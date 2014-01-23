@@ -1,0 +1,129 @@
+#!/usr/bin/env php
+<?php
+
+/*
+* This file is part of pssht.
+*
+* (c) François Poirotte <clicky@erebot.net>
+*
+* For the full copyright and license information, please view the LICENSE
+* file that was distributed with this source code.
+*/
+
+require_once(
+    dirname(__DIR__) .
+    DIRECTORY_SEPARATOR . 'vendor' .
+    DIRECTORY_SEPARATOR . 'autoload.php'
+);
+
+use Clicky\Pssht\Client;
+
+function escape($data)
+{
+#    return bin2hex($data);
+    return addcslashes($data, "\x00..\x1F\x7F..\xFF");
+}
+
+function main()
+{
+    $sockets    = array();
+    $sockets[]  = stream_socket_server("tcp://0.0.0.0:22222");
+    $clients    = array();
+    $address    = stream_socket_get_name($sockets[0], FALSE);
+    echo "Listening for new connections on $address" . PHP_EOL;
+
+    while (TRUE) {
+        $read   = $except = $sockets;
+        $write  = array();
+
+        foreach ($clients as $id => $client) {
+            if (count($client->getEncoder()->getBuffer()))
+                $write[] = $sockets[$id];
+        }
+
+        if (stream_select($read, $write, $except, NULL) === FALSE) {
+            echo socket_strerror(socket_last_error()) . PHP_EOL;
+            foreach ($sockets as &$socket) {
+                fclose($socket);
+            }
+            exit(1);
+        }
+
+        foreach ($read as $socket) {
+            if ($socket === $sockets[0]) {
+                $new = stream_socket_accept($sockets[0]);
+                if ($new === FALSE) {
+                    echo socket_strerror(socket_last_error()) . PHP_EOL;
+                }
+                else {
+                    $sockets[]  = $new;
+                    $id         = array_search($new, $sockets, TRUE);
+                    $peer       = stream_socket_get_name($new, TRUE);
+                    echo "[#$id] New client connected from $peer" . PHP_EOL;
+
+                    $inBuffer   = new \Clicky\Pssht\Buffer();
+                    $outBuffer  = new \Clicky\Pssht\Buffer();
+                    $client = new Client(
+                        new \Clicky\Pssht\Wire\Encoder($outBuffer),
+                        new \Clicky\Pssht\Wire\Decoder($inBuffer)
+                    );
+                    $clients[$id] = $client;
+                }
+                continue;
+            }
+
+            $data = fread($socket, 8192);
+            if ($data === '') {
+                foreach ($except as $socket) {
+                    if ($socket === $sockets[0]) {
+                        continue;
+                    }
+
+                    $peer   = stream_socket_get_name($socket, TRUE);
+                    $id     = array_search($socket, $sockets, TRUE);
+                    echo "[#$id] Client disconnected from $peer" . PHP_EOL;
+                    fclose($socket);
+                    unset($sockets[$id]);
+                    unset($clients[$id]);
+                }
+                continue;
+            }
+
+            if ($data !== FALSE) {
+                $peer   = stream_socket_get_name($socket, TRUE);
+                $length = strlen($data);
+                $id     = array_search($socket, $sockets, TRUE);
+                $clients[$id]->getDecoder()->getBuffer()->push($data);
+
+                echo "[#$id] Received $length bytes from $peer" . PHP_EOL;
+                echo escape($data) . PHP_EOL;
+
+                // Process messages in the buffer.
+                while ($clients[$id]->readMessage()) ;
+            }
+        }
+
+        foreach ($write as $socket) {
+            $id = array_search($socket, $sockets, TRUE);
+            if ($id === FALSE)
+                continue;
+
+            $peer   = stream_socket_get_name($socket, TRUE);
+            $buffer = $clients[$id]->getEncoder()->getBuffer();
+            $size   = count($buffer);
+            $data   = $buffer->get($size);
+            while ($size > 0) {
+                $written = fwrite($socket, $data);
+                if ($written === FALSE)
+                    break;
+                echo "[#$id] Sent $written bytes to $peer" . PHP_EOL;
+                echo escape(substr($data, 0, $written)) . PHP_EOL;
+                $data   = substr($data, $written);
+                $size  -= $written;
+            }
+        }
+    }
+}
+
+main();
+

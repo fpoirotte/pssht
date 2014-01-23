@@ -1,0 +1,45 @@
+{
+    "prefer-stable": true,
+    "name": "fpoirotte/pssht",
+    "description": "SSH library for PHP",
+    "keywords": ["SSH"],
+    "homepage": "https://github.com/fpoirotte/pssht",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "François Poirotte",
+            "email": "clicky@erebot.net",
+            "role": "lead"
+        }
+    ],
+    "support": {
+        "email": "clicky@erebot.net",
+        "issues": "https://github.com/fpoirotte/pssht/issues",
+        "irc": "irc://irc.iiens.net/Erebot",
+        "source": "https://github.com/fpoirotte/pssht"
+    },
+    "require": {
+        "php": ">=5.2.2",
+        "ext-openssl": "*",
+        "ext-gmp": "*",
+        "fpoirotte/xrl": "*"
+    },
+    "require-dev": {
+        "phing/phing": "*",
+        "behat/behat": "*",
+        "phpmd/phpmd": "*",
+        "sebastian/phpcpd": "*",
+        "phpunit/phpunit": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Clicky\\Pssht\\": "src/"
+        }
+    },
+    "bin": ["bin/pssht"],
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0.x-dev"
+        }
+    }
+}
