@@ -23,9 +23,9 @@ implements  PublicKeyInterface
 
     public function __construct($file)
     {
-        $key = openssl_pkey_get_private($file);
-        $this->_key = openssl_pkey_get_details($key);
-        if ($this->_key['type'] !== OPENSSL_KEYTYPE_RSA)
+        $this->_key = openssl_pkey_get_private($file);
+        $details    = openssl_pkey_get_details($this->_key);
+        if ($details['type'] !== OPENSSL_KEYTYPE_RSA)
             throw new \InvalidArgumentException();
     }
 
@@ -36,38 +36,42 @@ implements  PublicKeyInterface
 
     public function serialize(Encoder $encoder)
     {
+        $details = openssl_pkey_get_details($this->_key);
         $encoder->encode_string(self::getName());
-        $encoder->encode_mpint(gmp_init(bin2hex($this->_key['rsa']['e']), 16));
-        $encoder->encode_mpint(gmp_init(bin2hex($this->_key['rsa']['n']), 16));
+        $encoder->encode_mpint(gmp_init(bin2hex($details['rsa']['e']), 16));
+        $encoder->encode_mpint(gmp_init(bin2hex($details['rsa']['n']), 16));
     }
 
     public function sign($message, $raw_output = FALSE)
     {
-        $H      = sha1($message, TRUE);
-        $T      = self::DER_HEADER . $H;
-        $tLen   = strlen($T);
-        $emLen  = ($this->_key['bits'] + 7) >> 3;
-        if ($emLen < $tLen + 11)
+        $res = openssl_sign(
+            $message,
+            $signature,
+            $this->_key,
+            OPENSSL_ALGO_SHA1
+        );
+        if ($res === FALSE)
             throw new \RuntimeException();
-        $PS     = str_repeat("\xFF", $emLen - $tLen - 3);
-        $EM     = gmp_init(bin2hex("\x00\x01" . $PS . "\x00" . $T), 16);
-        $n      = gmp_init(bin2hex($this->_key['rsa']['n']), 16);
-        $d      = gmp_init(bin2hex($this->_key['rsa']['d']), 16);
-        if (gmp_cmp($EM, $n) >= 0)
-            throw new \RuntimeException();
-        $s = str_pad(gmp_strval(gmp_powm($EM, $d, $n), 16), $emLen * 2, '0', STR_PAD_LEFT);
-        return $raw_output ? pack('H*', $s) : $s;
+        return ($raw_output ? $signature : bin2hex($signature));
     }
 
     public function check($message, $signature)
     {
+#        return openssl_verify(
+#            $message,
+#            $signature,
+#            $this->_key,
+#            OPENSSL_ALGO_SHA1
+#        );
+
         // Decode given signature.
-        $emLen = ($this->_key['bits'] + 7) >> 3;
+        $details = openssl_pkey_get_details($this->_key);
+        $emLen = ($details['bits'] + 7) >> 3;
         if (strlen($signature) !== $emLen)
             throw new \InvalidArgumentException();
         $s = gmp_init(bin2hex($signature), 16);
-        $n = gmp_init(bin2hex($this->_key['rsa']['n']), 16);
-        $e = gmp_init(bin2hex($this->_key['rsa']['e']), 16);
+        $n = gmp_init(bin2hex($details['rsa']['n']), 16);
+        $e = gmp_init(bin2hex($details['rsa']['e']), 16);
         if (gmp_cmp($s, $n) >= 0)
             throw new \InvalidArgumentException();
         $m      = gmp_powm($s, $e, $n);
