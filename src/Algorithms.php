@@ -65,7 +65,7 @@ class Algorithms
         $class = "\\Clicky\\Pssht\\$type\\$name";
         if (!class_exists($class))
             return NULL;
-        $reflector = new ReflectionClass($class);
+        $reflector = new \ReflectionClass($class);
         return ($reflector->isAbstract() ? NULL : $class);
     }
 

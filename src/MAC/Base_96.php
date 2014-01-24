@@ -20,13 +20,13 @@ implements      MACInterface
 
     final public function __construct($key)
     {
-        $cls            = self::HASH;
+        $cls = __NAMESPACE__ . '\\' . static::HASH;
         $this->_subhash = new $cls($key);
     }
 
     final static public function getName()
     {
-        $cls = self::HASH;
+        $cls = __NAMESPACE__ . '\\' . static::HASH;
         return $cls::getName() . '-96';
     }
 
