@@ -13,9 +13,6 @@ namespace Clicky\Pssht;
 
 class Algorithms
 {
-    const CLASS_WHITELIST = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_1234567890';
-    const ALGO_WHITELIST  = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-1234567890@.';
-
     protected $_algos;
 
     private function __construct()
@@ -32,20 +29,16 @@ class Algorithms
         foreach (array_keys($this->_algos) as $type) {
             $it = new \DirectoryIterator(__DIR__ . DIRECTORY_SEPARATOR . $type);
             foreach ($it as $entry) {
-                $name = $entry->getBasename('.php');
-                if (!is_string($name) || strspn($name, self::CLASS_WHITELIST) !== strlen($name))
-                    continue;
                 if (!$entry->isFile())
                     continue;
-                $class = "\\Clicky\\Pssht\\$type\\$name";
-                if (!class_exists($class))
+                $name   = $entry->getBasename('.php');
+                $class  = $this->_getClass($type, $name);
+                if ($class === NULL)
                     continue;
-
-                $algo = $class::getName();
-                if (!is_string($algo) || strspn($algo, self::ALGO_WHITELIST) !== strlen($algo))
+                $algo = $this->_getAlgo($class);
+                if ($algo === NULL)
                     continue;
-
-                $this->_algos[$type][$algo] = "\\Clicky\\Pssht\\$type\\$name";
+                $this->_algos[$type][$algo] = $class;
             }
         }
     }
@@ -64,14 +57,39 @@ class Algorithms
         return $instance;
     }
 
+    protected function _getClass($type, $name)
+    {
+        $w = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_1234567890';
+        if (!is_string($name) || strspn($name, $w) !== strlen($name))
+            return NULL;
+        $class = "\\Clicky\\Pssht\\$type\\$name";
+        if (!class_exists($class))
+            return NULL;
+        $reflector = new ReflectionClass($class);
+        return ($reflector->isAbstract() ? NULL : $class);
+    }
+
+    protected function _getAlgo($class)
+    {
+        $w =    'abcdefghijklmnopqrstuvwxyz' .
+                'ABCDEFGHIJKLMNOPQRSTUVWXYZ' .
+                '1234567890-@.';
+        $name = $class::getName();
+        if (!is_string($name) || strspn($name, $w) !== strlen($name))
+            return NULL;
+        return $name;
+    }
+
     public function register($type, $class)
     {
+        if (is_object($class))
+            $class = get_class($class);
         if (!is_string($class) || !class_exists($class))
             throw new \InvalidArgumentException();
         if (!is_string($type) || !isset($this->_algos[$type]))
             throw new \InvalidArgumentException();
-        $name = $class::getName();
-        if (!is_string($name) || strspn($name, self::ALGO_WHITELIST) !== strlen($name))
+        $name = $this->_getAlgo($class);
+        if ($name === NULL)
             throw new \InvalidArgumentException();
 
         $this->_algos[$type][$name] = $class;
@@ -92,12 +110,9 @@ class Algorithms
     {
         if (!is_string($type) || !isset($this->_algos[$type]))
             throw new \InvalidArgumentException();
-        if (!is_string($name) || strspn($name, self::CLASS_WHITELIST) !== strlen($name))
-            throw new \InvalidArgumentException();
-
-        if (class_exists("\\Clicky\\Pssht\\$type\\$name")) {
-            $this->_algos[$type][$name] = "\\Clicky\\Pssht\\$type\\$name";
-        }
+        $class = $this->_getClass($type, $name);
+        if ($class !== NULL)
+            $this->_algos[$type][$name] = $class;
         return $this;
     }
 
