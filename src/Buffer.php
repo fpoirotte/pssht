@@ -65,8 +65,9 @@ implements  \Countable
     public function unget($data)
     {
         if (!is_string($data))
-            throw new \InvalidArgumentException();
+            throw new \InvalidArgumentException();
         $this->_buffer = $data . $this->_buffer;
+        return $this;
     }
 
     public function push($data)
@@ -74,6 +75,7 @@ implements  \Countable
         if (!is_string($data))
             throw new \InvalidArgumentException();
         $this->_buffer .= $data;
+        return $this;
     }
 }
 

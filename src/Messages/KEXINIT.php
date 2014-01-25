@@ -55,34 +55,40 @@ implements  MessageInterface
 
         $algos = Algorithms::factory();
 
-        if ($kexAlgos === NULL)
+        if ($kexAlgos === NULL) {
             $kexAlgos = $algos->getAlgorithms('KEX');
+            usort($kexAlgos, array('self', 'sortAlgorithms'));
+        }
 
-        if ($serverHostKeyAlgos === NULL)
+        if ($serverHostKeyAlgos === NULL) {
             $serverHostKeyAlgos = $algos->getAlgorithms('PublicKey');
+            usort($serverHostKeyAlgos, array('self', 'sortAlgorithms'));
+        }
 
+        $encAlgos = $algos->getClasses('Encryption');
+        unset($encAlgos['none']);
+        $encAlgos = array_keys($encAlgos);
+        usort($encAlgos, array('self', 'sortAlgorithms'));
         if ($encAlgosC2S === NULL)
-            $encAlgosC2S = $algos->getAlgorithms('Encryption');
+            $encAlgosC2S = $encAlgos;
+        if ($encAlgosS2C === NULL)
+            $encAlgosS2C = $encAlgos;
 
-        if ($encAlgosS2C === NULL) {
-            $encAlgosS2C = $algos->getAlgorithms('Encryption');
-#            unset($encAlgosS2C['none']);
-        }
-
+        $macAlgos = $algos->getClasses('MAC');
+        unset($macAlgos['none']);
+        $macAlgos = array_keys($macAlgos);
+        usort($macAlgos, array('self', 'sortAlgorithms'));
         if ($macAlgosC2S === NULL)
-            $macAlgosC2S = $algos->getAlgorithms('MAC');
+            $macAlgosC2S = $macAlgos;
+        if ($macAlgosS2C === NULL)
+            $macAlgosS2C = $macAlgos;
 
-        if ($macAlgosS2C === NULL) {
-            $macAlgosS2C = $algos->getAlgorithms('MAC');
-#            unset($macAlgosS2C['none']);
-        }
-
+        $compAlgos = $algos->getAlgorithms('Compression');
+        usort($compAlgos, array('self', 'sortAlgorithms'));
         if ($compAlgosC2S === NULL)
-            $compAlgosC2S = $algos->getAlgorithms('Compression');
-
-        if ($compAlgosS2C === NULL) {
-            $compAlgosS2C = $algos->getAlgorithms('Compression');
-        }
+            $compAlgosC2S = $compAlgos;
+        if ($compAlgosS2C === NULL)
+            $compAlgosS2C = $compAlgos;
 
         $this->_cookie              = $random->getBytes(16);
         $this->_kexAlgos            = $kexAlgos;
@@ -174,6 +180,85 @@ implements  MessageInterface
     public function getS2CCompressionAlgos()
     {
         return $this->_compAlgosS2C;
+    }
+
+    static public function sortAlgorithms($a, $b)
+    {
+        static $preferences = array(
+            // KEX
+            'ecdh-sha2-nistp256',
+            'ecdh-sha2-nistp384',
+            'ecdh-sha2-nistp521',
+            'diffie-hellman-group-exchange-sha256',
+            'diffie-hellman-group-exchange-sha1',
+            'diffie-hellman-group14-sha1',
+            'diffie-hellman-group1-sha1',
+
+            // PublicKey
+            'ssh-rsa-cert-v01@openssh.com',
+            'ssh-rsa-cert-v00@openssh.com',
+            'ssh-rsa',
+            'ecdsa-sha2-nistp256-cert-v01@openssh.com',
+            'ecdsa-sha2-nistp384-cert-v01@openssh.com',
+            'ecdsa-sha2-nistp521-cert-v01@openssh.com',
+            'ssh-dss-cert-v01@openssh.com',
+            'ssh-dss-cert-v00@openssh.com',
+            'ecdsa-sha2-nistp256',
+            'ecdsa-sha2-nistp384',
+            'ecdsa-sha2-nistp521',
+            'ssh-dss',
+
+            // Encryption
+            'aes128-ctr',
+            'aes192-ctr',
+            'aes256-ctr',
+            'arcfour256',
+            'arcfour128',
+            'aes128-gcm@openssh.com',
+            'aes256-gcm@openssh.com',
+            'aes128-cbc',
+            '3des-cbc',
+            'blowfish-cbc',
+            'cast128-cbc',
+            'aes192-cbc',
+            'aes256-cbc',
+            'arcfour',
+            'rijndael-cbc@lysator.liu.se',
+
+            // MAC
+            'hmac-md5-etm@openssh.com',
+            'hmac-sha1-etm@openssh.com',
+            'umac-64-etm@openssh.com',
+            'umac-128-etm@openssh.com',
+            'hmac-sha2-256-etm@openssh.com',
+            'hmac-sha2-512-etm@openssh.com',
+            'hmac-ripemd160-etm@openssh.com',
+            'hmac-sha1-96-etm@openssh.com',
+            'hmac-md5-96-etm@openssh.com',
+            'hmac-md5',
+            'hmac-sha1',
+            'umac-64@openssh.com',
+            'umac-128@openssh.com',
+            'hmac-sha2-256',
+            'hmac-sha2-512',
+            'hmac-ripemd160',
+            'hmac-ripemd160@openssh.com',
+            'hmac-sha1-96',
+            'hmac-md5-96',
+
+            // Compression
+            'none',
+            'zlib@openssh.com',
+            'zlib',
+        );
+
+        $iA = array_search($a, $preferences, TRUE);
+        $iB = array_search($b, $preferences, TRUE);
+        if ($iA === FALSE)
+            return ($iB === FALSE ? 0 : 1);
+        if ($iB === FALSE)
+            return -1;
+        return ($iA - $iB);
     }
 }
 

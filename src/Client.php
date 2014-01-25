@@ -43,8 +43,8 @@ class Client
         $this->_decoder         = $decoder;
         $this->_compressor      = new \Clicky\Pssht\Compression\None();
         $this->_uncompressor    = new \Clicky\Pssht\Compression\None();
-        $this->_encryptor       = new \Clicky\Pssht\Encryption\None();
-        $this->_decryptor       = new \Clicky\Pssht\Encryption\None();
+        $this->_encryptor       = new \Clicky\Pssht\Encryption\None(NULL, NULL);
+        $this->_decryptor       = new \Clicky\Pssht\Encryption\None(NULL, NULL);
         $this->_inMAC           = new \Clicky\Pssht\MAC\None(NULL);
         $this->_outMAC          = new \Clicky\Pssht\MAC\None(NULL);
         $this->_context         = array();
@@ -79,12 +79,11 @@ class Client
         $size       = strlen($payload);
 
         // Compute padding size.
-        /// @FIXME: retrieve cipher block size
-        $cipherSize = max(8, 0);
-        $padSize    = $cipherSize - ((1 + 4 + $size) % $cipherSize);
+        $blockSize  = max(8, $this->_encryptor->getBlockSize());
+        $padSize    = $blockSize - ((1 + 4 + $size) % $blockSize);
         if ($padSize < 4)
-            $padSize = ($padSize + $cipherSize) % 256;
-        $padding = str_repeat("\x00", $padSize);
+            $padSize = ($padSize + $blockSize) % 256;
+        $padding = openssl_random_pseudo_bytes($padSize);
 
         // Create the packet.
         $encoder->encode_uint32(1 + $size + $padSize);
@@ -110,6 +109,10 @@ class Client
         if ($ident === NULL)
             throw new \RuntimeException();
         $this->_context['identity']['client'] = (string) substr($ident, 0, -2);
+
+        /// @FIXME: implement disconnect method (with reason/code).
+        if (strncmp($ident, 'SSH-2.0-', 8) !== 0)
+            $this->disconnect(NULL);
 
         $random = new \Clicky\Pssht\Random\OpenSSL();
         $kex    = new \Clicky\Pssht\Messages\KEXINIT($random);
@@ -261,23 +264,21 @@ class Client
             'B' => array($this->_context['S2C']['Encryption'], 'getIVSize'),
             'C' => array($this->_context['C2S']['Encryption'], 'getKeySize'),
             'D' => array($this->_context['S2C']['Encryption'], 'getKeySize'),
+            'E' => array($this->_context['C2S']['MAC'], 'getSize'),
+            'F' => array($this->_context['C2S']['MAC'], 'getSize'),
         );
         foreach (array('A', 'B', 'C', 'D', 'E', 'F') as $keyIndex) {
-            $keys   = array($kexAlgo->hash($sharedSecret . $exchangeHash . $keyIndex . $sessionId));
-            $limit  = isset($limiters[$keyIndex])
-                    ? call_user_func($limiters[$keyIndex])
-                    : 0;
-            while (strlen(implode('', $keys)) < $limit) {
-                $key    = $kexAlgo->hash($sharedSecret . $exchangeHash . implode('', $keys));
-                $keys[] = $key;
+            $key    = $kexAlgo->hash($sharedSecret . $exchangeHash . $keyIndex . $sessionId);
+            $limit  = call_user_func($limiters[$keyIndex]);
+            $keyReq = max(24, $limit);
+            while (strlen($key) < $keyReq) {
+                $key .= $kexAlgo->hash($sharedSecret . $exchangeHash . $key);
             }
-            $key = implode('', $keys);
-            if ($limit !== 0)
-                $key = substr($key, 0, $limit);
+            $key = (string) substr($key, 0, $limit);
             $this->_context['keys'][$keyIndex] = $key;
         }
 
-        /// @FIXME: Reset compression & encryption contexts.
+        /// @FIXME: Reset compression contexts.
 
         $cls = $this->_context['C2S']['Encryption'];
         $this->_decryptor = new $cls(
@@ -342,10 +343,8 @@ class Client
             return $this->_handle_INIT($this->_decoder);
         }
 
-        /// @FIXME: retrieve cipher block size.
-        $cipherSize = max(0, 4);
-
-        $encPayload = $this->_decoder->getBuffer()->get($cipherSize);
+        $blockSize  = max($this->_decryptor->getBlockSize(), 8);
+        $encPayload = $this->_decoder->getBuffer()->get($blockSize);
         if ($encPayload === NULL || $encPayload === '') {
             return FALSE;
         }
@@ -354,34 +353,54 @@ class Client
         $decoder        = new Decoder($buffer);
         $packetLength   = $decoder->decode_uint32();
 
-        $macSize        = $this->_inMAC->getSize() / 8;
-        $encPayload2    = $this->_decoder->getBuffer()->get($packetLength + $macSize);
-        if ($encPayload2 === NULL || $encPayload2 === '') {
-            $this->_decoder->getBuffer()->unget($encPayload);
-            return FALSE;
+        // Read the rest of the message.
+        $toRead         =
+            // Remove what we already read.
+            // Note: we must account for the "packet length" field
+            // not being included in $packetLength itself.
+            4 - $blockSize +
+
+            // Rest of the encrypted data.
+            $packetLength;
+
+        if ($toRead < 0)
+            throw new \RuntimeException();
+
+        if ($toRead !== 0) {
+            $encPayload2 = $this->_decoder->getBuffer()->get($toRead);
+            if ($encPayload2 === NULL) {
+                $this->_decoder->getBuffer()->unget($encPayload);
+                return FALSE;
+            }
+            $unencrypted2 = $this->_decryptor->decrypt($encPayload2);
+            $buffer->push($unencrypted2);
         }
-        $unencrypted2   = $this->_decryptor->decrypt($encPayload2);
-        $buffer->push($unencrypted2);
 
         $paddingLength  = ord($decoder->decode_bytes());
         $payload        = $decoder->decode_bytes($packetLength - $paddingLength - 1);
         $padding        = $decoder->decode_bytes($paddingLength);
-        $expectedMAC    = $this->_inMAC->compute(
-            pack('N', $this->_inSeqNo) .
-            ((string) substr($unencrypted . $unencrypted2, 0, $packetLength + 4))
-        );
 
-        // If a MAC is used.
-        $actualMAC = '';
-        if ($expectedMAC !== '') {
-            $actualMAC = $decoder->decode_bytes(strlen($expectedMAC));
+        // If a MAC is in use.
+        $macSize    = $this->_inMAC->getSize();
+        $actualMAC  = '';
+        if ($macSize > 0) {
+            $actualMAC = $this->_decoder->getBuffer()->get($macSize);
+            if ($actualMAC === NULL) {
+                $this->_decoder->getBuffer()->unget($encPayload2)->unget($encPayload);
+                return FALSE;
+            }
+
+            $expectedMAC = $this->_inMAC->compute(
+                pack('N', $this->_inSeqNo) .
+                ((string) substr($unencrypted . $unencrypted2, 0, $packetLength + 4))
+            );
+
             if ($expectedMAC !== $actualMAC)
                 throw new \RuntimeException();
         }
 
         if (!isset($packetLength, $paddingLength, $payload, $padding, $actualMAC)) {
-            $this->_decoder->getBuffer()->unget($encPayload2);
-            $this->_decoder->getBuffer()->unget($encPayload);
+            $this->_decoder->getBuffer()->unget($actualMAC)->unget($encPayload2)->unget($encPayload);
             echo "Something went wrong during decoding" . PHP_EOL;
             return FALSE;
         }

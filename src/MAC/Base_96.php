@@ -39,9 +39,9 @@ implements      MACInterface
         );
     }
 
-    final public function getSize()
+    final static public function getSize()
     {
-        return 96;
+        return 96 >> 3;
     }
 }
 

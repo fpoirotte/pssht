@@ -18,7 +18,7 @@ extends \Clicky\Pssht\Encryption\Base
 
     static public function getName()
     {
-        return 'aes192-cbc';
+        return 'aes192-cbc@foo';
     }
 }
 

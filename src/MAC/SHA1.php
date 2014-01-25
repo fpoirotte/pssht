@@ -33,9 +33,9 @@ implements  MACInterface
         return hash_hmac('sha1', $data, $this->_key, TRUE);
     }
 
-    public function getSize()
+    static public function getSize()
     {
-        return 160;
+        return 160 >> 3;
     }
 }
 

@@ -17,6 +17,6 @@ interface MACInterface
 
     public function compute($data);
 
-    public function getSize();
+    static public function getSize();
 }
 

@@ -30,7 +30,7 @@ implements  MACInterface
         return '';
     }
 
-    public function getSize()
+    static public function getSize()
     {
         return 0;
     }
