@@ -11,14 +11,14 @@
 
 namespace Clicky\Pssht\Encryption;
 
-use Clicky\Pssht\Encryption\None;
-
-class   Erebot
-extends None
+class   cast128_cbc
+extends \Clicky\Pssht\Encryption\Base
 {
+    const ALGORITHM = 'MCRYPT_CAST_128';
+
     static public function getName()
     {
-        return 'null@erebot.net';
+        return 'cast128-cbc';
     }
 }
 

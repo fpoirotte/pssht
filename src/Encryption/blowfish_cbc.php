@@ -11,14 +11,14 @@
 
 namespace Clicky\Pssht\Encryption;
 
-use Clicky\Pssht\Encryption\None;
-
-class   Erebot
-extends None
+class   blowfish_cbc
+extends \Clicky\Pssht\Encryption\Base
 {
+    const ALGORITHM = 'MCRYPT_BLOWFISH';
+
     static public function getName()
     {
-        return 'null@erebot.net';
+        return 'blowfish-cbc';
     }
 }
 

@@ -13,7 +13,17 @@ namespace Clicky\Pssht;
 
 interface EncryptionInterface
 {
+    public function __construct($iv, $key);
+
+    static public function isAvailable();
+
     static public function getName();
+
+    static public function getKeySize();
+
+    static public function getIVSize();
+
+    static public function getBlockSize();
 
     public function encrypt($data);
 

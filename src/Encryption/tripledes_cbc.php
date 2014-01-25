@@ -11,14 +11,14 @@
 
 namespace Clicky\Pssht\Encryption;
 
-use Clicky\Pssht\Encryption\None;
-
-class   Erebot
-extends None
+class   tripledes_cbc
+extends \Clicky\Pssht\Encryption\Base
 {
+    const ALGORITHM = 'MCRYPT_TRIPLEDES';
+
     static public function getName()
     {
-        return 'null@erebot.net';
+        return '3des-cbc';
     }
 }
 

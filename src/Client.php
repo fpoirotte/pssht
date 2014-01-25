@@ -139,27 +139,27 @@ class Client
 
 
         // C2S encryption
-        $this->_context['C2S']['encryption'] = NULL;
+        $this->_context['C2S']['Encryption'] = NULL;
         foreach ($kex->getC2SEncryptionAlgos() as $algo) {
             if ($algos->getClass('Encryption', $algo) !== NULL) {
-                $this->_context['C2S']['encryption'] = $algos->getClass('Encryption', $algo);
+                $this->_context['C2S']['Encryption'] = $algos->getClass('Encryption', $algo);
                 break;
             }
         }
         // No suitable C2S encryption cipher found.
-        if (!$this->_context['C2S']['encryption'])
+        if (!$this->_context['C2S']['Encryption'])
             throw new \RuntimeException();
 
         // C2S compression
-        $this->_context['C2S']['compression'] = NULL;
+        $this->_context['C2S']['Compression'] = NULL;
         foreach ($kex->getC2SCompressionAlgos() as $algo) {
             if ($algos->getClass('Compression', $algo) !== NULL) {
-                $this->_context['C2S']['compression'] = $algos->getClass('Compression', $algo);
+                $this->_context['C2S']['Compression'] = $algos->getClass('Compression', $algo);
                 break;
             }
         }
         // No suitable C2S compression found.
-        if (!$this->_context['C2S']['compression'])
+        if (!$this->_context['C2S']['Compression'])
             throw new \RuntimeException();
 
         // C2S MAC
@@ -175,27 +175,27 @@ class Client
             throw new \RuntimeException();
 
         // S2C encryption
-        $this->_context['S2C']['encryption'] = NULL;
+        $this->_context['S2C']['Encryption'] = NULL;
         foreach ($kex->getS2CEncryptionAlgos() as $algo) {
             if ($algos->getClass('Encryption', $algo) !== NULL) {
-                $this->_context['S2C']['encryption'] = $algos->getClass('Encryption', $algo);
+                $this->_context['S2C']['Encryption'] = $algos->getClass('Encryption', $algo);
                 break;
             }
         }
         // No suitable S2C encryption cipher found.
-        if (!$this->_context['S2C']['encryption'])
+        if (!$this->_context['S2C']['Encryption'])
             throw new \RuntimeException();
 
         // S2C compression
-        $this->_context['S2C']['compression'] = NULL;
+        $this->_context['S2C']['Compression'] = NULL;
         foreach ($kex->getS2CCompressionAlgos() as $algo) {
             if ($algos->getClass('Compression', $algo) !== NULL) {
-                $this->_context['S2C']['compression'] = $algos->getClass('Compression', $algo);
+                $this->_context['S2C']['Compression'] = $algos->getClass('Compression', $algo);
                 break;
             }
         }
         // No suitable S2C compression found.
-        if (!$this->_context['S2C']['compression'])
+        if (!$this->_context['S2C']['Compression'])
             throw new \RuntimeException();
 
         // S2C MAC
@@ -216,22 +216,18 @@ class Client
     // SSH_MSG_KEXDH_INIT
     protected function _handle_30(Decoder $decoder)
     {
-        $message = \Clicky\Pssht\Messages\KEXDH_INIT::unserialize($decoder);
-
-        $encryptionAlgo = $this->_context['S2C']['encryption'];
-        $decryptionAlgo = $this->_context['C2S']['encryption'];
-        $kexAlgo        = $this->_context['kexAlgo'];
-        $kexAlgo        = new $kexAlgo();
-
-        $response = new \Clicky\Pssht\Messages\KEXDH_REPLY(
+        $message    = \Clicky\Pssht\Messages\KEXDH_INIT::unserialize($decoder);
+        $kexAlgo    = $this->_context['kexAlgo'];
+        $kexAlgo    = new $kexAlgo();
+        $response   = new \Clicky\Pssht\Messages\KEXDH_REPLY(
             $message,
             new \Clicky\Pssht\PublicKey\RSA(
                 'file://' .
                 dirname(__DIR__) .
                 '/tests/data/rsa2048'
             ),
-            new $encryptionAlgo(),
-            new $decryptionAlgo(),
+            $this->_encryptor,
+            $this->_decryptor,
             $kexAlgo,
             $this->_context['kex']['server'],
             $this->_context['kex']['client'],
@@ -260,21 +256,44 @@ class Client
         $sharedSecret   = $encoder->getBuffer()->get(0);
         $exchangeHash   = $this->_context['DH']->getExchangeHash();
         $sessionId      = $this->_context['sessionIdentifier'];
+        $limiters       = array(
+            'A' => array($this->_context['C2S']['Encryption'], 'getIVSize'),
+            'B' => array($this->_context['S2C']['Encryption'], 'getIVSize'),
+            'C' => array($this->_context['C2S']['Encryption'], 'getKeySize'),
+            'D' => array($this->_context['S2C']['Encryption'], 'getKeySize'),
+        );
         foreach (array('A', 'B', 'C', 'D', 'E', 'F') as $keyIndex) {
-            $keys = array($kexAlgo->hash($sharedSecret . $exchangeHash . $keyIndex . $sessionId));
-            /// @FIXME: Retrieve cipher keylength requirements.
-            while (strlen(implode('', $keys)) < 0) {
+            $keys   = array($kexAlgo->hash($sharedSecret . $exchangeHash . $keyIndex . $sessionId));
+            $limit  = isset($limiters[$keyIndex])
+                    ? call_user_func($limiters[$keyIndex])
+                    : 0;
+            while (strlen(implode('', $keys)) < $limit) {
                 $key    = $kexAlgo->hash($sharedSecret . $exchangeHash . implode('', $keys));
                 $keys[] = $key;
             }
-            /// @FIXME: Limit key length to based on actual cipher requirements.
-            $this->_context['keys'][$keyIndex] = implode('', $keys);;
+            $key = implode('', $keys);
+            if ($limit !== 0)
+                $key = substr($key, 0, $limit);
+            $this->_context['keys'][$keyIndex] = $key;
         }
 
         /// @FIXME: Reset compression & encryption contexts.
 
+        $cls = $this->_context['C2S']['Encryption'];
+        $this->_decryptor = new $cls(
+            $this->_context['keys']['A'],
+            $this->_context['keys']['C']
+        );
+
+        $cls = $this->_context['S2C']['Encryption'];
+        $this->_encryptor = new $cls(
+            $this->_context['keys']['B'],
+            $this->_context['keys']['D']
+        );
+
         $cls            = $this->_context['C2S']['MAC'];
         $this->_inMAC   = new $cls($this->_context['keys']['E']);
+
         $cls            = $this->_context['S2C']['MAC'];
         $this->_outMAC  = new $cls($this->_context['keys']['F']);
 

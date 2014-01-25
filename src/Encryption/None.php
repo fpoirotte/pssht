@@ -16,15 +16,33 @@ use Clicky\Pssht\EncryptionInterface;
 class       None
 implements  EncryptionInterface
 {
-    const KEY_LENGTH = 0;
-
-    public function __construct()
+    public function __construct($iv, $key)
     {
+    }
+
+    static public function isAvailable()
+    {
+        return TRUE;
     }
 
     static public function getName()
     {
         return 'none';
+    }
+
+    static public function getKeySize()
+    {
+        return 0;
+    }
+
+    static public function getIVSize()
+    {
+        return 0;
+    }
+
+    static public function getBlockSize()
+    {
+        return 0;
     }
 
     public function encrypt($data)

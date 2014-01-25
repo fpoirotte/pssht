@@ -11,14 +11,14 @@
 
 namespace Clicky\Pssht\Encryption;
 
-use Clicky\Pssht\Encryption\None;
-
-class   Erebot
-extends None
+class   aes192_cbc
+extends \Clicky\Pssht\Encryption\Base
 {
+    const ALGORITHM = 'MCRYPT_RIJNDAEL_192';
+
     static public function getName()
     {
-        return 'null@erebot.net';
+        return 'aes192-cbc';
     }
 }
 

@@ -48,7 +48,7 @@ implements  MessageInterface
                             $remoteIdent
     )
     {
-        $keyLength          = min(20, max($encryptionAlgo::KEY_LENGTH, 16));
+        $keyLength          = min(20, max($encryptionAlgo->getKeySize(), 16));
         $randBytes          = openssl_random_pseudo_bytes(2 * $keyLength);
         $y                  = gmp_init(bin2hex($randBytes), 16);
         $prime              = gmp_init(str_replace("\r\n ", '', $kexAlgo::PRIME), 16);
