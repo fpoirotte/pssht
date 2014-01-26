@@ -20,11 +20,6 @@ implements  EncryptionInterface
     {
     }
 
-    static public function isAvailable()
-    {
-        return TRUE;
-    }
-
     static public function getName()
     {
         return 'none';

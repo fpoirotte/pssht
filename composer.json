@@ -22,8 +22,7 @@
         "php": ">=5.2.2",
         "ext-openssl": "*",
         "ext-mcrypt": "*",
-        "ext-gmp": "*",
-        "fpoirotte/xrl": "*"
+        "ext-gmp": "*"
     },
     "require-dev": {
         "phing/phing": "*",
@@ -31,6 +30,9 @@
         "phpmd/phpmd": "*",
         "sebastian/phpcpd": "*",
         "phpunit/phpunit": "*"
+    },
+    "suggest": {
+        "ext-http": "~1.0"
     },
     "autoload": {
         "psr-4": {

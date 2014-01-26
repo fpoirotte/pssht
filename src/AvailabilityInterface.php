@@ -11,15 +11,8 @@
 
 namespace Clicky\Pssht;
 
-interface CompressionInterface
+interface AvailabilityInterface
 {
-    const MODE_COMPRESS     = 0;
-    const MODE_UNCOMPRESS   = 1;
-
-    public function __construct($mode);
-
-    static public function getName();
-
-    public function update($data);
+    static public function isAvailable();
 }
 

@@ -15,6 +15,7 @@ use Clicky\Pssht\Buffer;
 use Clicky\Pssht\Wire\Encoder;
 use Clicky\Pssht\Wire\Decoder;
 use Clicky\Pssht\Messages\DISCONNECT;
+use Clicky\Pssht\CompressionInterface;
 
 class Client
 {
@@ -41,8 +42,8 @@ class Client
         $this->_outSeqNo        = 0;
         $this->_encoder         = $encoder;
         $this->_decoder         = $decoder;
-        $this->_compressor      = new \Clicky\Pssht\Compression\None();
-        $this->_uncompressor    = new \Clicky\Pssht\Compression\None();
+        $this->_compressor      = new \Clicky\Pssht\Compression\None(CompressionInterface::MODE_COMPRESS);
+        $this->_uncompressor    = new \Clicky\Pssht\Compression\None(CompressionInterface::MODE_UNCOMPRESS);
         $this->_encryptor       = new \Clicky\Pssht\Encryption\None(NULL, NULL);
         $this->_decryptor       = new \Clicky\Pssht\Encryption\None(NULL, NULL);
         $this->_inMAC           = new \Clicky\Pssht\MAC\None(NULL);
@@ -75,7 +76,7 @@ class Client
         $payload    = $buffer->get(0);
 
         // Compress the payload if necessary.
-        $payload    = $this->_compressor->compress($payload);
+        $payload    = $this->_compressor->update($payload);
         $size       = strlen($payload);
 
         // Compute padding size.
@@ -278,25 +279,29 @@ class Client
             $this->_context['keys'][$keyIndex] = $key;
         }
 
-        /// @FIXME: Reset compression contexts.
-
+        // Encryption
         $cls = $this->_context['C2S']['Encryption'];
         $this->_decryptor = new $cls(
             $this->_context['keys']['A'],
             $this->_context['keys']['C']
         );
-
         $cls = $this->_context['S2C']['Encryption'];
         $this->_encryptor = new $cls(
             $this->_context['keys']['B'],
             $this->_context['keys']['D']
         );
 
+        // MAC
         $cls            = $this->_context['C2S']['MAC'];
         $this->_inMAC   = new $cls($this->_context['keys']['E']);
-
         $cls            = $this->_context['S2C']['MAC'];
         $this->_outMAC  = new $cls($this->_context['keys']['F']);
+
+        // Compression
+        $cls                    = $this->_context['C2S']['Compression'];
+        $this->_uncompressor    = new $cls(CompressionInterface::MODE_UNCOMPRESS);
+        $cls                    = $this->_context['S2C']['Compression'];
+        $this->_compressor      = new $cls(CompressionInterface::MODE_COMPRESS);
 
         return TRUE;
     }
@@ -405,7 +410,7 @@ class Client
             return FALSE;
         }
 
-        $payload    = $this->_uncompressor->uncompress($payload);
+        $payload    = $this->_uncompressor->update($payload);
         $decoder    = new Decoder(new Buffer($payload));
         $msgType    = ord($decoder->decode_bytes(1));
         $func       = '_handle_' . $msgType;

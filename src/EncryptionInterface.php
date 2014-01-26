@@ -15,8 +15,6 @@ interface EncryptionInterface
 {
     public function __construct($iv, $key);
 
-    static public function isAvailable();
-
     static public function getName();
 
     static public function getKeySize();

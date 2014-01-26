@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "7288cec1f5343caa48cace11dec86d8a",
+    "hash": "9f32dc9e94c684303ca37ff49e0f8007",
     "packages": [
         {
             "name": "fpoirotte/xrl",
@@ -1251,6 +1251,7 @@
     "platform": {
         "php": ">=5.2.2",
         "ext-openssl": "*",
+        "ext-mcrypt": "*",
         "ext-gmp": "*"
     },
     "platform-dev": [

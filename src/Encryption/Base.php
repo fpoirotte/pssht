@@ -12,9 +12,11 @@
 namespace Clicky\Pssht\Encryption;
 
 use Clicky\Pssht\EncryptionInterface;
+use Clicky\Pssht\AvailabilityInterface;
 
 abstract class  Base
-implements      EncryptionInterface
+implements      EncryptionInterface,
+                AvailabilityInterface
 {
     protected $_mcrypt;
 

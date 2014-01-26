@@ -66,7 +66,13 @@ class Algorithms
         if (!class_exists($class))
             return NULL;
         $reflector = new \ReflectionClass($class);
-        return ($reflector->isAbstract() ? NULL : $class);
+        if ($reflector->isAbstract())
+            return NULL;
+        $iface = '\\Clicky\\Pssht\\AvailabilityInterface';
+        if ($refletor->implementsInterface($iface) &&
+            $class::isAvailable() !== TRUE)
+            return NULL;
+        return $class;
     }
 
     protected function _getAlgo($class)
