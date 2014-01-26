@@ -29,7 +29,8 @@
         "behat/behat": "*",
         "phpmd/phpmd": "*",
         "sebastian/phpcpd": "*",
-        "phpunit/phpunit": "*"
+        "phpunit/phpunit": "*",
+        "squizlabs/php_codesniffer": "*"
     },
     "suggest": {
         "ext-http": "~1.0"
