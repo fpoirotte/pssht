@@ -14,9 +14,19 @@ namespace Clicky\Pssht;
 class Algorithms
 {
     protected $_algos;
+    protected $_interfaces;
 
     private function __construct()
     {
+        $this->_interfaces = array(
+            'MAC'           => '\\Clicky\\Pssht\\MACInterface',
+            'Compression'   => '\\Clicky\\Pssht\\CompressionInterface',
+            'PublicKey'     => '\\Clicky\\Pssht\\PublicKeyInterface',
+            'KEX'           => '\\Clicky\\Pssht\\KEXInterface',
+            'Encryption'    => '\\Clicky\\Pssht\\EncryptionInterface',
+            'Services'      => NULL,
+        );
+
         $this->_algos = array(
             'MAC'           => array(),
             'Compression'   => array(),
@@ -62,16 +72,28 @@ class Algorithms
         $w = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_1234567890';
         if (!is_string($name) || strspn($name, $w) !== strlen($name))
             return NULL;
+
+        // Non-existing classes.
         $class = "\\Clicky\\Pssht\\$type\\$name";
         if (!class_exists($class))
             return NULL;
+
+        // Abstract classes.
         $reflector = new \ReflectionClass($class);
         if ($reflector->isAbstract())
             return NULL;
+
+        // Classes that implement AvailabilityInterface
+        // and the algorithm is not currently available.
         $iface = '\\Clicky\\Pssht\\AvailabilityInterface';
-        if ($refletor->implementsInterface($iface) &&
-            $class::isAvailable() !== TRUE)
+        if ($reflector->implementsInterface($iface) && !$class::isAvailable())
             return NULL;
+
+        // Classes that do not implement the proper interface.
+        $iface = $this->_interfaces[$type];
+        if ($iface !== NULL && !$reflector->implementsInterface($iface))
+            return NULL;
+
         return $class;
     }
 
