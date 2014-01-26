@@ -18,8 +18,6 @@ use Clicky\Pssht\Wire\Decoder;
 class   DEBUG
 extends Base
 {
-    const MESSAGE_ID = 4;
-
     protected $_alwaysDisplay;
     protected $_message;
     protected $_language;
@@ -36,6 +34,11 @@ extends Base
         $this->_alwaysDisplay   = $alwaysDisplay;
         $this->_message         = $message;
         $this->_language        = $language;
+    }
+
+    static public function getMessageId()
+    {
+        return 4;
     }
 
     public function serialize(Encoder $encoder)

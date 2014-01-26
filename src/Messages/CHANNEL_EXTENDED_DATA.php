@@ -18,8 +18,6 @@ use Clicky\Pssht\Wire\Decoder;
 class       CHANNEL_EXTENDED_DATA
 implements  MessageInterface
 {
-    const MESSAGE_ID = 95;
-
     const SSH_EXTENDED_DATA_STDERR = 1;
 
     protected $_channel;
@@ -31,6 +29,11 @@ implements  MessageInterface
         $this->_channel = $channel;
         $this->_code    = $code;
         $this->_data    = $data;
+    }
+
+    static public function getMessageId()
+    {
+        return 95;
     }
 
     public function serialize(Encoder $encoder)

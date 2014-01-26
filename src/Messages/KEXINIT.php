@@ -20,8 +20,6 @@ use Clicky\Pssht\Algorithms;
 class       KEXINIT
 implements  MessageInterface
 {
-    const MESSAGE_ID = 20;
-
     protected $_cookie;
     protected $_kexAlgos;
     protected $_serverHostKeyAlgos;
@@ -102,6 +100,11 @@ implements  MessageInterface
         $this->_langC2S             = $langC2S;
         $this->_langS2C             = $langS2C;
         $this->_firstKexPacket      = $firstKexPacket;
+    }
+
+    static public function getMessageId()
+    {
+        return 20;
     }
 
     public function serialize(Encoder $encoder)

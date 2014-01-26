@@ -17,6 +17,9 @@ class   MD5_96
 extends Base_96
 implements  MACInterface
 {
-    const HASH = 'MD5';
+    static protected function _getHash()
+    {
+        return '\\Clicky\\Pssht\\MAC\\MD5';
+    }
 }
 

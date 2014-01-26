@@ -18,8 +18,6 @@ use Clicky\Pssht\Wire\Decoder;
 class       CHANNEL_OPEN_FAILURE
 implements  MessageInterface
 {
-    const MESSAGE_ID = 91;
-
     const SSH_OPEN_ADMINISTRATIVELY_PROHIBITED  = 1;
     const SSH_OPEN_CONNECT_FAILED               = 2;
     const SSH_OPEN_UNKNOWN_CHANNEL_TYPE         = 3;
@@ -36,6 +34,11 @@ implements  MessageInterface
         $this->_reasonCode          = $reasonCode;
         $this->_reasonMessage       = $reasonMessage;
         $this->_language            = $language;
+    }
+
+    static public function getMessageId()
+    {
+        return 92;
     }
 
     public function serialize(Encoder $encoder)

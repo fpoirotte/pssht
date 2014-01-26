@@ -48,7 +48,7 @@ class   SSHUserAuth
     public function handleMessage($msgType, Decoder $decoder, $remaining)
     {
         switch ($msgType) {
-            case \Clicky\Pssht\Messages\USERAUTH_REQUEST::MESSAGE_ID:
+            case \Clicky\Pssht\Messages\USERAUTH_REQUEST::getMessageId():
                 $message = \Clicky\Pssht\Messages\USERAUTH_REQUEST::unserialize($decoder);
                 $response = new \Clicky\Pssht\Messages\USERAUTH_FAILURE(array(), FALSE);
                 if ($message->getUserName() === 'clicky' &&

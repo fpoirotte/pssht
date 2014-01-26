@@ -13,6 +13,8 @@ namespace Clicky\Pssht;
 
 interface MACInterface
 {
+    public function __construct($key);
+
     static public function getName();
 
     public function compute($data);

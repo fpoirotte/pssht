@@ -18,13 +18,16 @@ use Clicky\Pssht\Wire\Decoder;
 class       CHANNEL_FAILURE
 implements  MessageInterface
 {
-    const MESSAGE_ID = 100;
-
     protected $_channel;
 
     public function __construct($channel)
     {
         $this->_channel = $channel;
+    }
+
+    static public function getMessageId()
+    {
+        return 100;
     }
 
     public function serialize(Encoder $encoder)

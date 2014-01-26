@@ -14,7 +14,14 @@ namespace Clicky\Pssht\Encryption;
 class   cast128_cbc
 extends \Clicky\Pssht\Encryption\Base
 {
-    const ALGORITHM = 'MCRYPT_CAST_128';
+    static protected function _getMode()
+    {
+        return 'MCRYPT_MODE_CBC';
+    }
+
+    static protected function _getAlgorithm() {
+        return 'MCRYPT_CAST_128';
+    }
 
     static public function getName()
     {

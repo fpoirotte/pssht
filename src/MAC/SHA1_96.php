@@ -17,6 +17,9 @@ class   SHA1_96
 extends Base_96
 implements  MACInterface
 {
-    const HASH = 'SHA1';
+    static protected function _getHash()
+    {
+        return '\\Clicky\\Pssht\\MAC\\SHA1';
+    }
 }
 

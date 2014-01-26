@@ -18,13 +18,16 @@ use Clicky\Pssht\Wire\Decoder;
 class   CHANNEL_CLOSE
 extends Base
 {
-    const MESSAGE_ID = 97;
-
     protected $_channel;
 
     public function __construct($channel)
     {
         $this->_channel = $channel;
+    }
+
+    static public function getMessageId()
+    {
+        return 97;
     }
 
     public function serialize(Encoder $encoder)

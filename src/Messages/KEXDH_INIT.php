@@ -19,13 +19,16 @@ use Clicky\Pssht\Wire\Decoder;
 class       KEXDH_INIT
 implements  MessageInterface
 {
-    const MESSAGE_ID = 30;
-
     protected $_e;
 
     public function __construct($e)
     {
         $this->_e = $e;
+    }
+
+    static public function getMessageId()
+    {
+        return 30;
     }
 
     public function serialize(Encoder $encoder)

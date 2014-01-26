@@ -18,8 +18,6 @@ use Clicky\Pssht\Wire\Decoder;
 abstract class  CHANNEL_REQUEST
 implements      MessageInterface
 {
-    const MESSAGE_ID = 98;
-
     protected $_channel;
     protected $_type;
     protected $_wantReply;
@@ -29,6 +27,11 @@ implements      MessageInterface
         $this->_channel     = $senderChannel;
         $this->_type        = $type;
         $this->_wantReply   = $wantReply;
+    }
+
+    static public function getMessageId()
+    {
+        return 98;
     }
 
     public function serialize(Encoder $encoder)

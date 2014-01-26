@@ -14,7 +14,14 @@ namespace Clicky\Pssht\Encryption;
 class   tripledes_cbc
 extends \Clicky\Pssht\Encryption\Base
 {
-    const ALGORITHM = 'MCRYPT_TRIPLEDES';
+    static protected function _getMode()
+    {
+        return 'MCRYPT_MODE_CBC';
+    }
+
+    static protected function _getAlgorithm() {
+        return 'MCRYPT_TRIPLEDES';
+    }
 
     static public function getName()
     {

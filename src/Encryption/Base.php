@@ -20,14 +20,16 @@ implements      EncryptionInterface,
 {
     protected $_mcrypt;
 
-    const MODE = 'MCRYPT_MODE_CBC';
+    abstract static protected function _getMode();
+
+    abstract static protected function _getAlgorithm();
 
     final public function __construct($iv, $key)
     {
         $this->_mcrypt = mcrypt_module_open(
-            constant(static::ALGORITHM),
+            constant(static::_getAlgorithm()),
             '',
-            constant(static::MODE),
+            constant(static::_getMode()),
             ''
         );
         mcrypt_generic_init($this->_mcrypt, $key, $iv);
@@ -41,30 +43,30 @@ implements      EncryptionInterface,
 
     final static public function isAvailable()
     {
-        return defined(static::ALGORITHM) && defined(static::MODE);
+        return defined(static::_getAlgorithm()) && defined(static::_getMode());
     }
 
     final static public function getKeySize()
     {
         return mcrypt_get_key_size(
-            constant(static::ALGORITHM),
-            constant(static::MODE)
+            constant(static::_getAlgorithm()),
+            constant(static::_getMode())
         );
     }
 
     final static public function getIVSize()
     {
         return mcrypt_get_iv_size(
-            constant(static::ALGORITHM),
-            constant(static::MODE)
+            constant(static::_getAlgorithm()),
+            constant(static::_getMode())
         );
     }
 
     final static public function getBlockSize()
     {
         return mcrypt_get_block_size(
-            constant(static::ALGORITHM),
-            constant(static::MODE)
+            constant(static::_getAlgorithm()),
+            constant(static::_getMode())
         );
     }
 

@@ -18,6 +18,9 @@ use Clicky\Pssht\Wire\Decoder;
 class   USERAUTH_SUCCESS
 extends Base
 {
-    const MESSAGE_ID = 52;
+    static public function getMessageId()
+    {
+        return 52;
+    }
 }
 

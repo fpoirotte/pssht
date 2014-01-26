@@ -14,7 +14,14 @@ namespace Clicky\Pssht\Encryption;
 class   blowfish_cbc
 extends \Clicky\Pssht\Encryption\Base
 {
-    const ALGORITHM = 'MCRYPT_BLOWFISH';
+    static protected function _getMode()
+    {
+        return 'MCRYPT_MODE_CBC';
+    }
+
+    static protected function _getAlgorithm() {
+        return 'MCRYPT_BLOWFISH';
+    }
 
     static public function getName()
     {

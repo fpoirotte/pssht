@@ -13,7 +13,10 @@ namespace Clicky\Pssht;
 
 interface MessageInterface
 {
+    static public function getMessageId();
+
     public function serialize(\Clicky\Pssht\Wire\Encoder $encoder);
+
     static public function unserialize(\Clicky\Pssht\Wire\Decoder $encoder);
 }
 

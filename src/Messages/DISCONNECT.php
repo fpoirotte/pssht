@@ -18,8 +18,6 @@ use Clicky\Pssht\Wire\Decoder;
 class       DISCONNECT
 implements  MessageInterface
 {
-    const MESSAGE_ID = 1;
-
     const SSH_DISCONNECT_HOST_NOT_ALLOWED_TO_CONNECT        =    1;
     const SSH_DISCONNECT_PROTOCOL_ERROR                     =    2;
     const SSH_DISCONNECT_KEY_EXCHANGE_FAILED                =    3;
@@ -51,6 +49,11 @@ implements  MessageInterface
         $this->_code        = $reasonCode;
         $this->_message     = $reasonMessage;
         $this->_language    = $language;
+    }
+
+    static public function getMessageId()
+    {
+        return 1;
     }
 
     public function serialize(Encoder $encoder)

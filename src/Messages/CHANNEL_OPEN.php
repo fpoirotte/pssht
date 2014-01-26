@@ -18,8 +18,6 @@ use Clicky\Pssht\Wire\Decoder;
 class       CHANNEL_OPEN
 implements  MessageInterface
 {
-    const MESSAGE_ID = 90;
-
     protected $_type;
     protected $_senderChannel;
     protected $_initialWindowSize;
@@ -31,6 +29,11 @@ implements  MessageInterface
         $this->_senderChannel       = $senderChannel;
         $this->_initialWindowSize   = $initialWindowSize;
         $this->_maximumPacketSize   = $maximumPacketSize;
+    }
+
+    static public function getMessageId()
+    {
+        return 90;
     }
 
     public function serialize(Encoder $encoder)

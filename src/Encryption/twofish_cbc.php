@@ -14,7 +14,14 @@ namespace Clicky\Pssht\Encryption;
 class   twofish_cbc
 extends \Clicky\Pssht\Encryption\Base
 {
-    const ALGORITHM = 'MCRYPT_TWOFISH';
+    static protected function _getMode()
+    {
+        return 'MCRYPT_MODE_CBC';
+    }
+
+    static protected function _getAlgorithm() {
+        return 'MCRYPT_TWOFISH';
+    }
 
     static public function getName()
     {

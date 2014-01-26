@@ -18,8 +18,6 @@ use Clicky\Pssht\Wire\Decoder;
 class       SERVICE_ACCEPT
 implements  MessageInterface
 {
-    const MESSAGE_ID = 6;
-
     protected $_service;
 
     public function __construct($service)
@@ -27,6 +25,11 @@ implements  MessageInterface
         if (!is_string($service))
             throw new \InvalidArgumentException();
         $this->_service = $service;
+    }
+
+    static public function getMessageId()
+    {
+        return 6;
     }
 
     public function serialize(Encoder $encoder)

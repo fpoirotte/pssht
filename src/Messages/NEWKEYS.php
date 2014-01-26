@@ -18,6 +18,9 @@ use Clicky\Pssht\Wire\Decoder;
 class   NEWKEYS
 extends Base
 {
-    const MESSAGE_ID = 21;
+    static public function getMessageId()
+    {
+        return 21;
+    }
 }
 

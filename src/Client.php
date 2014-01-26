@@ -71,7 +71,7 @@ class Client
         $encoder    = new Encoder($buffer);
 
         // Serialize the message.
-        $encoder->encode_bytes(chr($message::MESSAGE_ID));
+        $encoder->encode_bytes(chr($message::getMessageId()));
         $message->serialize($encoder);
         $payload    = $buffer->get(0);
 

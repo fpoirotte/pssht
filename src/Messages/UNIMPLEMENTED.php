@@ -14,13 +14,16 @@ namespace Clicky\Pssht\Messages;
 class       UNIMPLEMENTED
 implements  \Clicky\Pssht\MessageInterface
 {
-    const MESSAGE_ID = 3;
-
     protected $_sequenceNo;
 
     public function __construct($sequenceNo)
     {
         $this->_sequenceNo = $sequenceNo;
+    }
+
+    static public function getMessageId()
+    {
+        return 3;
     }
 
     public function serialize(\Clicky\Pssht\Wire\Encoder $encoder)

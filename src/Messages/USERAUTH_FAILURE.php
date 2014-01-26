@@ -18,8 +18,6 @@ use Clicky\Pssht\Wire\Decoder;
 class       USERAUTH_FAILURE
 implements  MessageInterface
 {
-    const MESSAGE_ID = 51;
-
     protected $_methods;
     protected $_partial;
 
@@ -36,6 +34,11 @@ implements  MessageInterface
 
         $this->_methods = $methods;
         $this->_partial = $partial;
+    }
+
+    static public function getMessageId()
+    {
+        return 51;
     }
 
     public function serialize(Encoder $encoder)

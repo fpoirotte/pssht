@@ -18,15 +18,17 @@ implements      MACInterface
 {
     protected $_subhash;
 
+    abstract static protected function _getHash();
+
     final public function __construct($key)
     {
-        $cls = __NAMESPACE__ . '\\' . static::HASH;
+        $cls = static::_getHash();
         $this->_subhash = new $cls($key);
     }
 
     final static public function getName()
     {
-        $cls = __NAMESPACE__ . '\\' . static::HASH;
+        $cls = static::_getHash();
         return $cls::getName() . '-96';
     }
 

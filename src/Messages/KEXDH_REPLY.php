@@ -23,8 +23,6 @@ use Clicky\Pssht\Messages\KEXDH_INIT;
 class       KEXDH_REPLY
 implements  MessageInterface
 {
-    const MESSAGE_ID = 31;
-
     protected $_H;
     protected $_f;
     protected $_K;
@@ -51,8 +49,8 @@ implements  MessageInterface
         $keyLength          = min(20, max($encryptionAlgo->getKeySize(), 16));
         $randBytes          = openssl_random_pseudo_bytes(2 * $keyLength);
         $y                  = gmp_init(bin2hex($randBytes), 16);
-        $prime              = gmp_init(str_replace("\r\n ", '', $kexAlgo::PRIME), 16);
-        $this->_f           = gmp_powm($kexAlgo::GENERATOR, $y, $prime);
+        $prime              = gmp_init($kexAlgo::getPrime(), 16);
+        $this->_f           = gmp_powm($kexAlgo::getGenerator(), $y, $prime);
         $this->_K           = gmp_powm($kexDHInit->getE(), $y, $prime);
         $this->_K_S         = $key;
         $this->_kexDHInit   = $kexDHInit;
@@ -61,6 +59,11 @@ implements  MessageInterface
         $this->_remoteKEX   = $remoteKEX;
         $this->_localIdent  = $localIdent;
         $this->_remoteIdent = $remoteIdent;
+    }
+
+    static public function getMessageId()
+    {
+        return 31;
     }
 
     public function serialize(Encoder $encoder)
@@ -76,11 +79,12 @@ implements  MessageInterface
         $sub->encode_string($this->_localIdent);
         // $sub2 is used to compute the value
         // of various fields inside the structure.
-        $sub2 = new Encoder(new \Clicky\Pssht\Buffer());
-        $sub2->encode_bytes(chr(\Clicky\Pssht\Messages\KEXINIT::MESSAGE_ID));
+        $sub2   = new Encoder(new \Clicky\Pssht\Buffer());
+        $msgId  = chr(\Clicky\Pssht\Messages\KEXINIT::getMessageId());
+        $sub2->encode_bytes($msgId); // Add message identifier.
         $this->_remoteKEX->serialize($sub2);
         $sub->encode_string($sub2->getBuffer()->get(0));
-        $sub2->encode_bytes(chr(\Clicky\Pssht\Messages\KEXINIT::MESSAGE_ID));
+        $sub2->encode_bytes($msgId); // Add message identifier.
         $this->_localKEX->serialize($sub2);
         $sub->encode_string($sub2->getBuffer()->get(0));
         $sub->encode_string($K_S);
