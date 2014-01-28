@@ -9,19 +9,12 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\MAC;
+namespace Clicky\Pssht\Encryption;
 
-class   MD5
-extends Base
+interface BaseInterface
 {
-    static public function getName()
-    {
-        return 'hmac-md5';
-    }
+    static public function getMode();
 
-    static public function getHash()
-    {
-        return 'md5';
-    }
+    static public function getAlgorithm();
 }
 

@@ -13,23 +13,21 @@ namespace Clicky\Pssht\Encryption;
 
 use Clicky\Pssht\EncryptionInterface;
 use Clicky\Pssht\AvailabilityInterface;
+use Clicky\Pssht\Encryption\BaseInterface;
 
 abstract class  Base
 implements      EncryptionInterface,
-                AvailabilityInterface
+                AvailabilityInterface,
+                BaseInterface
 {
     protected $_mcrypt;
-
-    abstract static protected function _getMode();
-
-    abstract static protected function _getAlgorithm();
 
     final public function __construct($iv, $key)
     {
         $this->_mcrypt = mcrypt_module_open(
-            constant(static::_getAlgorithm()),
+            constant(static::getAlgorithm()),
             '',
-            constant(static::_getMode()),
+            constant(static::getMode()),
             ''
         );
         mcrypt_generic_init($this->_mcrypt, $key, $iv);
@@ -43,30 +41,30 @@ implements      EncryptionInterface,
 
     final static public function isAvailable()
     {
-        return defined(static::_getAlgorithm()) && defined(static::_getMode());
+        return defined(static::getAlgorithm()) && defined(static::getMode());
     }
 
     final static public function getKeySize()
     {
         return mcrypt_get_key_size(
-            constant(static::_getAlgorithm()),
-            constant(static::_getMode())
+            constant(static::getAlgorithm()),
+            constant(static::getMode())
         );
     }
 
     final static public function getIVSize()
     {
         return mcrypt_get_iv_size(
-            constant(static::_getAlgorithm()),
-            constant(static::_getMode())
+            constant(static::getAlgorithm()),
+            constant(static::getMode())
         );
     }
 
     final static public function getBlockSize()
     {
         return mcrypt_get_block_size(
-            constant(static::_getAlgorithm()),
-            constant(static::_getMode())
+            constant(static::getAlgorithm()),
+            constant(static::getMode())
         );
     }
 

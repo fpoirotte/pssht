@@ -9,19 +9,16 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\MAC;
+namespace Clicky\Pssht\MAC\MD5;
 
-class   MD5
-extends Base
+use Clicky\Pssht\MAC\Base96;
+
+class       Len96
+extends     Base96
 {
-    static public function getName()
+    static public function getBaseClass()
     {
-        return 'hmac-md5';
-    }
-
-    static public function getHash()
-    {
-        return 'md5';
+        return '\\Clicky\\Pssht\\MAC\\MD5';
     }
 }
 

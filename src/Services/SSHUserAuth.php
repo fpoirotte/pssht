@@ -48,14 +48,14 @@ class   SSHUserAuth
     public function handleMessage($msgType, Decoder $decoder, $remaining)
     {
         switch ($msgType) {
-            case \Clicky\Pssht\Messages\USERAUTH_REQUEST::getMessageId():
-                $message = \Clicky\Pssht\Messages\USERAUTH_REQUEST::unserialize($decoder);
-                $response = new \Clicky\Pssht\Messages\USERAUTH_FAILURE(array(), FALSE);
+            case \Clicky\Pssht\Messages\USERAUTH\REQUEST::getMessageId():
+                $message = \Clicky\Pssht\Messages\USERAUTH\REQUEST::unserialize($decoder);
+                $response = new \Clicky\Pssht\Messages\USERAUTH\FAILURE(array(), FALSE);
                 if ($message->getUserName() === 'clicky' &&
                     $message->getServiceName() === 'ssh-connection' &&
                     $message->getMethodName() === 'none' &&
                     $this->_connection === NULL) {
-                        $response = new \Clicky\Pssht\Messages\USERAUTH_SUCCESS();
+                        $response = new \Clicky\Pssht\Messages\USERAUTH\SUCCESS();
                         $this->_connection = new \Clicky\Pssht\Connection($this, $message);
                 }
                 $this->_transport->writeMessage($response);

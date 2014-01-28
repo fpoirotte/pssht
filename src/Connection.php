@@ -12,7 +12,7 @@
 namespace Clicky\Pssht;
 
 use Clicky\Pssht\Services\SSHUserAuth;
-use \Clicky\Pssht\Messages\USERAUTH_REQUEST;
+use \Clicky\Pssht\Messages\USERAUTH\REQUEST;
 use Clicky\Pssht\Wire\Encoder;
 use Clicky\Pssht\Wire\Decoder;
 
@@ -26,8 +26,8 @@ class   Connection
     protected $_applicationFactory;
 
     public function __construct(
-        SSHUserAuth         $service,
-        USERAUTH_REQUEST    $authRequest
+        SSHUserAuth $service,
+        REQUEST     $authRequest
     )
     {
         $this->_service     = $service;
@@ -54,13 +54,13 @@ class   Connection
     // SSH_MSG_CHANNEL_OPEN
     public function _handle_90(Decoder $decoder, $remaining)
     {
-        $message            = \Clicky\Pssht\Messages\CHANNEL_OPEN::unserialize($decoder);
+        $message            = \Clicky\Pssht\Messages\CHANNEL\OPEN::unserialize($decoder);
         $recipientChannel   = $message->getSenderChannel();
 
         if ($message->getType() === 'session') {
             for ($i = 0; isset($this->_sessions[$i]); $i++) ;
             $this->_sessions[$i] = $message;
-            $response = new \Clicky\Pssht\Messages\CHANNEL_OPEN_CONFIRMATION(
+            $response = new \Clicky\Pssht\Messages\CHANNEL\OPEN\CONFIRMATION(
                 $recipientChannel,
                 $i,
                 0x200000,
@@ -68,9 +68,9 @@ class   Connection
             );
         }
         else {
-            $response = new \Clicky\Pssht\Messages\CHANNEL_OPEN_FAILURE(
+            $response = new \Clicky\Pssht\Messages\CHANNEL\OPEN\FAILURE(
                 $recipientChannel,
-                \Clicky\Pssht\Messages\CHANNEL_OPEN_FAILURE::SSH_OPEN_UNKNOWN_CHANNEL_TYPE,
+                \Clicky\Pssht\Messages\CHANNEL\OPEN\FAILURE::SSH_OPEN_UNKNOWN_CHANNEL_TYPE,
                 'No such channel type'
             );
         }
@@ -101,7 +101,7 @@ class   Connection
     // SSH_MSG_CHANNEL_DATA
     public function _handle_94(Decoder $decoder, $remaining)
     {
-        $message = \Clicky\Pssht\Messages\CHANNEL_DATA::unserialize($decoder);
+        $message = \Clicky\Pssht\Messages\CHANNEL\DATA::unserialize($decoder);
         $this->_application->handle($message, $remaining);
         return TRUE;
     }
@@ -121,9 +121,9 @@ class   Connection
     // SSH_MSG_CHANNEL_CLOSE
     public function _handle_97(Decoder $decoder, $remaining)
     {
-        $message = \Clicky\Pssht\Messages\CHANNEL_CLOSE::unserialize($decoder);
+        $message = \Clicky\Pssht\Messages\CHANNEL\CLOSE::unserialize($decoder);
         $channel = $message->getChannel();
-        $response = new \Clicky\Pssht\Messages\CHANNEL_CLOSE($this->getChannel($channel));
+        $response = new \Clicky\Pssht\Messages\CHANNEL\CLOSE($this->getChannel($channel));
         $this->writeMessage($response);
         unset($this->__sessions[$channel]);
         return TRUE;
@@ -145,13 +145,13 @@ class   Connection
         switch ($type) {
             case 'exec':
             case 'shell':
-                $cls = '\\Clicky\\Pssht\\Messages\\CHANNEL_REQUEST\\' . $type;
+                $cls = '\\Clicky\\Pssht\\Messages\\CHANNEL\\REQUEST\\' . ucfirst($type);
                 $message = $cls::unserialize($decoder);
                 break;
 
             default:
                 if ($wantsReply) {
-                    $response = new \Clicky\Pssht\Messages\CHANNEL_FAILURE($this->getChannel($channel));
+                    $response = new \Clicky\Pssht\Messages\CHANNEL\FAILURE($this->getChannel($channel));
                     $this->writeMessage($response);
                 }
                 return TRUE;
@@ -161,10 +161,10 @@ class   Connection
             return TRUE;
 
         if ($type === 'shell') {
-            $response = new \Clicky\Pssht\Messages\CHANNEL_SUCCESS($this->getChannel($channel));
+            $response = new \Clicky\Pssht\Messages\CHANNEL\SUCCESS($this->getChannel($channel));
         }
         else {
-            $response = new \Clicky\Pssht\Messages\CHANNEL_FAILURE($this->getChannel($channel));
+            $response = new \Clicky\Pssht\Messages\CHANNEL\FAILURE($this->getChannel($channel));
         }
         $this->writeMessage($response);
 

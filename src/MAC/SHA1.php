@@ -11,31 +11,17 @@
 
 namespace Clicky\Pssht\MAC;
 
-use Clicky\Pssht\MACInterface;
-
-class       SHA1
-implements  MACInterface
+class   SHA1
+extends Base
 {
-    protected $_key;
-
-    public function __construct($key)
-    {
-        $this->_key = $key;
-    }
-
     static public function getName()
     {
         return 'hmac-sha1';
     }
 
-    public function compute($data)
+    static public function getHash()
     {
-        return hash_hmac('sha1', $data, $this->_key, TRUE);
-    }
-
-    static public function getSize()
-    {
-        return 160 >> 3;
+        return 'sha1';
     }
 }
 

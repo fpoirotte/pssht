@@ -14,7 +14,7 @@ namespace Clicky\Pssht;
 use Clicky\Pssht\Buffer;
 use Clicky\Pssht\Wire\Encoder;
 use Clicky\Pssht\Wire\Decoder;
-use Clicky\Pssht\Messages\DISCONNECT;
+use Clicky\Pssht\Messages\Disconnect;
 use Clicky\Pssht\CompressionInterface;
 
 class Client
@@ -220,12 +220,12 @@ class Client
     // SSH_MSG_KEXDH_INIT
     protected function _handle_30(Decoder $decoder)
     {
-        $message    = \Clicky\Pssht\Messages\KEXDH_INIT::unserialize($decoder);
+        $message    = \Clicky\Pssht\Messages\KEXDH\INIT::unserialize($decoder);
         $kexAlgo    = $this->_context['kexAlgo'];
         $kexAlgo    = new $kexAlgo();
-        $response   = new \Clicky\Pssht\Messages\KEXDH_REPLY(
+        $response   = new \Clicky\Pssht\Messages\KEXDH\REPLY(
             $message,
-            new \Clicky\Pssht\PublicKey\RSA(
+            new \Clicky\Pssht\PublicKey\SSH\RSA(
                 'file://' .
                 dirname(__DIR__) .
                 '/tests/data/rsa2048'
@@ -324,17 +324,17 @@ class Client
     // SSH_MSG_SERVICE_REQUEST
     public function _handle_5(Decoder $decoder)
     {
-        $message    = \Clicky\Pssht\Messages\SERVICE_REQUEST::unserialize($decoder);
+        $message    = \Clicky\Pssht\Messages\SERVICE\REQUEST::unserialize($decoder);
         $algos      = Algorithms::factory();
         $service    = $message->getServiceName();
         $cls        = $algos->getClass('Services', $service);
         if ($cls !== NULL) {
-            $response = new \Clicky\Pssht\Messages\SERVICE_ACCEPT($message->getServiceName());
+            $response = new \Clicky\Pssht\Messages\SERVICE\ACCEPT($message->getServiceName());
             $this->_authLayer = new $cls($this);
         }
         else {
-            $response = new DISCONNECT(
-                DISCONNECT::SSH_DISCONNECT_SERVICE_NOT_AVAILABLE,
+            $response = new Disconnect(
+                Disconnect::SSH_DISCONNECT_SERVICE_NOT_AVAILABLE,
                 'No such service'
             );
         }

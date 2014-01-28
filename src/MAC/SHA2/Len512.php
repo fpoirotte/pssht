@@ -11,17 +11,19 @@
 
 namespace Clicky\Pssht\MAC;
 
-class   MD5
+use Clicky\Pssht\MAC\Base;
+
+class   Len512
 extends Base
 {
     static public function getName()
     {
-        return 'hmac-md5';
+        return 'hmac-sha2-512';
     }
 
     static public function getHash()
     {
-        return 'md5';
+        return 'sha512';
     }
 }
 

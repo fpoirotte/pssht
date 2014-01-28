@@ -9,19 +9,16 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\MAC;
+namespace Clicky\Pssht\Messages\USERAUTH;
 
-class   MD5
+use Clicky\Pssht\Messages\Base;
+
+class   SUCCESS
 extends Base
 {
-    static public function getName()
+    static public function getMessageId()
     {
-        return 'hmac-md5';
-    }
-
-    static public function getHash()
-    {
-        return 'md5';
+        return 52;
     }
 }
 

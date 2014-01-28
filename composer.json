@@ -19,7 +19,7 @@
         "source": "https://github.com/fpoirotte/pssht"
     },
     "require": {
-        "php": ">=5.3.1",
+        "php": ">=5.3.3",
         "ext-openssl": "*",
         "ext-mcrypt": "*",
         "ext-gmp": "*"

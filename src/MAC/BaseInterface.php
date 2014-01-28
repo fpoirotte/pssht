@@ -11,17 +11,8 @@
 
 namespace Clicky\Pssht\MAC;
 
-class   MD5
-extends Base
+interface BaseInterface
 {
-    static public function getName()
-    {
-        return 'hmac-md5';
-    }
-
-    static public function getHash()
-    {
-        return 'md5';
-    }
+    static public function getHash();
 }
 

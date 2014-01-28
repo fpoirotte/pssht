@@ -9,19 +9,17 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\MAC;
+namespace Clicky\Pssht\Messages\CHANNEL\REQUEST;
 
-class   MD5
+use Clicky\Pssht\Wire\Decoder;
+use Clicky\Pssht\Messages\CHANNEL\REQUEST\Base;
+
+class   Shell
 extends Base
 {
-    static public function getName()
+    static protected function _unserialize(Decoder $decoder)
     {
-        return 'hmac-md5';
-    }
-
-    static public function getHash()
-    {
-        return 'md5';
+        return array();
     }
 }
 
