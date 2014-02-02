@@ -18,6 +18,7 @@ use \HttpDeflateStream;
 class Zlib implements CompressionInterface
 {
     protected $stream;
+    protected $mode;
 
     public function __construct($mode)
     {
@@ -30,6 +31,12 @@ class Zlib implements CompressionInterface
         } else {
             $this->stream = HttpInflateStream::factory();
         }
+        $this->mode = $mode;
+    }
+
+    public function getMode()
+    {
+        return $this->mode;
     }
 
     public static function isAvailable()

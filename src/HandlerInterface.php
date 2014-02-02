@@ -11,16 +11,12 @@
 
 namespace Clicky\Pssht;
 
-interface CompressionInterface
+interface HandlerInterface
 {
-    const MODE_COMPRESS     = 0;
-    const MODE_UNCOMPRESS   = 1;
-
-    public function __construct($mode);
-
-    public function getMode();
-
-    public static function getName();
-
-    public function update($data);
+    public function handle(
+        $msgType,
+        \Clicky\Pssht\Wire\Decoder $decoder,
+        \Clicky\Pssht\Transport $transport,
+        array &$context
+    );
 }

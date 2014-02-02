@@ -11,199 +11,121 @@
 
 namespace Clicky\Pssht;
 
-use Clicky\Pssht\Services\SSHUserAuth;
 use Clicky\Pssht\Messages\USERAUTH\REQUEST;
 use Clicky\Pssht\Wire\Encoder;
 use Clicky\Pssht\Wire\Decoder;
 
-class Connection
+class Connection implements \Clicky\Pssht\HandlerInterface
 {
-    protected $service;
-    protected $authRequest;
-    protected $sessions;
     protected $channels;
-    protected $application;
-    protected $applicationFactory;
 
     public function __construct(
-        SSHUserAuth $service,
-        REQUEST $authRequest
+        \Clicky\Pssht\Transport $transport
     ) {
-        $this->service      = $service;
-        $this->authRequest  = $authRequest;
-        $this->sessions     = array();
         $this->channels     = array();
-    }
 
-    public function getService()
-    {
-        return $this->service;
-    }
+        $transport->setHandler(
+            // 90
+            \Clicky\Pssht\Messages\CHANNEL\OPEN::getMessageId(),
+            new \Clicky\Pssht\Handlers\CHANNEL\OPEN($this)
+        )->setHandler(
+            // 97
+            \Clicky\Pssht\Messages\CHANNEL\CLOSE::getMessageId(),
+            new \Clicky\Pssht\Handlers\CHANNEL\CLOSE($this)
+        )->setHandler(
+            // 98
+            \Clicky\Pssht\Messages\CHANNEL\REQUEST\Base::getMessageId(),
+            new \Clicky\Pssht\Handlers\CHANNEL\REQUEST($this)
+        );
 
-    public function getAuthRequest()
-    {
-        return $this->authRequest;
-    }
-
-    public function writeMessage(\Clicky\Pssht\MessageInterface $message)
-    {
-        return $this->service->getTransport()->writeMessage($message);
-    }
-
-    // SSH_MSG_CHANNEL_OPEN
-    public function handleCode90(Decoder $decoder, $remaining)
-    {
-        $message            = \Clicky\Pssht\Messages\CHANNEL\OPEN::unserialize($decoder);
-        $recipientChannel   = $message->getSenderChannel();
-
-        if ($message->getType() === 'session') {
-            for ($i = 0; isset($this->sessions[$i]); $i++) {
-                // Do nothing.
-            }
-            $this->sessions[$i] = $message;
-            $response = new \Clicky\Pssht\Messages\CHANNEL\OPEN\CONFIRMATION(
-                $recipientChannel,
-                $i,
-                0x200000,
-                0x800000
-            );
-        } else {
-            $response = new \Clicky\Pssht\Messages\CHANNEL\OPEN\FAILURE(
-                $recipientChannel,
-                \Clicky\Pssht\Messages\CHANNEL\OPEN\FAILURE::SSH_OPEN_UNKNOWN_CHANNEL_TYPE,
-                'No such channel type'
-            );
+        foreach (array_merge(range(91, 96), array(99, 100)) as $msgId) {
+            $transport->setHandler($msgId, $this);
         }
-        $this->writeMessage($response);
-        return true;
     }
 
-    // SSH_MSG_CHANNEL_OPEN_CONFIRMATION
-    public function handleCode91(Decoder $decoder, $remaining)
-    {
-        /// @FIXME: Support this message for clients.
-        return true;
-    }
-
-    // SSH_MSG_CHANNEL_OPEN_FAILURE
-    public function handleCode92(Decoder $decoder, $remaining)
-    {
-        /// @FIXME: Support this message for clients.
-        return true;
-    }
-
-    // SSH_MSG_CHANNEL_WINDOW_ADJUST
-    public function handleCode93(Decoder $decoder, $remaining)
-    {
-        return true;
-    }
-
-    // SSH_MSG_CHANNEL_DATA
-    public function handleCode94(Decoder $decoder, $remaining)
-    {
-        $message = \Clicky\Pssht\Messages\CHANNEL\DATA::unserialize($decoder);
-        $this->application->handle($message, $remaining);
-        return true;
-    }
-
-    // SSH_MSG_CHANNEL_EXTENDED_DATA
-    public function handleCode95(Decoder $decoder, $remaining)
-    {
-        return true;
-    }
-
-    // SSH_MSG_CHANNEL_EOF
-    public function handleCode96(Decoder $decoder, $remaining)
-    {
-        return true;
-    }
-
-    // SSH_MSG_CHANNEL_CLOSE
-    public function handleCode97(Decoder $decoder, $remaining)
-    {
-        $message = \Clicky\Pssht\Messages\CHANNEL\CLOSE::unserialize($decoder);
-        $channel = $message->getChannel();
-        $response = new \Clicky\Pssht\Messages\CHANNEL\CLOSE($this->getChannel($channel));
-        $this->writeMessage($response);
-        unset($this->sessions[$channel]);
-        return true;
-    }
-
-    // SSH_MSG_CHANNEL_REQUEST
-    public function handleCode98(Decoder $decoder, $remaining)
-    {
-        $encoder    = new Encoder(new Buffer());
-        $channel    = $decoder->decodeUint32();
-        $type       = $decoder->decodeString();
-        $wantsReply = $decoder->decodeBoolean();
-
-        $encoder->encodeUint32($channel);
-        $encoder->encodeString($type);
-        $encoder->encodeBoolean($wantsReply);
+    public function handle(
+        $msgType,
+        \Clicky\Pssht\Wire\Decoder $decoder,
+        \Clicky\Pssht\Transport $transport,
+        array &$context
+    ) {
+        $localChannel   = $decoder->decodeUint32();
+        $encoder        = new \Clicky\Pssht\Wire\Encoder();
+        $encoder->encodeUint32($localChannel);
         $decoder->getBuffer()->unget($encoder->getBuffer()->get(0));
 
-        switch ($type) {
-            case 'exec':
-            case 'shell':
-                $cls = '\\Clicky\\Pssht\\Messages\\CHANNEL\\REQUEST\\' . ucfirst($type);
-                $message = $cls::unserialize($decoder);
-                break;
-
-            default:
-                if ($wantsReply) {
-                    $response = new \Clicky\Pssht\Messages\CHANNEL\FAILURE($this->getChannel($channel));
-                    $this->writeMessage($response);
-                }
-                return true;
+        if (isset($this->handlers[$localChannel][$msgType])) {
+            $handler = $this->handlers[$localChannel][$msgType];
+            $logging = \Plop::getInstance();
+            $logging->debug(
+                'Calling %(handler)s for channel #%(channel)d ' .
+                'and message type #%(msgType)d',
+                array(
+                    'handler' => get_class($handler) . '::handle',
+                    'channel' => $localChannel,
+                    'msgType' => $msgType,
+                )
+            );
+            return $handler->handle($msgType, $decoder, $transport, $context);
         }
-
-        if (!$wantsReply) {
-            return true;
-        }
-
-        if ($type === 'shell') {
-            $response = new \Clicky\Pssht\Messages\CHANNEL\SUCCESS($this->getChannel($channel));
-        } else {
-            $response = new \Clicky\Pssht\Messages\CHANNEL\FAILURE($this->getChannel($channel));
-        }
-        $this->writeMessage($response);
-
-        if ($type === 'shell') {
-            $this->application = new \Clicky\Pssht\XRL($this, $message);
-        }
-
         return true;
     }
 
-    // SSH_MSG_CHANNEL_SUCCESS
-    public function handleCode99(Decoder $decoder, $remaining)
+    public function allocateChannel(\Clicky\Pssht\MessageInterface $message)
     {
-        /// @FIXME: Support this message for clients.
-        return true;
-    }
-
-    // SSH_MSG_CHANNEL_FAILURE
-    public function handleCode100(Decoder $decoder, $remaining)
-    {
-        /// @FIXME: Support this message for clients.
-        return true;
-    }
-
-    public function handleMessage($msgType, Decoder $decoder, $remaining)
-    {
-        $func = 'handleCode' . $msgType;
-        if (method_exists($this, $func)) {
-            return call_user_func(array($this, $func), $decoder, $remaining);
+        for ($i = 0; isset($this->channels[$i]); ++$i) {
+            // Do nothing.
         }
-        throw new \RuntimeException();
+        $this->channels[$i] = $message->getSenderChannel();
+        $this->handlers[$i] = array();
+        return $i;
+    }
+
+    public function freeChannel($id)
+    {
+        if (!is_int($id)) {
+            throw new \InvalidArgumentException();
+        }
+
+        unset($this->channels[$id]);
+        unset($this->handlers[$id]);
+        return $this;
     }
 
     public function getChannel($message)
     {
         if (is_int($message)) {
-            return $this->sessions[$message]->getSenderChannel();
+            return $this->channels[$message];
+        }
+        return $this->channels[$message->getChannel()];
+    }
+
+    public function setHandler(
+        \Clicky\Pssht\MessageInterface $message,
+        $type,
+        \Clicky\Pssht\HandlerInterface $handler
+    ) {
+        if (!is_int($type) || $type < 0 || $type > 255) {
+            throw new \InvalidArgumentException();
         }
 
-        return $this->sessions[$message->getChannel()]->getSenderChannel();
+        $this->handlers[$message->getChannel()][$type] = $handler;
+        return $this;
+    }
+
+    public function unsetHandler(
+        \Clicky\Pssht\MessageInterface $message,
+        $type,
+        \Clicky\Pssht\HandlerInterface $handler
+    ) {
+        if (!is_int($type) || $type < 0 || $type > 255) {
+            throw new \InvalidArgumentException();
+        }
+
+        if (isset($this->handlers[$message->getChannel()][$type]) &&
+            $this->handlers[$message->getChannel()][$type] === $handler) {
+            unset($this->handlers[$message->getChannel()][$type]);
+        }
+        return $this;
     }
 }

@@ -14,14 +14,14 @@
 
     <services>
         <!-- The "client" service is used to handle new clients. -->
-        <service id="client" scope="prototype" class="\Clicky\Pssht\Client"/>
+        <service id="client" scope="prototype" class="\Clicky\Pssht\Transport"/>
         <!-- End of "client" service. -->
 
         <!-- The "logging" service is used to log messages. -->
         <service id="logging" factory-class="Plop" factory-method="getInstance">
             <call method="addLogger">
                 <argument type="service">
-                    <service id="logging.logger.root" class="Plop_Logger">
+                    <service class="Plop_Logger">
                         <argument type="constant">NULL</argument>
                         <argument type="constant">NULL</argument>
                         <argument type="constant">NULL</argument>

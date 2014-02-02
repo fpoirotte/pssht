@@ -11,11 +11,10 @@
 
 namespace Clicky\Pssht\Messages;
 
-use Clicky\Pssht\Messages\Base;
 use Clicky\Pssht\Wire\Encoder;
 use Clicky\Pssht\Wire\Decoder;
 
-class DEBUG extends Base
+class DEBUG implements \Clicky\Pssht\MessageInterface
 {
     protected $alwaysDisplay;
     protected $message;

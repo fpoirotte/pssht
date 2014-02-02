@@ -25,7 +25,6 @@ class Algorithms
             'PublicKey'     => '\\Clicky\\Pssht\\PublicKeyInterface',
             'KEX'           => '\\Clicky\\Pssht\\KEXInterface',
             'Encryption'    => '\\Clicky\\Pssht\\EncryptionInterface',
-            'Services'      => null,
         );
 
         $this->algos = array(
@@ -34,7 +33,6 @@ class Algorithms
             'PublicKey'     => array(),
             'KEX'           => array(),
             'Encryption'    => array(),
-            'Services'      => array(),
         );
 
         foreach (array_keys($this->algos) as $type) {

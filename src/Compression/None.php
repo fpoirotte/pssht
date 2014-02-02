@@ -15,8 +15,16 @@ use Clicky\Pssht\CompressionInterface;
 
 class None implements CompressionInterface
 {
+    protected $mode;
+
     public function __construct($mode)
     {
+        $this->mode = $mode;
+    }
+
+    public function getMode()
+    {
+        return $this->mode;
     }
 
     public static function getName()
