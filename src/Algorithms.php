@@ -69,7 +69,6 @@ class Algorithms
             uksort($this->_algos[$type], array('self', 'sortAlgorithms'));
         }
         $this->_savedAlgos = $this->_algos;
-        var_dump($this->_algos);
     }
 
     public function __clone()
@@ -96,7 +95,6 @@ class Algorithms
         $class = "\\Clicky\\Pssht\\$type$name";
         if (!class_exists($class))
             return NULL;
-var_dump($class);
 
         // Abstract classes.
         $reflector = new \ReflectionClass($class);

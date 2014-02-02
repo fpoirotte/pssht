@@ -18,8 +18,10 @@ class Encoder
 {
     protected $_buffer;
 
-    public function __construct(Buffer $buffer)
+    public function __construct(Buffer $buffer = NULL)
     {
+        if ($buffer === NULL)
+            $buffer = new Buffer();
         $this->_buffer = $buffer;
     }
 

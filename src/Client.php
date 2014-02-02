@@ -33,10 +33,15 @@ class Client
     protected $_context;
 
     public function __construct(
-        \Clicky\Pssht\Wire\Encoder  $encoder,
-        \Clicky\Pssht\Wire\Decoder  $decoder
+        \Clicky\Pssht\Wire\Encoder  $encoder = NULL,
+        \Clicky\Pssht\Wire\Decoder  $decoder = NULL
     )
     {
+        if ($encoder === NULL)
+            $encoder = new \Clicky\Pssht\Wire\Encoder();
+        if ($decoder === NULL)
+            $decoder = new \Clicky\Pssht\Wire\Decoder();
+
         $this->_authLayer       = NULL;
         $this->_inSeqNo         = 0;
         $this->_outSeqNo        = 0;

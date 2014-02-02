@@ -12,7 +12,7 @@
 namespace Clicky\Pssht;
 
 use Clicky\Pssht\Services\SSHUserAuth;
-use \Clicky\Pssht\Messages\USERAUTH\REQUEST;
+use Clicky\Pssht\Messages\USERAUTH\REQUEST;
 use Clicky\Pssht\Wire\Encoder;
 use Clicky\Pssht\Wire\Decoder;
 
