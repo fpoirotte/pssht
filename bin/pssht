@@ -54,52 +54,47 @@ function main()
                 $write[] = $sockets['clients'][$id];
         }
 
-        if (stream_select($read, $write, $except, NULL) === FALSE) {
-            echo socket_strerror(socket_last_error()) . PHP_EOL;
-            foreach ($sockets as $socketType) {
-                foreach ($socketType as &$socket) {
-                    fclose($socket);
-                }
-            }
-            exit(1);
+        if (@stream_select($read, $write, $except, NULL) === FALSE) {
+            $logging->error(
+                'Error while waiting for activity on sockets: %s',
+                array(socket_strerror(socket_last_error()))
+            );
+            continue;
         }
 
         foreach ($read as $socket) {
             if (in_array($socket, $sockets['servers'], TRUE)) {
                 $new = stream_socket_accept($socket);
                 if ($new === FALSE) {
-                    echo socket_strerror(socket_last_error()) . PHP_EOL;
-                }
-                else {
-                    $sockets['clients'][] = $new;
-                    $id     = array_search($new, $sockets['clients'], TRUE);
-                    $peer   = stream_socket_get_name($new, TRUE);
-                    $logging->info(
-                        '#%(id)d New client connected from %(peer)s',
-                        array('id' => $id, 'peer' => $peer)
+                    $logging->error(
+                        'Could not accept new client: %s',
+                        array(socket_strerror(socket_last_error()))
                     );
-                    $clients[$id] = $container->get('client');
+                    continue;
                 }
+
+                for ($id = 0; isset($sockets['clients'][$id]); $id++) ;
+                $sockets['clients'][$id] = $new;
+                $peer   = stream_socket_get_name($new, TRUE);
+                $logging->info(
+                    '#%(id)d New client connected from %(peer)s',
+                    array('id' => $id, 'peer' => $peer)
+                );
+                $clients[$id] = $container->get('client');
                 continue;
             }
 
             $data = fread($socket, 8192);
             if ($data === '') {
-                foreach ($except as $socket) {
-                    if (in_array($socket, $sockets['servers'], TRUE)) {
-                        continue;
-                    }
-
-                    $peer   = stream_socket_get_name($socket, TRUE);
-                    $id     = array_search($socket, $sockets['clients'], TRUE);
-                    $logging->info(
-                        '#%(id)d Client disconnected from %(peer)s',
-                        array('id' => $id, 'peer' => $peer)
-                    );
-                    fclose($socket);
-                    unset($sockets['clients'][$id]);
-                    unset($clients[$id]);
-                }
+                $peer   = stream_socket_get_name($socket, TRUE);
+                $id     = array_search($socket, $sockets['clients'], TRUE);
+                $logging->info(
+                    '#%(id)d Client disconnected from %(peer)s',
+                    array('id' => $id, 'peer' => $peer)
+                );
+                fclose($socket);
+                unset($sockets['clients'][$id]);
+                unset($clients[$id]);
                 continue;
             }
 
@@ -109,11 +104,11 @@ function main()
                 $id     = array_search($socket, $sockets['clients'], TRUE);
                 $clients[$id]->getDecoder()->getBuffer()->push($data);
 
-                $logging->info(
+                $logging->debug(
                     '#%(id)d Received %(length)d bytes from %(peer)s',
                     array('id' => $id, 'peer' => $peer, 'length' => $length)
                 );
-                $logging->info('%s', array(escape($data)));
+                $logging->debug('%s', array(escape($data)));
 
                 // Process messages in the buffer.
                 while ($clients[$id]->readMessage()) ;
@@ -134,11 +129,11 @@ function main()
                 if ($written === FALSE)
                     break;
 
-                $logging->info(
-                    "#%(id)d Send %(written)d bytes to %(peer)s",
+                $logging->debug(
+                    "#%(id)d Sent %(written)d bytes to %(peer)s",
                     array('id' => $id, 'peer' => $peer, 'written' => $written)
                 );
-                $logging->info('%s', array(escape(substr($data, 0, $written))));
+                $logging->debug('%s', array(escape(substr($data, 0, $written))));
                 $data   = substr($data, $written);
                 $size  -= $written;
             }

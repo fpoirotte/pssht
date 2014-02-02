@@ -55,7 +55,7 @@ class Client
         $this->_outMAC          = new \Clicky\Pssht\MAC\None(NULL);
         $this->_context         = array();
 
-        $ident = "SSH-2.0-Pssht_1.0.x_dev";
+        $ident = "SSH-2.0-pssht_1.0.x_dev";
         $this->_context['identity']['server'] = $ident;
         $this->_encoder->encode_bytes($ident . "\r\n");
     }
