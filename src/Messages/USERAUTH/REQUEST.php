@@ -15,60 +15,62 @@ use Clicky\Pssht\MessageInterface;
 use Clicky\Pssht\Wire\Encoder;
 use Clicky\Pssht\Wire\Decoder;
 
-class       REQUEST
-implements  MessageInterface
+class REQUEST implements MessageInterface
 {
-    protected $_user;
-    protected $_service;
-    protected $_method;
+    protected $user;
+    protected $service;
+    protected $method;
 
     public function __construct($user, $service, $method)
     {
-        if (!is_string($user))
+        if (!is_string($user)) {
             throw new \InvalidArgumentException();
-        if (!is_string($service))
+        }
+        if (!is_string($service)) {
             throw new \InvalidArgumentException();
-        if (!is_string($method))
+        }
+        if (!is_string($method)) {
             throw new \InvalidArgumentException();
-        $this->_user    = $user;
-        $this->_service = $service;
-        $this->_method  = $method;
+        }
+
+        $this->user    = $user;
+        $this->service = $service;
+        $this->method  = $method;
     }
 
-    static public function getMessageId()
+    public static function getMessageId()
     {
         return 50;
     }
 
     public function serialize(Encoder $encoder)
     {
-        $encoder->encode_string($this->_user);
-        $encoder->encode_string($this->_service);
-        $encoder->encode_string($this->_method);
+        $encoder->encodeString($this->user);
+        $encoder->encodeString($this->service);
+        $encoder->encodeString($this->method);
     }
 
-    static public function unserialize(Decoder $decoder)
+    public static function unserialize(Decoder $decoder)
     {
         return new self(
-            $decoder->decode_string(),
-            $decoder->decode_string(),
-            $decoder->decode_string()
+            $decoder->decodeString(),
+            $decoder->decodeString(),
+            $decoder->decodeString()
         );
     }
 
     public function getUserName()
     {
-        return $this->_user;
+        return $this->user;
     }
 
     public function getServiceName()
     {
-        return $this->_service;
+        return $this->service;
     }
 
     public function getMethodName()
     {
-        return $this->_method;
+        return $this->method;
     }
 }
-

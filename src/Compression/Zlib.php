@@ -15,39 +15,36 @@ use Clicky\Pssht\CompressionInterface;
 use \HttpInflateStream;
 use \HttpDeflateStream;
 
-class       Zlib
-implements  CompressionInterface
+class Zlib implements CompressionInterface
 {
-    protected $_stream;
+    protected $stream;
 
     public function __construct($mode)
     {
         if ($mode == self::MODE_COMPRESS) {
-            $this->_stream = HttpDeflateStream::factory(
+            $this->stream = HttpDeflateStream::factory(
                 HttpDeflateStream::TYPE_ZLIB |
                 HttpDeflateStream::LEVEL_DEF |
                 HttpDeflateStream::FLUSH_SYNC
             );
-        }
-        else {
-            $this->_stream = HttpInflateStream::factory();
+        } else {
+            $this->stream = HttpInflateStream::factory();
         }
     }
 
-    static public function isAvailable()
+    public static function isAvailable()
     {
         return  class_exists('HttpDeflateStream') &&
                 class_exists('HttpInflateStream');
     }
 
-    static public function getName()
+    public static function getName()
     {
         return 'zlib';
     }
 
     public function update($data)
     {
-        return $this->_stream->update($data);
+        return $this->stream->update($data);
     }
 }
-

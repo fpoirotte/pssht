@@ -13,6 +13,5 @@ namespace Clicky\Pssht;
 
 interface AvailabilityInterface
 {
-    static public function isAvailable();
+    public static function isAvailable();
 }
-

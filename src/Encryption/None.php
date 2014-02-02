@@ -13,29 +13,28 @@ namespace Clicky\Pssht\Encryption;
 
 use Clicky\Pssht\EncryptionInterface;
 
-class       None
-implements  EncryptionInterface
+class None implements EncryptionInterface
 {
     public function __construct($iv, $key)
     {
     }
 
-    static public function getName()
+    public static function getName()
     {
         return 'none';
     }
 
-    static public function getKeySize()
+    public static function getKeySize()
     {
         return 0;
     }
 
-    static public function getIVSize()
+    public static function getIVSize()
     {
         return 0;
     }
 
-    static public function getBlockSize()
+    public static function getBlockSize()
     {
         return 0;
     }
@@ -50,4 +49,3 @@ implements  EncryptionInterface
         return $data;
     }
 }
-

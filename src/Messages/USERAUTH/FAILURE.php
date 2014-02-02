@@ -15,44 +15,43 @@ use Clicky\Pssht\MessageInterface;
 use Clicky\Pssht\Wire\Encoder;
 use Clicky\Pssht\Wire\Decoder;
 
-class       FAILURE
-implements  MessageInterface
+class FAILURE implements MessageInterface
 {
-    protected $_methods;
-    protected $_partial;
+    protected $methods;
+    protected $partial;
 
-    public function __construct($methods, $partial)
+    public function __construct(array $methods, $partial)
     {
-        if (!is_bool($partial))
+        if (!is_bool($partial)) {
             throw new \InvalidArgumentException();
-        if (!is_array($methods))
-            throw new \InvalidArgumentException();
-        foreach ($methods as $method) {
-            if (!is_string($method))
-                throw new \InvalidArgumentException();
         }
 
-        $this->_methods = $methods;
-        $this->_partial = $partial;
+        foreach ($methods as $method) {
+            if (!is_string($method)) {
+                throw new \InvalidArgumentException();
+            }
+        }
+
+        $this->methods = $methods;
+        $this->partial = $partial;
     }
 
-    static public function getMessageId()
+    public static function getMessageId()
     {
         return 51;
     }
 
     public function serialize(Encoder $encoder)
     {
-        $encoder->encode_name_list($this->_methods);
-        $encoder->encode_boolean($this->_partial);
+        $encoder->encodeNameList($this->methods);
+        $encoder->encodeBoolean($this->partial);
     }
 
-    static public function unserialize(Decoder $decoder)
+    public static function unserialize(Decoder $decoder)
     {
-        return new self(
-            $decoder->decode_name_list(),
-            $decoder->decode_boolean()
+        return new static(
+            $decoder->decodeNameList(),
+            $decoder->decodeBoolean()
         );
     }
 }
-

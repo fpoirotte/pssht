@@ -11,34 +11,32 @@
 
 namespace Clicky\Pssht\Messages;
 
-class       UNIMPLEMENTED
-implements  \Clicky\Pssht\MessageInterface
+class UNIMPLEMENTED implements \Clicky\Pssht\MessageInterface
 {
-    protected $_sequenceNo;
+    protected $sequenceNo;
 
     public function __construct($sequenceNo)
     {
-        $this->_sequenceNo = $sequenceNo;
+        $this->sequenceNo = $sequenceNo;
     }
 
-    static public function getMessageId()
+    public static function getMessageId()
     {
         return 3;
     }
 
     public function serialize(\Clicky\Pssht\Wire\Encoder $encoder)
     {
-        $encoder->encode_uint32($this->_sequenceNo);
+        $encoder->encodeUint32($this->sequenceNo);
     }
 
-    static public function unserialize(\Clicky\Pssht\Wire\Decoder $decoder)
+    public static function unserialize(\Clicky\Pssht\Wire\Decoder $decoder)
     {
-        return new self($decoder->decode_uint32());
+        return new self($decoder->decodeUint32());
     }
 
     public function getSequenceNo()
     {
-        return $this->_sequenceNo;
+        return $this->sequenceNo;
     }
 }
-

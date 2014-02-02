@@ -15,34 +15,32 @@ use Clicky\Pssht\MessageInterface;
 use Clicky\Pssht\Wire\Encoder;
 use Clicky\Pssht\Wire\Decoder;
 
-class       CLOSE
-implements  MessageInterface
+class CLOSE implements MessageInterface
 {
-    protected $_channel;
+    protected $channel;
 
     public function __construct($channel)
     {
-        $this->_channel = $channel;
+        $this->channel = $channel;
     }
 
-    static public function getMessageId()
+    public static function getMessageId()
     {
         return 97;
     }
 
     public function serialize(Encoder $encoder)
     {
-        $encoder->encode_uint32($this->_channel);
+        $encoder->encodeUint32($this->channel);
     }
 
-    static public function unserialize(Decoder $decoder)
+    public static function unserialize(Decoder $decoder)
     {
-        return new self($decoder->decode_uint32());
+        return new self($decoder->decodeUint32());
     }
 
     public function getChannel()
     {
-        return $this->_channel;
+        return $this->channel;
     }
 }
-

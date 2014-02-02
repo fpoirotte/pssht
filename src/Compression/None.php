@@ -13,14 +13,13 @@ namespace Clicky\Pssht\Compression;
 
 use Clicky\Pssht\CompressionInterface;
 
-class       None
-implements  CompressionInterface
+class None implements CompressionInterface
 {
     public function __construct($mode)
     {
     }
 
-    static public function getName()
+    public static function getName()
     {
         return 'none';
     }
@@ -30,4 +29,3 @@ implements  CompressionInterface
         return $data;
     }
 }
-

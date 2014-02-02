@@ -11,11 +11,7 @@
 
 namespace Clicky\Pssht\MAC;
 
-use Clicky\Pssht\MACInterface;
-use Clicky\Pssht\AvailabilityInterface;
-
 interface Base96Interface
 {
-    static public function getBaseClass();
+    public static function getBaseClass();
 }
-

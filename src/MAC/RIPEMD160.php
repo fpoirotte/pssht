@@ -11,17 +11,15 @@
 
 namespace Clicky\Pssht\MAC;
 
-class   RIPEMD160
-extends Base
+class RIPEMD160 extends Base
 {
-    static public function getName()
+    public static function getName()
     {
         return 'hmac-ripemd160';
     }
 
-    static public function getHash()
+    public static function getHash()
     {
         return 'ripemd160';
     }
 }
-

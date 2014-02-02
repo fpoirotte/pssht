@@ -11,14 +11,10 @@
 
 namespace Clicky\Pssht\Messages\USERAUTH;
 
-use Clicky\Pssht\Messages\Base;
-
-class   SUCCESS
-extends Base
+class SUCCESS extends \Clicky\Pssht\Messages\Base
 {
-    static public function getMessageId()
+    public static function getMessageId()
     {
         return 52;
     }
 }
-

@@ -11,40 +11,10 @@
 
 namespace Clicky\Pssht\Messages\SERVICE;
 
-use Clicky\Pssht\MessageInterface;
-use Clicky\Pssht\Wire\Encoder;
-use Clicky\Pssht\Wire\Decoder;
-
-class       REQUEST
-implements  MessageInterface
+class REQUEST extends \Clicky\Pssht\Messages\SERVICE\Base
 {
-    protected $_service;
-
-    public function __construct($service)
-    {
-        if (!is_string($service))
-            throw new \InvalidArgumentException();
-        $this->_service = $service;
-    }
-
-    static public function getMessageId()
+    public static function getMessageId()
     {
         return 5;
     }
-
-    public function serialize(Encoder $encoder)
-    {
-        $encoder->encode_string($this->_service);
-    }
-
-    static public function unserialize(Decoder $decoder)
-    {
-        return new self($decoder->decode_string());
-    }
-
-    public function getServiceName()
-    {
-        return $this->_service;
-    }
 }
-

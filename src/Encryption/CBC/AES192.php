@@ -11,21 +11,20 @@
 
 namespace Clicky\Pssht\Encryption\CBC;
 
-class   AES192
-extends \Clicky\Pssht\Encryption\Base
+class AES192 extends \Clicky\Pssht\Encryption\Base
 {
-    static public function getMode()
+    public static function getMode()
     {
         return 'MCRYPT_MODE_CBC';
     }
 
-    static public function getAlgorithm() {
+    public static function getAlgorithm()
+    {
         return 'MCRYPT_RIJNDAEL_192';
     }
 
-    static public function getName()
+    public static function getName()
     {
         return 'aes192-cbc@foo';
     }
 }
-

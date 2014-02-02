@@ -13,8 +13,7 @@ namespace Clicky\Pssht\Encryption;
 
 interface BaseInterface
 {
-    static public function getMode();
+    public static function getMode();
 
-    static public function getAlgorithm();
+    public static function getAlgorithm();
 }
-

@@ -13,6 +13,5 @@ namespace Clicky\Pssht;
 
 interface PublicKeyInterface
 {
-    static public function getName();
+    public static function getName();
 }
-

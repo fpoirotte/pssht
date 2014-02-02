@@ -15,53 +15,51 @@ use Clicky\Pssht\MessageInterface;
 use Clicky\Pssht\Wire\Encoder;
 use Clicky\Pssht\Wire\Decoder;
 
-class       OPEN
-implements  MessageInterface
+class OPEN implements MessageInterface
 {
-    protected $_type;
-    protected $_senderChannel;
-    protected $_initialWindowSize;
-    protected $_maximumPacketSize;
+    protected $type;
+    protected $senderChannel;
+    protected $initialWindowSize;
+    protected $maximumPacketSize;
 
     public function __construct($type, $senderChannel, $initialWindowSize, $maximumPacketSize)
     {
-        $this->_type                = $type;
-        $this->_senderChannel       = $senderChannel;
-        $this->_initialWindowSize   = $initialWindowSize;
-        $this->_maximumPacketSize   = $maximumPacketSize;
+        $this->type                 = $type;
+        $this->senderChannel        = $senderChannel;
+        $this->initialWindowSize    = $initialWindowSize;
+        $this->maximumPacketSize    = $maximumPacketSize;
     }
 
-    static public function getMessageId()
+    public static function getMessageId()
     {
         return 90;
     }
 
     public function serialize(Encoder $encoder)
     {
-        $encoder->encode_string($this->_type);
-        $encoder->encode_uint32($this->_senderChannel);
-        $encoder->encode_uint32($this->_initialWindowSize);
-        $encoder->encode_uint32($this->_maximumPacketSize);
+        $encoder->encodeString($this->type);
+        $encoder->encodeUint32($this->senderChannel);
+        $encoder->encodeUint32($this->initialWindowSize);
+        $encoder->encodeUint32($this->maximumPacketSize);
     }
 
-    static public function unserialize(Decoder $decoder)
+    public static function unserialize(Decoder $decoder)
     {
-        return new self(
-            $decoder->decode_string(),
-            $decoder->decode_uint32(),
-            $decoder->decode_uint32(),
-            $decoder->decode_uint32()
+        return new static(
+            $decoder->decodeString(),
+            $decoder->decodeUint32(),
+            $decoder->decodeUint32(),
+            $decoder->decodeUint32()
         );
     }
 
     public function getType()
     {
-        return $this->_type;
+        return $this->type;
     }
 
     public function getSenderChannel()
     {
-        return $this->_senderChannel;
+        return $this->senderChannel;
     }
 }
-

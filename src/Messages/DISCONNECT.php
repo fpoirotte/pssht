@@ -15,8 +15,7 @@ use Clicky\Pssht\MessageInterface;
 use Clicky\Pssht\Wire\Encoder;
 use Clicky\Pssht\Wire\Decoder;
 
-class       DISCONNECT
-implements  MessageInterface
+class DISCONNECT implements MessageInterface
 {
     const SSH_DISCONNECT_HOST_NOT_ALLOWED_TO_CONNECT        =    1;
     const SSH_DISCONNECT_PROTOCOL_ERROR                     =    2;
@@ -34,42 +33,45 @@ implements  MessageInterface
     const SSH_DISCONNECT_NO_MORE_AUTH_METHODS_AVAILABLE     =   14;
     const SSH_DISCONNECT_ILLEGAL_USER_NAME                  =   15;
 
-    protected $_code;
-    protected $_message;
-    protected $_language;
+    protected $code;
+    protected $message;
+    protected $language;
 
     public function __construct($reasonCode, $reasonMessage, $language = '')
     {
-        if (!is_int($reasonCode))
+        if (!is_int($reasonCode)) {
             throw new \InvalidArgumentException();
-        if (!is_string($reasonMessage))
+        }
+        if (!is_string($reasonMessage)) {
             throw new \InvalidArgumentException();
-        if (!is_string($language))
+        }
+        if (!is_string($language)) {
             throw new \InvalidArgumentException();
-        $this->_code        = $reasonCode;
-        $this->_message     = $reasonMessage;
-        $this->_language    = $language;
+        }
+
+        $this->code        = $reasonCode;
+        $this->message     = $reasonMessage;
+        $this->language    = $language;
     }
 
-    static public function getMessageId()
+    public static function getMessageId()
     {
         return 1;
     }
 
     public function serialize(Encoder $encoder)
     {
-        $encoder->encode_uint32($this->_code);
-        $encoder->encode_string($this->_message);
-        $encoder->encode_string($this->_language);
+        $encoder->encodeUint32($this->code);
+        $encoder->encodeString($this->message);
+        $encoder->encodeString($this->language);
     }
 
-    static public function unserialize(Decoder $decoder)
+    public static function unserialize(Decoder $decoder)
     {
-        return new self(
-            $decoder->decode_uint32(),
-            $decoder->decode_string(),
-            $decoder->decode_string()
+        return new static(
+            $decoder->decodeUint32(),
+            $decoder->decodeString(),
+            $decoder->decodeString()
         );
     }
 }
-

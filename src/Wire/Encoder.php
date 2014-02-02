@@ -11,91 +11,92 @@
 
 namespace Clicky\Pssht\Wire;
 
-use Clicky\Pssht\Wire\Exception;
-use Clicky\Pssht\Buffer;
-
 class Encoder
 {
-    protected $_buffer;
+    protected $buffer;
 
-    public function __construct(Buffer $buffer = NULL)
+    public function __construct(\Clicky\Pssht\Buffer $buffer = null)
     {
-        if ($buffer === NULL)
-            $buffer = new Buffer();
-        $this->_buffer = $buffer;
+        if ($buffer === null) {
+            $buffer = new \Clicky\Pssht\Buffer();
+        }
+
+        $this->buffer = $buffer;
     }
 
     public function getBuffer()
     {
-        return $this->_buffer;
+        return $this->buffer;
     }
 
-    protected function _write($value)
+    protected function write($value)
     {
-        $this->_buffer->push($value);
+        $this->buffer->push($value);
     }
 
-    public function encode_bytes($value)
+    public function encodeBytes($value)
     {
-        $this->_write($value);
+        $this->write($value);
     }
 
-    public function encode_boolean($value)
+    public function encodeBoolean($value)
     {
-        return $this->encode_bytes(((bool) $value) ? "\x01" : "\x00");
+        return $this->encodeBytes(((bool) $value) ? "\x01" : "\x00");
     }
 
-    public function encode_uint32($value)
+    public function encodeUint32($value)
     {
-        return $this->encode_bytes(pack('N', $value));
+        return $this->encodeBytes(pack('N', $value));
     }
 
-    public function encode_uint64($value)
+    public function encodeUint64($value)
     {
-        $res = gmp_div_qr($value, "0x100000000");
-        return $this->encode_bytes(
-            $this->encode_uint32(gmp_intval($res[0])) .
-            $this->encode_uint32(gmp_intval($res[1]))
+        $s = gmp_strval($value, 16);
+        $s = pack('H*', str_pad($s, ((strlen($s) + 1) >> 1) << 1, '0', STR_PAD_LEFT));
+        return $this->encodeBytes(pack('H*', $s));
+    }
+
+    public function encodeString($value)
+    {
+        return $this->encodeBytes(
+            $this->encodeUint32(strlen($value)) .
+            $this->encodeBytes($value)
         );
     }
 
-    public function encode_string($value)
+    public function encodeMpint($value)
     {
-        return $this->encode_bytes(
-            $this->encode_uint32(strlen($value)) .
-            $this->encode_bytes($value)
-        );
-    }
-
-    public function encode_mpint($value)
-    {
-        if (gmp_cmp($value, "0") == 0)
-            return $this->encode_string('');
+        if (gmp_cmp($value, "0") == 0) {
+            return $this->encodeString('');
+        }
         $s = gmp_strval($value, 16);
         $s = pack('H*', str_pad($s, ((strlen($s) + 1) >> 1) << 1, '0', STR_PAD_LEFT));
         // Positive numbers where the most significant bit
         // in the first byte is set must be preceded with \x00
         // to distinguish them from negative numbers.
-        if ((ord($s[0]) & 0x80) && gmp_sign($value) > 0)
+        if ((ord($s[0]) & 0x80) && gmp_sign($value) > 0) {
             $s = "\x00" . $s;
-        return $this->encode_string($s);
+        }
+        return $this->encodeString($s);
     }
 
-    public function encode_name_list(array $values)
+    public function encodeNameList(array $values)
     {
         $s = implode(',', $values);
-        if ($s === '')
-            return $this->encode_uint32(0);
+        if ($s === '') {
+            return $this->encodeUint32(0);
+        }
 
-        if (addcslashes($s, "\x80..\xFF") !== $s)
-            throw new Exception();
+        if (addcslashes($s, "\x80..\xFF") !== $s) {
+            throw new \InvalidArgumentException();
+        }
 
         // The names in the list MUST NOT be empty.
         if ($s[0] === ',' || substr($s, -1) === ',' ||
-            strpos($s, ',,') !== FALSE)
-            throw new Exception();
+            strpos($s, ',,') !== false) {
+            throw new \InvalidArgumentException();
+        }
 
-        return $this->encode_string($s);
+        return $this->encodeString($s);
     }
 }
-

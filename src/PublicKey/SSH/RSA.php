@@ -14,44 +14,45 @@ namespace Clicky\Pssht\PublicKey\SSH;
 use Clicky\Pssht\PublicKeyInterface;
 use Clicky\Pssht\Wire\Encoder;
 
-class       RSA
-implements  PublicKeyInterface
+class RSA implements PublicKeyInterface
 {
     const DER_HEADER = "\x30\x21\x30\x09\x06\x05\x2b\x0e\x03\x02\x1a\x05\x00\x04\x14";
 
-    protected $_key;
+    protected $key;
 
     public function __construct($file)
     {
-        $this->_key = openssl_pkey_get_private($file);
-        $details    = openssl_pkey_get_details($this->_key);
-        if ($details['type'] !== OPENSSL_KEYTYPE_RSA)
+        $this->key  = openssl_pkey_get_private($file);
+        $details    = openssl_pkey_get_details($this->key);
+        if ($details['type'] !== OPENSSL_KEYTYPE_RSA) {
             throw new \InvalidArgumentException();
+        }
     }
 
-    static public function getName()
+    public static function getName()
     {
         return 'ssh-rsa';
     }
 
     public function serialize(Encoder $encoder)
     {
-        $details = openssl_pkey_get_details($this->_key);
-        $encoder->encode_string(self::getName());
-        $encoder->encode_mpint(gmp_init(bin2hex($details['rsa']['e']), 16));
-        $encoder->encode_mpint(gmp_init(bin2hex($details['rsa']['n']), 16));
+        $details = openssl_pkey_get_details($this->key);
+        $encoder->encodeString(self::getName());
+        $encoder->encodeMpint(gmp_init(bin2hex($details['rsa']['e']), 16));
+        $encoder->encodeMpint(gmp_init(bin2hex($details['rsa']['n']), 16));
     }
 
-    public function sign($message, $raw_output = FALSE)
+    public function sign($message, $raw_output = false)
     {
         $res = openssl_sign(
             $message,
             $signature,
-            $this->_key,
+            $this->key,
             OPENSSL_ALGO_SHA1
         );
-        if ($res === FALSE)
+        if ($res === false) {
             throw new \RuntimeException();
+        }
         return ($raw_output ? $signature : bin2hex($signature));
     }
 
@@ -60,29 +61,32 @@ implements  PublicKeyInterface
 #        return openssl_verify(
 #            $message,
 #            $signature,
-#            $this->_key,
+#            $this->key,
 #            OPENSSL_ALGO_SHA1
 #        );
 
         // Decode given signature.
-        $details = openssl_pkey_get_details($this->_key);
+        $details = openssl_pkey_get_details($this->key);
         $emLen = ($details['bits'] + 7) >> 3;
-        if (strlen($signature) !== $emLen)
+        if (strlen($signature) !== $emLen) {
             throw new \InvalidArgumentException();
+        }
         $s = gmp_init(bin2hex($signature), 16);
         $n = gmp_init(bin2hex($details['rsa']['n']), 16);
         $e = gmp_init(bin2hex($details['rsa']['e']), 16);
-        if (gmp_cmp($s, $n) >= 0)
+        if (gmp_cmp($s, $n) >= 0) {
             throw new \InvalidArgumentException();
+        }
         $m      = gmp_powm($s, $e, $n);
         $EM     = bin2hex(pack('H*', str_pad(gmp_strval($m, 16), $emLen * 2, '0', STR_PAD_LEFT)));
 
         // Generate actual signature.
-        $H      = sha1($message, TRUE);
+        $H      = sha1($message, true);
         $T      = self::DER_HEADER . $H;
         $tLen   = strlen($T);
-        if ($emLen < $tLen + 11)
+        if ($emLen < $tLen + 11) {
             throw new \RuntimeException();
+        }
         $PS     = str_repeat("\xFF", $emLen - $tLen - 3);
         $EMb    = bin2hex("\x00\x01" . $PS . "\x00" . $T);
 
@@ -90,4 +94,3 @@ implements  PublicKeyInterface
         return ($EM === $EMb);
     }
 }
-

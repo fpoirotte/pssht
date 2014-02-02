@@ -11,21 +11,20 @@
 
 namespace Clicky\Pssht\Encryption\CBC;
 
-class   TripleDES
-extends \Clicky\Pssht\Encryption\Base
+class TripleDES extends \Clicky\Pssht\Encryption\Base
 {
-    static public function getMode()
+    public static function getMode()
     {
         return 'MCRYPT_MODE_CBC';
     }
 
-    static public function getAlgorithm() {
+    public static function getAlgorithm()
+    {
         return 'MCRYPT_TRIPLEDES';
     }
 
-    static public function getName()
+    public static function getName()
     {
         return '3des-cbc';
     }
 }
-

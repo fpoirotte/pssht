@@ -19,55 +19,56 @@ use Clicky\Pssht\CompressionInterface;
 
 class Client
 {
-    protected $_authLayer;
-    protected $_inSeqNo;
-    protected $_outSeqNo;
-    protected $_encoder;
-    protected $_decoder;
-    protected $_encryptor;
-    protected $_decryptor;
-    protected $_compressor;
-    protected $_uncompressor;
-    protected $_inMAC;
-    protected $_outMAC;
-    protected $_context;
+    protected $authLayer;
+    protected $inSeqNo;
+    protected $outSeqNo;
+    protected $encoder;
+    protected $decoder;
+    protected $encryptor;
+    protected $ecryptor;
+    protected $compressor;
+    protected $uncompressor;
+    protected $inMAC;
+    protected $outMAC;
+    protected $context;
 
     public function __construct(
-        \Clicky\Pssht\Wire\Encoder  $encoder = NULL,
-        \Clicky\Pssht\Wire\Decoder  $decoder = NULL
-    )
-    {
-        if ($encoder === NULL)
+        \Clicky\Pssht\Wire\Encoder $encoder = null,
+        \Clicky\Pssht\Wire\Decoder $decoder = null
+    ) {
+        if ($encoder === null) {
             $encoder = new \Clicky\Pssht\Wire\Encoder();
-        if ($decoder === NULL)
+        }
+        if ($decoder === null) {
             $decoder = new \Clicky\Pssht\Wire\Decoder();
+        }
 
-        $this->_authLayer       = NULL;
-        $this->_inSeqNo         = 0;
-        $this->_outSeqNo        = 0;
-        $this->_encoder         = $encoder;
-        $this->_decoder         = $decoder;
-        $this->_compressor      = new \Clicky\Pssht\Compression\None(CompressionInterface::MODE_COMPRESS);
-        $this->_uncompressor    = new \Clicky\Pssht\Compression\None(CompressionInterface::MODE_UNCOMPRESS);
-        $this->_encryptor       = new \Clicky\Pssht\Encryption\None(NULL, NULL);
-        $this->_decryptor       = new \Clicky\Pssht\Encryption\None(NULL, NULL);
-        $this->_inMAC           = new \Clicky\Pssht\MAC\None(NULL);
-        $this->_outMAC          = new \Clicky\Pssht\MAC\None(NULL);
-        $this->_context         = array();
+        $this->authLayer    = null;
+        $this->inSeqNo      = 0;
+        $this->outSeqNo     = 0;
+        $this->encoder      = $encoder;
+        $this->decoder      = $decoder;
+        $this->compressor   = new \Clicky\Pssht\Compression\None(CompressionInterface::MODE_COMPRESS);
+        $this->uncompressor = new \Clicky\Pssht\Compression\None(CompressionInterface::MODE_UNCOMPRESS);
+        $this->encryptor    = new \Clicky\Pssht\Encryption\None(null, null);
+        $this->decryptor    = new \Clicky\Pssht\Encryption\None(null, null);
+        $this->inMAC        = new \Clicky\Pssht\MAC\None(null);
+        $this->outMAC       = new \Clicky\Pssht\MAC\None(null);
+        $this->context      = array();
 
         $ident = "SSH-2.0-pssht_1.0.x_dev";
-        $this->_context['identity']['server'] = $ident;
-        $this->_encoder->encode_bytes($ident . "\r\n");
+        $this->context['identity']['server'] = $ident;
+        $this->encoder->encodeBytes($ident . "\r\n");
     }
 
     public function getEncoder()
     {
-        return $this->_encoder;
+        return $this->encoder;
     }
 
     public function getDecoder()
     {
-        return $this->_decoder;
+        return $this->decoder;
     }
 
     public function writeMessage(\Clicky\Pssht\MessageInterface $message)
@@ -76,157 +77,168 @@ class Client
         $encoder    = new Encoder($buffer);
 
         // Serialize the message.
-        $encoder->encode_bytes(chr($message::getMessageId()));
+        $encoder->encodeBytes(chr($message::getMessageId()));
         $message->serialize($encoder);
         $payload    = $buffer->get(0);
 
         // Compress the payload if necessary.
-        $payload    = $this->_compressor->update($payload);
+        $payload    = $this->compressor->update($payload);
         $size       = strlen($payload);
 
         // Compute padding size.
-        $blockSize  = max(8, $this->_encryptor->getBlockSize());
+        $blockSize  = max(8, $this->encryptor->getBlockSize());
         $padSize    = $blockSize - ((1 + 4 + $size) % $blockSize);
-        if ($padSize < 4)
+        if ($padSize < 4) {
             $padSize = ($padSize + $blockSize) % 256;
+        }
         $padding = openssl_random_pseudo_bytes($padSize);
 
         // Create the packet.
-        $encoder->encode_uint32(1 + $size + $padSize);
-        $encoder->encode_bytes(chr($padSize));
-        $encoder->encode_bytes($payload);
-        $encoder->encode_bytes($padding);
+        $encoder->encodeUint32(1 + $size + $padSize);
+        $encoder->encodeBytes(chr($padSize));
+        $encoder->encodeBytes($payload);
+        $encoder->encodeBytes($padding);
         $packet = $buffer->get(0);
 
         // Write the encrypted packet on the wire.
-        $this->_encoder->encode_bytes($this->_encryptor->encrypt($packet));
+        $this->encoder->encodeBytes($this->encryptor->encrypt($packet));
 
         // Write the MAC if necessary.
-        $mac = $this->_outMAC->compute(pack('N', $this->_outSeqNo) . $packet);
-        $this->_outSeqNo++;
-        $this->_outSeqNo &= 0xFFFFFFFF;
-        $this->_encoder->encode_bytes($mac);
+        $mac = $this->outMAC->compute(pack('N', $this->outSeqNo) . $packet);
+        $this->outSeqNo++;
+        $this->outSeqNo &= 0xFFFFFFFF;
+        $this->encoder->encodeBytes($mac);
     }
 
     // Initial state
-    protected function _handle_INIT(Decoder $decoder)
+    protected function handleINIT(Decoder $decoder)
     {
         $ident = $decoder->getBuffer()->get("\r\n");
-        if ($ident === NULL)
+        if ($ident === null) {
             throw new \RuntimeException();
-        $this->_context['identity']['client'] = (string) substr($ident, 0, -2);
+        }
+
+        $this->context['identity']['client'] = (string) substr($ident, 0, -2);
 
         /// @FIXME: implement disconnect method (with reason/code).
-        if (strncmp($ident, 'SSH-2.0-', 8) !== 0)
-            $this->disconnect(NULL);
+        if (strncmp($ident, 'SSH-2.0-', 8) !== 0) {
+            $this->disconnect(null);
+        }
 
         $random = new \Clicky\Pssht\Random\OpenSSL();
         $kex    = new \Clicky\Pssht\Messages\KEXINIT($random);
-        $this->_context['kex']['server'] = $kex;
+        $this->context['kex']['server'] = $kex;
         $this->writeMessage($kex);
-        return TRUE;
+        return true;
     }
 
     // SSH_MSG_KEXINIT
-    protected function _handle_20(Decoder $decoder)
+    protected function handleCode20(Decoder $decoder)
     {
         $algos      = \Clicky\Pssht\Algorithms::factory();
         $kex        = \Clicky\Pssht\Messages\KEXINIT::unserialize($decoder);
-        $this->_context['kex']['client'] = $kex;
+        $this->context['kex']['client'] = $kex;
 
         // KEX method
-        $this->_context['kexAlgo'] = NULL;
+        $this->context['kexAlgo'] = null;
         foreach ($kex->getKEXAlgos() as $algo) {
-            if ($algos->getClass('KEX', $algo) !== NULL) {
-                $this->_context['kexAlgo'] = $algos->getClass('KEX', $algo);
+            if ($algos->getClass('KEX', $algo) !== null) {
+                $this->context['kexAlgo'] = $algos->getClass('KEX', $algo);
                 break;
             }
         }
         // No suitable KEX algorithm found.
-        if (!$this->_context['kexAlgo'])
+        if (!$this->context['kexAlgo']) {
             throw new \RuntimeException();
+        }
 
 
         // C2S encryption
-        $this->_context['C2S']['Encryption'] = NULL;
+        $this->context['C2S']['Encryption'] = null;
         foreach ($kex->getC2SEncryptionAlgos() as $algo) {
-            if ($algos->getClass('Encryption', $algo) !== NULL) {
-                $this->_context['C2S']['Encryption'] = $algos->getClass('Encryption', $algo);
+            if ($algos->getClass('Encryption', $algo) !== null) {
+                $this->context['C2S']['Encryption'] = $algos->getClass('Encryption', $algo);
                 break;
             }
         }
         // No suitable C2S encryption cipher found.
-        if (!$this->_context['C2S']['Encryption'])
+        if (!$this->context['C2S']['Encryption']) {
             throw new \RuntimeException();
+        }
 
         // C2S compression
-        $this->_context['C2S']['Compression'] = NULL;
+        $this->context['C2S']['Compression'] = null;
         foreach ($kex->getC2SCompressionAlgos() as $algo) {
-            if ($algos->getClass('Compression', $algo) !== NULL) {
-                $this->_context['C2S']['Compression'] = $algos->getClass('Compression', $algo);
+            if ($algos->getClass('Compression', $algo) !== null) {
+                $this->context['C2S']['Compression'] = $algos->getClass('Compression', $algo);
                 break;
             }
         }
         // No suitable C2S compression found.
-        if (!$this->_context['C2S']['Compression'])
+        if (!$this->context['C2S']['Compression']) {
             throw new \RuntimeException();
+        }
 
         // C2S MAC
-        $this->_context['C2S']['MAC'] = NULL;
+        $this->context['C2S']['MAC'] = null;
         foreach ($kex->getC2SMACAlgos() as $algo) {
-            if ($algos->getClass('MAC', $algo) !== NULL) {
-                $this->_context['C2S']['MAC'] = $algos->getClass('MAC', $algo);
+            if ($algos->getClass('MAC', $algo) !== null) {
+                $this->context['C2S']['MAC'] = $algos->getClass('MAC', $algo);
                 break;
             }
         }
         // No suitable C2S MAC found.
-        if (!$this->_context['C2S']['MAC'])
+        if (!$this->context['C2S']['MAC']) {
             throw new \RuntimeException();
+        }
 
         // S2C encryption
-        $this->_context['S2C']['Encryption'] = NULL;
+        $this->context['S2C']['Encryption'] = null;
         foreach ($kex->getS2CEncryptionAlgos() as $algo) {
-            if ($algos->getClass('Encryption', $algo) !== NULL) {
-                $this->_context['S2C']['Encryption'] = $algos->getClass('Encryption', $algo);
+            if ($algos->getClass('Encryption', $algo) !== null) {
+                $this->context['S2C']['Encryption'] = $algos->getClass('Encryption', $algo);
                 break;
             }
         }
         // No suitable S2C encryption cipher found.
-        if (!$this->_context['S2C']['Encryption'])
+        if (!$this->context['S2C']['Encryption']) {
             throw new \RuntimeException();
+        }
 
         // S2C compression
-        $this->_context['S2C']['Compression'] = NULL;
+        $this->context['S2C']['Compression'] = null;
         foreach ($kex->getS2CCompressionAlgos() as $algo) {
-            if ($algos->getClass('Compression', $algo) !== NULL) {
-                $this->_context['S2C']['Compression'] = $algos->getClass('Compression', $algo);
+            if ($algos->getClass('Compression', $algo) !== null) {
+                $this->context['S2C']['Compression'] = $algos->getClass('Compression', $algo);
                 break;
             }
         }
         // No suitable S2C compression found.
-        if (!$this->_context['S2C']['Compression'])
+        if (!$this->context['S2C']['Compression']) {
             throw new \RuntimeException();
+        }
 
         // S2C MAC
-        $this->_context['S2C']['MAC'] = NULL;
+        $this->context['S2C']['MAC'] = null;
         foreach ($kex->getS2CMACAlgos() as $algo) {
-            if ($algos->getClass('MAC', $algo) !== NULL) {
-                $this->_context['S2C']['MAC'] = $algos->getClass('MAC', $algo);
+            if ($algos->getClass('MAC', $algo) !== null) {
+                $this->context['S2C']['MAC'] = $algos->getClass('MAC', $algo);
                 break;
             }
         }
         // No suitable S2C MAC found.
-        if (!$this->_context['S2C']['MAC'])
+        if (!$this->context['S2C']['MAC']) {
             throw new \RuntimeException();
+        }
 
-        return TRUE;
+        return true;
     }
 
     // SSH_MSG_KEXDH_INIT
-    protected function _handle_30(Decoder $decoder)
+    protected function handleCode30(Decoder $decoder)
     {
         $message    = \Clicky\Pssht\Messages\KEXDH\INIT::unserialize($decoder);
-        $kexAlgo    = $this->_context['kexAlgo'];
+        $kexAlgo    = $this->context['kexAlgo'];
         $kexAlgo    = new $kexAlgo();
         $response   = new \Clicky\Pssht\Messages\KEXDH\REPLY(
             $message,
@@ -235,43 +247,44 @@ class Client
                 dirname(__DIR__) .
                 '/tests/data/rsa2048'
             ),
-            $this->_encryptor,
-            $this->_decryptor,
+            $this->encryptor,
+            $this->decryptor,
             $kexAlgo,
-            $this->_context['kex']['server'],
-            $this->_context['kex']['client'],
-            $this->_context['identity']['server'],
-            $this->_context['identity']['client']
+            $this->context['kex']['server'],
+            $this->context['kex']['client'],
+            $this->context['identity']['server'],
+            $this->context['identity']['client']
         );
         $this->writeMessage($response);
 
-        if (!isset($this->_context['sessionIdentifier']))
-            $this->_context['sessionIdentifier'] = $response->getExchangeHash();
-        $this->_context['DH'] = $response;
-        return TRUE;
+        if (!isset($this->context['sessionIdentifier'])) {
+            $this->context['sessionIdentifier'] = $response->getExchangeHash();
+        }
+        $this->context['DH'] = $response;
+        return true;
     }
 
     // SSH_MSG_NEWKEYS
-    protected function _handle_21(Decoder $decoder)
+    protected function handleCode21(Decoder $decoder)
     {
         $response = new \Clicky\Pssht\Messages\NEWKEYS();
         $this->writeMessage($response);
 
         // Reset the various keys.
-        $kexAlgo    = $this->_context['kexAlgo'];
+        $kexAlgo    = $this->context['kexAlgo'];
         $kexAlgo    = new $kexAlgo();
         $encoder    = new Encoder(new Buffer());
-        $encoder->encode_mpint($this->_context['DH']->getSharedSecret());
+        $encoder->encodeMpint($this->context['DH']->getSharedSecret());
         $sharedSecret   = $encoder->getBuffer()->get(0);
-        $exchangeHash   = $this->_context['DH']->getExchangeHash();
-        $sessionId      = $this->_context['sessionIdentifier'];
+        $exchangeHash   = $this->context['DH']->getExchangeHash();
+        $sessionId      = $this->context['sessionIdentifier'];
         $limiters       = array(
-            'A' => array($this->_context['C2S']['Encryption'], 'getIVSize'),
-            'B' => array($this->_context['S2C']['Encryption'], 'getIVSize'),
-            'C' => array($this->_context['C2S']['Encryption'], 'getKeySize'),
-            'D' => array($this->_context['S2C']['Encryption'], 'getKeySize'),
-            'E' => array($this->_context['C2S']['MAC'], 'getSize'),
-            'F' => array($this->_context['C2S']['MAC'], 'getSize'),
+            'A' => array($this->context['C2S']['Encryption'], 'getIVSize'),
+            'B' => array($this->context['S2C']['Encryption'], 'getIVSize'),
+            'C' => array($this->context['C2S']['Encryption'], 'getKeySize'),
+            'D' => array($this->context['S2C']['Encryption'], 'getKeySize'),
+            'E' => array($this->context['C2S']['MAC'], 'getSize'),
+            'F' => array($this->context['C2S']['MAC'], 'getSize'),
         );
         foreach (array('A', 'B', 'C', 'D', 'E', 'F') as $keyIndex) {
             $key    = $kexAlgo->hash($sharedSecret . $exchangeHash . $keyIndex . $sessionId);
@@ -281,87 +294,87 @@ class Client
                 $key .= $kexAlgo->hash($sharedSecret . $exchangeHash . $key);
             }
             $key = (string) substr($key, 0, $limit);
-            $this->_context['keys'][$keyIndex] = $key;
+            $this->context['keys'][$keyIndex] = $key;
         }
 
         // Encryption
-        $cls = $this->_context['C2S']['Encryption'];
-        $this->_decryptor = new $cls(
-            $this->_context['keys']['A'],
-            $this->_context['keys']['C']
+        $cls = $this->context['C2S']['Encryption'];
+        $this->decryptor = new $cls(
+            $this->context['keys']['A'],
+            $this->context['keys']['C']
         );
-        $cls = $this->_context['S2C']['Encryption'];
-        $this->_encryptor = new $cls(
-            $this->_context['keys']['B'],
-            $this->_context['keys']['D']
+        $cls = $this->context['S2C']['Encryption'];
+        $this->encryptor = new $cls(
+            $this->context['keys']['B'],
+            $this->context['keys']['D']
         );
 
         // MAC
-        $cls            = $this->_context['C2S']['MAC'];
-        $this->_inMAC   = new $cls($this->_context['keys']['E']);
-        $cls            = $this->_context['S2C']['MAC'];
-        $this->_outMAC  = new $cls($this->_context['keys']['F']);
+        $cls            = $this->context['C2S']['MAC'];
+        $this->inMAC   = new $cls($this->context['keys']['E']);
+        $cls            = $this->context['S2C']['MAC'];
+        $this->outMAC  = new $cls($this->context['keys']['F']);
 
         // Compression
-        $cls                    = $this->_context['C2S']['Compression'];
-        $this->_uncompressor    = new $cls(CompressionInterface::MODE_UNCOMPRESS);
-        $cls                    = $this->_context['S2C']['Compression'];
-        $this->_compressor      = new $cls(CompressionInterface::MODE_COMPRESS);
+        $cls                    = $this->context['C2S']['Compression'];
+        $this->uncompressor    = new $cls(CompressionInterface::MODE_UNCOMPRESS);
+        $cls                    = $this->context['S2C']['Compression'];
+        $this->compressor      = new $cls(CompressionInterface::MODE_COMPRESS);
 
-        return TRUE;
+        return true;
     }
 
     // SSH_MSG_IGNORE
-    public function _handle_2(Decoder $decoder)
+    public function handleCode2(Decoder $decoder)
     {
-        return TRUE;
+        return true;
     }
 
     // SSH_MSG_DEBUG
-    public function _handle_4(Decoder $decoder)
+    public function handleCode4(Decoder $decoder)
     {
         $message = \Clicky\Pssht\Messages\DEBUG::unserialize($decoder);
-        if ($message->mustAlwaysDisplay())
+        if ($message->mustAlwaysDisplay()) {
             echo escape($message->getMessage()) . PHP_EOL;
-        return TRUE;
+        }
+        return true;
     }
 
     // SSH_MSG_SERVICE_REQUEST
-    public function _handle_5(Decoder $decoder)
+    public function handleCode5(Decoder $decoder)
     {
         $message    = \Clicky\Pssht\Messages\SERVICE\REQUEST::unserialize($decoder);
         $algos      = Algorithms::factory();
         $service    = $message->getServiceName();
         $cls        = $algos->getClass('Services', $service);
-        if ($cls !== NULL) {
+        if ($cls !== null) {
             $response = new \Clicky\Pssht\Messages\SERVICE\ACCEPT($message->getServiceName());
-            $this->_authLayer = new $cls($this);
-        }
-        else {
+            $this->authLayer = new $cls($this);
+        } else {
             $response = new Disconnect(
                 Disconnect::SSH_DISCONNECT_SERVICE_NOT_AVAILABLE,
                 'No such service'
             );
         }
         $this->writeMessage($response);
-        return TRUE;
+        return true;
     }
 
     public function readMessage()
     {
-        if (!isset($this->_context['identity']['client'])) {
-            return $this->_handle_INIT($this->_decoder);
+        if (!isset($this->context['identity']['client'])) {
+            return $this->handleINIT($this->decoder);
         }
 
-        $blockSize  = max($this->_decryptor->getBlockSize(), 8);
-        $encPayload = $this->_decoder->getBuffer()->get($blockSize);
-        if ($encPayload === NULL || $encPayload === '') {
-            return FALSE;
+        $blockSize  = max($this->decryptor->getBlockSize(), 8);
+        $encPayload = $this->decoder->getBuffer()->get($blockSize);
+        if ($encPayload === null || $encPayload === '') {
+            return false;
         }
-        $unencrypted    = $this->_decryptor->decrypt($encPayload);
+        $unencrypted    = $this->decryptor->decrypt($encPayload);
         $buffer         = new Buffer($unencrypted);
         $decoder        = new Decoder($buffer);
-        $packetLength   = $decoder->decode_uint32();
+        $packetLength   = $decoder->decodeUint32();
 
         // Read the rest of the message.
         $toRead         =
@@ -373,77 +386,76 @@ class Client
             // Rest of the encrypted data.
             $packetLength;
 
-        if ($toRead < 0)
+        if ($toRead < 0) {
             throw new \RuntimeException();
+        }
 
         if ($toRead !== 0) {
-            $encPayload2 = $this->_decoder->getBuffer()->get($toRead);
-            if ($encPayload2 === NULL) {
-                $this->_decoder->getBuffer()->unget($encPayload);
-                return FALSE;
+            $encPayload2 = $this->decoder->getBuffer()->get($toRead);
+            if ($encPayload2 === null) {
+                $this->decoder->getBuffer()->unget($encPayload);
+                return false;
             }
-            $unencrypted2 = $this->_decryptor->decrypt($encPayload2);
+            $unencrypted2 = $this->decryptor->decrypt($encPayload2);
             $buffer->push($unencrypted2);
         }
 
-        $paddingLength  = ord($decoder->decode_bytes());
-        $payload        = $decoder->decode_bytes($packetLength - $paddingLength - 1);
-        $padding        = $decoder->decode_bytes($paddingLength);
+        $paddingLength  = ord($decoder->decodeBytes());
+        $payload        = $decoder->decodeBytes($packetLength - $paddingLength - 1);
+        $padding        = $decoder->decodeBytes($paddingLength);
 
         // If a MAC is in use.
-        $macSize    = $this->_inMAC->getSize();
+        $macSize    = $this->inMAC->getSize();
         $actualMAC  = '';
         if ($macSize > 0) {
-            $actualMAC = $this->_decoder->getBuffer()->get($macSize);
-            if ($actualMAC === NULL) {
-                $this->_decoder->getBuffer()->unget($encPayload2)->unget($encPayload);
-                return FALSE;
+            $actualMAC = $this->decoder->getBuffer()->get($macSize);
+            if ($actualMAC === null) {
+                $this->decoder->getBuffer()->unget($encPayload2)->unget($encPayload);
+                return false;
             }
 
-            $expectedMAC = $this->_inMAC->compute(
-                pack('N', $this->_inSeqNo) .
+            $expectedMAC = $this->inMAC->compute(
+                pack('N', $this->inSeqNo) .
                 ((string) substr($unencrypted . $unencrypted2, 0, $packetLength + 4))
             );
 
-            if ($expectedMAC !== $actualMAC)
+            if ($expectedMAC !== $actualMAC) {
                 throw new \RuntimeException();
+            }
         }
 
         if (!isset($packetLength, $paddingLength, $payload, $padding, $actualMAC)) {
-            $this->_decoder->getBuffer()->unget($actualMAC)->unget($encPayload2)->unget($encPayload);
+            $this->decoder->getBuffer()->unget($actualMAC)->unget($encPayload2)->unget($encPayload);
             echo "Something went wrong during decoding" . PHP_EOL;
-            return FALSE;
+            return false;
         }
 
-        $payload    = $this->_uncompressor->update($payload);
+        $payload    = $this->uncompressor->update($payload);
         $decoder    = new Decoder(new Buffer($payload));
-        $msgType    = ord($decoder->decode_bytes(1));
-        $func       = '_handle_' . $msgType;
-        $res        = TRUE;
+        $msgType    = ord($decoder->decodeBytes(1));
+        $func       = 'handleCode' . $msgType;
+        $res        = true;
 
         try {
             if (method_exists($this, $func)) {
                 $res = call_user_func(array($this, $func), $decoder);
-            }
-            else if ($this->_authLayer !== NULL) {
-                $res = $this->_authLayer->handleMessage(
+            } elseif ($this->authLayer !== null) {
+                $res = $this->authLayer->handleMessage(
                     $msgType,
                     $decoder,
-                    count($this->_decoder->getBuffer())
+                    count($this->decoder->getBuffer())
                 );
-            }
-            else
+            } else {
                 throw new \RuntimeException();
-        }
-        catch (RuntimeException $e) {
+            }
+        } catch (RuntimeException $e) {
             echo "No such handler: $func" . PHP_EOL;
-            $response = new \Clicky\Pssht\Messages\UNIMPLEMENTED($this->_inSeqNo);
+            $response = new \Clicky\Pssht\Messages\UNIMPLEMENTED($this->inSeqNo);
             $this->writeMessage($response);
         }
 
-        $this->_inSeqNo++;
-        $this->_inSeqNo &= 0xFFFFFFFF;
+        $this->inSeqNo++;
+        $this->inSeqNo &= 0xFFFFFFFF;
         return $res;
     }
 }
-

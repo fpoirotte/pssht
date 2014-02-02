@@ -11,24 +11,24 @@
 
 namespace Clicky\Pssht\KEX;
 
-use Clicky\Pssht\KEXInterface;
-
-class       DHGroup1SHA1
-implements  KEXInterface
+class DHGroup1SHA1 implements \Clicky\Pssht\KEXInterface
 {
-    static public function getName()
+    public static function getName()
     {
         return 'diffie-hellman-group1-sha1';
     }
 
-    static public function getGenerator()
+    public static function getGenerator()
     {
         return 2;
     }
 
-    static public function getPrime()
+    public static function getPrime()
     {
-        return str_replace("\r\n ", '', '
+        return str_replace(
+            "\r\n ",
+            '',
+            '
             FFFFFFFF FFFFFFFF C90FDAA2 2168C234 C4C6628B 80DC1CD1
             29024E08 8A67CC74 020BBEA6 3B139B22 514A0879 8E3404DD
             EF9519B3 CD3A431B 302B0A6D F25F1437 4FE1356D 6D51C245
@@ -40,7 +40,6 @@ implements  KEXInterface
 
     public function hash($data)
     {
-        return sha1($data, TRUE);
+        return sha1($data, true);
     }
 }
-

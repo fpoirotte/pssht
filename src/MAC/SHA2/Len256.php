@@ -11,19 +11,15 @@
 
 namespace Clicky\Pssht\MAC\SHA2;
 
-use Clicky\Pssht\MAC\Base;
-
-class   Len256
-extends Base
+class Len256 extends \Clicky\Pssht\MAC\Base
 {
-    static public function getName()
+    public static function getName()
     {
         return 'hmac-sha2-256';
     }
 
-    static public function getHash()
+    public static function getHash()
     {
         return 'sha256';
     }
 }
-

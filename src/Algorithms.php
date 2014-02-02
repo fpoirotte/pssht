@@ -13,22 +13,22 @@ namespace Clicky\Pssht;
 
 class Algorithms
 {
-    protected $_algos;
-    protected $_savedAlgos;
-    protected $_interfaces;
+    protected $algos;
+    protected $savedAlgos;
+    protected $interfaces;
 
     private function __construct()
     {
-        $this->_interfaces = array(
+        $this->interfaces = array(
             'MAC'           => '\\Clicky\\Pssht\\MACInterface',
             'Compression'   => '\\Clicky\\Pssht\\CompressionInterface',
             'PublicKey'     => '\\Clicky\\Pssht\\PublicKeyInterface',
             'KEX'           => '\\Clicky\\Pssht\\KEXInterface',
             'Encryption'    => '\\Clicky\\Pssht\\EncryptionInterface',
-            'Services'      => NULL,
+            'Services'      => null,
         );
 
-        $this->_algos = array(
+        $this->algos = array(
             'MAC'           => array(),
             'Compression'   => array(),
             'PublicKey'     => array(),
@@ -37,7 +37,7 @@ class Algorithms
             'Services'      => array(),
         );
 
-        foreach (array_keys($this->_algos) as $type) {
+        foreach (array_keys($this->algos) as $type) {
             $it = new \RecursiveIteratorIterator(
                 new \RecursiveDirectoryIterator(
                     __DIR__ . DIRECTORY_SEPARATOR . $type,
@@ -49,26 +49,31 @@ class Algorithms
             );
             $dirLen = strlen(__DIR__ . DIRECTORY_SEPARATOR . $type);
             foreach ($it as $entry) {
-                if (!$entry->isFile())
+                if (!$entry->isFile()) {
                     continue;
-                if (substr($entry->getBasename(), -4) !== '.php')
+                }
+
+                if (substr($entry->getBasename(), -4) !== '.php') {
                     continue;
+                }
 
                 $name   = (string) substr($entry->getPathname(), $dirLen, -4);
                 $name   = str_replace('/', '\\', $name);
-                $class  = $this->_getClass($type, $name);
-                if ($class === NULL)
+                $class  = $this->getValidClass($type, $name);
+                if ($class === null) {
                     continue;
+                }
 
-                $algo = $this->_getAlgo($class);
-                if ($algo === NULL)
+                $algo = $this->getValidAlgorithm($class);
+                if ($algo === null) {
                     continue;
+                }
 
-                $this->_algos[$type][$algo] = $class;
+                $this->algos[$type][$algo] = $class;
             }
-            uksort($this->_algos[$type], array('self', 'sortAlgorithms'));
+            uksort($this->algos[$type], array('self', 'sortAlgorithms'));
         }
-        $this->_savedAlgos = $this->_algos;
+        $this->savedAlgos = $this->algos;
     }
 
     public function __clone()
@@ -76,117 +81,134 @@ class Algorithms
         throw new \RuntimeException();
     }
 
-    static public function factory()
+    public static function factory()
     {
-        static $instance = NULL;
-        if ($instance === NULL) {
+        static $instance = null;
+        if ($instance === null) {
             $instance = new self();
         }
         return $instance;
     }
 
-    protected function _getClass($type, $name)
+    protected function getValidClass($type, $name)
     {
         $w = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_1234567890\\';
-        if (!is_string($name) || strspn($name, $w) !== strlen($name))
-            return NULL;
+        if (!is_string($name) || strspn($name, $w) !== strlen($name)) {
+            return null;
+        }
 
         // Non-existing classes.
         $class = "\\Clicky\\Pssht\\$type$name";
-        if (!class_exists($class))
-            return NULL;
+        if (!class_exists($class)) {
+            return null;
+        }
 
         // Abstract classes.
         $reflector = new \ReflectionClass($class);
-        if ($reflector->isAbstract())
-            return NULL;
+        if ($reflector->isAbstract()) {
+            return null;
+        }
 
         // Classes that implement AvailabilityInterface
         // where the algorithm is not currently available.
         $iface = '\\Clicky\\Pssht\\AvailabilityInterface';
-        if ($reflector->implementsInterface($iface) && !$class::isAvailable())
-            return NULL;
+        if ($reflector->implementsInterface($iface) && !$class::isAvailable()) {
+            return null;
+        }
 
         // Classes that do not implement the proper interface.
-        $iface = $this->_interfaces[$type];
-        if ($iface !== NULL && !$reflector->implementsInterface($iface))
-            return NULL;
+        $iface = $this->interfaces[$type];
+        if ($iface !== null && !$reflector->implementsInterface($iface)) {
+            return null;
+        }
 
         return $class;
     }
 
-    protected function _getAlgo($class)
+    protected function getValidAlgorithm($class)
     {
         $w =    'abcdefghijklmnopqrstuvwxyz' .
                 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' .
                 '1234567890-@.';
         $name = $class::getName();
-        if (!is_string($name) || strspn($name, $w) !== strlen($name))
-            return NULL;
+        if (!is_string($name) || strspn($name, $w) !== strlen($name)) {
+            return null;
+        }
         return $name;
     }
 
     public function register($type, $class)
     {
-        if (is_object($class))
+        if (is_object($class)) {
             $class = get_class($class);
-        if (!is_string($class) || !class_exists($class))
+        }
+        if (!is_string($class) || !class_exists($class)) {
             throw new \InvalidArgumentException();
-        if (!is_string($type) || !isset($this->_algos[$type]))
+        }
+        if (!is_string($type) || !isset($this->algos[$type])) {
             throw new \InvalidArgumentException();
-        $name = $this->_getAlgo($class);
-        if ($name === NULL)
+        }
+        $name = $this->getValidAlgorithm($class);
+        if ($name === null) {
             throw new \InvalidArgumentException();
+        }
 
-        $this->_algos[$type][$name] = $class;
-        uksort($this->_algos[$type], array('self', 'sortAlgorithms'));
+        $this->algos[$type][$name] = $class;
+        uksort($this->algos[$type], array('self', 'sortAlgorithms'));
         return $this;
     }
 
     public function unregister($type, $name)
     {
-        if (!is_string($type) || !isset($this->_algos[$type]))
+        if (!is_string($type) || !isset($this->algos[$type])) {
             throw new \InvalidArgumentException();
-        if (!is_string($name))
+        }
+        if (!is_string($name)) {
             throw new \InvalidArgumentException();
-        unset($this->_algos[$type][$name]);
+        }
+        unset($this->algos[$type][$name]);
         return $this;
     }
 
     public function restore($type, $name)
     {
-        if (!is_string($type) || !isset($this->_algos[$type]))
+        if (!is_string($type) || !isset($this->algos[$type])) {
             throw new \InvalidArgumentException();
-        if (isset($this->_savedAlgos[$type][$name])) {
-            $this->_algos[$type][$name] = $this->_savedAlgos[$type][$name];
+        }
+        if (isset($this->savedAlgos[$type][$name])) {
+            $this->algos[$type][$name] = $this->savedAlgos[$type][$name];
         }
         return $this;
     }
 
     public function getAlgorithms($type)
     {
-        if (!is_string($type) || !isset($this->_algos[$type]))
+        if (!is_string($type) || !isset($this->algos[$type])) {
             throw new \InvalidArgumentException();
-        return array_keys($this->_algos[$type]);
+        }
+        return array_keys($this->algos[$type]);
     }
 
     public function getClasses($type)
     {
-        if (!is_string($type) || !isset($this->_algos[$type]))
+        if (!is_string($type) || !isset($this->algos[$type])) {
             throw new \InvalidArgumentException();
-        return $this->_algos[$type];
+        }
+        return $this->algos[$type];
     }
 
     public function getClass($type, $name)
     {
-        if (!is_string($type) || !isset($this->_algos[$type]))
+        if (!is_string($type) || !isset($this->algos[$type])) {
             throw new \InvalidArgumentException();
-        if (!isset($this->_algos[$type][$name]))
-            return NULL;
-        return $this->_algos[$type][$name];
+        }
+        if (!isset($this->algos[$type][$name])) {
+            return null;
+        }
+        return $this->algos[$type][$name];
     }
 
-    static public function sortAlgorithms($a, $b)
+    public static function sortAlgorithms($a, $b)
     {
         static $preferences = array(
             // KEX
@@ -256,13 +278,14 @@ class Algorithms
             'zlib',
         );
 
-        $iA = array_search($a, $preferences, TRUE);
-        $iB = array_search($b, $preferences, TRUE);
-        if ($iA === FALSE)
-            return ($iB === FALSE ? 0 : 1);
-        if ($iB === FALSE)
+        $iA = array_search($a, $preferences, true);
+        $iB = array_search($b, $preferences, true);
+        if ($iA === false) {
+            return ($iB === false ? 0 : 1);
+        }
+        if ($iB === false) {
             return -1;
+        }
         return ($iA - $iB);
     }
 }
-

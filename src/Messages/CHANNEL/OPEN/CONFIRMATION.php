@@ -15,43 +15,41 @@ use Clicky\Pssht\MessageInterface;
 use Clicky\Pssht\Wire\Encoder;
 use Clicky\Pssht\Wire\Decoder;
 
-class       CONFIRMATION
-implements  MessageInterface
+class CONFIRMATION implements MessageInterface
 {
-    protected $_recipientChannel;
-    protected $_senderChannel;
-    protected $_initialWindowSize;
-    protected $_maximumPacketSize;
+    protected $recipientChannel;
+    protected $senderChannel;
+    protected $initialWindowSize;
+    protected $maximumPacketSize;
 
     public function __construct($recipientChannel, $senderChannel, $initialWindowSize, $maximumPacketSize)
     {
-        $this->_recipientChannel    = $recipientChannel;
-        $this->_senderChannel       = $senderChannel;
-        $this->_initialWindowSize   = $initialWindowSize;
-        $this->_maximumPacketSize   = $maximumPacketSize;
+        $this->recipientChannel     = $recipientChannel;
+        $this->senderChannel        = $senderChannel;
+        $this->initialWindowSize    = $initialWindowSize;
+        $this->maximumPacketSize    = $maximumPacketSize;
     }
 
-    static public function getMessageId()
+    public static function getMessageId()
     {
         return 91;
     }
 
     public function serialize(Encoder $encoder)
     {
-        $encoder->encode_uint32($this->_recipientChannel);
-        $encoder->encode_uint32($this->_senderChannel);
-        $encoder->encode_uint32($this->_initialWindowSize);
-        $encoder->encode_uint32($this->_maximumPacketSize);
+        $encoder->encodeUint32($this->recipientChannel);
+        $encoder->encodeUint32($this->senderChannel);
+        $encoder->encodeUint32($this->initialWindowSize);
+        $encoder->encodeUint32($this->maximumPacketSize);
     }
 
-    static public function unserialize(Decoder $decoder)
+    public static function unserialize(Decoder $decoder)
     {
-        return new self(
-            $decoder->decode_uint32(),
-            $decoder->decode_uint32(),
-            $decoder->decode_uint32(),
-            $decoder->decode_uint32()
+        return new static(
+            $decoder->decodeUint32(),
+            $decoder->decodeUint32(),
+            $decoder->decodeUint32(),
+            $decoder->decodeUint32()
         );
     }
 }
-

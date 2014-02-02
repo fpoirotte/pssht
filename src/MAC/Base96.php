@@ -15,20 +15,20 @@ use Clicky\Pssht\MACInterface;
 use Clicky\Pssht\AvailabilityInterface;
 use Clicky\Pssht\MAC\Base96Interface;
 
-abstract class  Base96
-implements      MACInterface,
-                AvailabilityInterface,
-                Base96Interface
+abstract class Base96 implements
+    MACInterface,
+    AvailabilityInterface,
+    Base96Interface
 {
-    protected $_subhash;
+    protected $subhash;
 
     final public function __construct($key)
     {
         $cls = static::getBaseClass();
-        $this->_subhash = new $cls($key);
+        $this->subhash = new $cls($key);
     }
 
-    final static public function getName()
+    final public static function getName()
     {
         $cls = static::getBaseClass();
         return $cls::getName() . '-96';
@@ -37,23 +37,23 @@ implements      MACInterface,
     final public function compute($data)
     {
         return substr(
-            $this->_subhash->compute($data),
+            $this->subhash->compute($data),
             0,
             $this->getSize() >> 3
         );
     }
 
-    final static public function getSize()
+    final public static function getSize()
     {
         return 96 >> 3;
     }
 
-    final static public function isAvailable()
+    final public static function isAvailable()
     {
         $cls = static::getBaseClass();
-        if ($cls instanceof AvailabilityInterface)
+        if ($cls instanceof AvailabilityInterface) {
             return $cls::isAvailable();
-        return TRUE;
+        }
+        return true;
     }
 }
-

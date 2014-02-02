@@ -9,38 +9,37 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\Messages\KEXDH;
+namespace Clicky\Pssht\Messages\SERVICE;
 
 use Clicky\Pssht\MessageInterface;
 use Clicky\Pssht\Wire\Encoder;
 use Clicky\Pssht\Wire\Decoder;
 
-class INIT implements MessageInterface
+abstract class Base implements MessageInterface
 {
-    protected $e;
+    protected $service;
 
-    public function __construct($e)
+    public function __construct($service)
     {
-        $this->e = $e;
-    }
+        if (!is_string($service)) {
+            throw new \InvalidArgumentException();
+        }
 
-    public static function getMessageId()
-    {
-        return 30;
+        $this->service = $service;
     }
 
     public function serialize(Encoder $encoder)
     {
-        $encoder->encodeMpint($this->e);
+        $encoder->encodeString($this->service);
     }
 
     public static function unserialize(Decoder $decoder)
     {
-        return new static($decoder->decodeMpint());
+        return new static($decoder->decodeString());
     }
 
-    public function getE()
+    public function getServiceName()
     {
-        return $this->e;
+        return $this->service;
     }
 }

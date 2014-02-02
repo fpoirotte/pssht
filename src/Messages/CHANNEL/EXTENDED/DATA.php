@@ -15,56 +15,54 @@ use Clicky\Pssht\MessageInterface;
 use Clicky\Pssht\Wire\Encoder;
 use Clicky\Pssht\Wire\Decoder;
 
-class       DATA
-implements  MessageInterface
+class DATA implements MessageInterface
 {
     const SSH_EXTENDED_DATA_STDERR = 1;
 
-    protected $_channel;
-    protected $_code;
-    protected $_data;
+    protected $channel;
+    protected $code;
+    protected $data;
 
     public function __construct($channel, $code, $data)
     {
-        $this->_channel = $channel;
-        $this->_code    = $code;
-        $this->_data    = $data;
+        $this->channel  = $channel;
+        $this->code     = $code;
+        $this->data     = $data;
     }
 
-    static public function getMessageId()
+    public static function getMessageId()
     {
         return 95;
     }
 
     public function serialize(Encoder $encoder)
     {
-        $encoder->encode_uint32($this->_channel);
-        $encoder->encode_uint32($this->_code);
-        $encoder->encode_string($this->_data);
+        $encoder->encodeUint32($this->channel);
+        $encoder->encodeUint32($this->code);
+        $encoder->encodeString($this->data);
     }
 
-    static public function unserialize(Decoder $decoder)
+    public static function unserialize(Decoder $decoder)
     {
-        return new self(
-            $decoder->decode_uint32(),
-            $decoder->decode_uint32(),
-            $decoder->decode_string()
+        return new static(
+            $decoder->decodeUint32(),
+            $decoder->decodeUint32(),
+            $decoder->decodeString()
         );
     }
 
     public function getChannel()
     {
-        return $this->_channel;
+        return $this->channel;
     }
 
     public function getCode()
     {
-        return $this->_code;
+        return $this->code;
     }
 
     public function getData()
     {
-        return $this->_data;
+        return $this->data;
     }
 }
-

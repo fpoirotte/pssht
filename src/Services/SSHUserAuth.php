@@ -14,35 +14,35 @@ namespace Clicky\Pssht\Services;
 use Clicky\Pssht\Client;
 use Clicky\Pssht\Wire\Decoder;
 
-class   SSHUserAuth
+class SSHUserAuth
 {
-    protected $_transport;
-    protected $_connection;
+    protected $transport;
+    protected $connection;
 
     public function __construct(Client $transport)
     {
-        $this->_transport   = $transport;
-        $this->_connection  = NULL;
+        $this->transport    = $transport;
+        $this->connection   = null;
     }
 
-    static public function getName()
+    public static function getName()
     {
         return 'ssh-userauth';
     }
 
     public function getTransport()
     {
-        return $this->_transport;
+        return $this->transport;
     }
 
     public function getConnection()
     {
-        return $this->_connection;
+        return $this->connection;
     }
 
     public function writeMessage(\Clicky\Pssht\MessageInterface $message)
     {
-        return $this->_transport->writeMessage($message);
+        return $this->transport->writeMessage($message);
     }
 
     public function handleMessage($msgType, Decoder $decoder, $remaining)
@@ -50,24 +50,23 @@ class   SSHUserAuth
         switch ($msgType) {
             case \Clicky\Pssht\Messages\USERAUTH\REQUEST::getMessageId():
                 $message = \Clicky\Pssht\Messages\USERAUTH\REQUEST::unserialize($decoder);
-                $response = new \Clicky\Pssht\Messages\USERAUTH\FAILURE(array(), FALSE);
+                $response = new \Clicky\Pssht\Messages\USERAUTH\FAILURE(array(), false);
                 if ($message->getUserName() === 'clicky' &&
                     $message->getServiceName() === 'ssh-connection' &&
                     $message->getMethodName() === 'none' &&
-                    $this->_connection === NULL) {
+                    $this->connection === null) {
                         $response = new \Clicky\Pssht\Messages\USERAUTH\SUCCESS();
-                        $this->_connection = new \Clicky\Pssht\Connection($this, $message);
+                        $this->connection = new \Clicky\Pssht\Connection($this, $message);
                 }
-                $this->_transport->writeMessage($response);
+                $this->transport->writeMessage($response);
                 break;
 
             default:
-                if ($this->_connection !== NULL) {
-                    return $this->_connection->handleMessage($msgType, $decoder, $remaining);
+                if ($this->connection !== null) {
+                    return $this->connection->handleMessage($msgType, $decoder, $remaining);
                 }
                 throw new \RuntimeException();
         }
-        return TRUE;
+        return true;
     }
 }
-

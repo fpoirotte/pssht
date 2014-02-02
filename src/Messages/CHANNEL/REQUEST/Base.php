@@ -15,64 +15,62 @@ use Clicky\Pssht\MessageInterface;
 use Clicky\Pssht\Wire\Encoder;
 use Clicky\Pssht\Wire\Decoder;
 
-abstract class  Base
-implements      MessageInterface
+abstract class Base implements MessageInterface
 {
-    protected $_channel;
-    protected $_type;
-    protected $_wantReply;
+    protected $channel;
+    protected $type;
+    protected $wantReply;
 
     public function __construct($senderChannel, $type, $wantReply)
     {
-        $this->_channel     = $senderChannel;
-        $this->_type        = $type;
-        $this->_wantReply   = $wantReply;
+        $this->channel      = $senderChannel;
+        $this->type         = $type;
+        $this->wantReply    = $wantReply;
     }
 
-    static public function getMessageId()
+    public static function getMessageId()
     {
         return 98;
     }
 
     public function serialize(Encoder $encoder)
     {
-        $encoder->encode_uint32($this->_channel);
-        $encoder->encode_string($this->_type);
-        $encoder->encode_boolean($this->_wantReply);
+        $encoder->encodeUint32($this->channel);
+        $encoder->encodeString($this->type);
+        $encoder->encodeBoolean($this->wantReply);
     }
 
-    static protected function _unserialize(Decoder $decoder)
+    protected static function unserializeSub(Decoder $decoder)
     {
         throw new \RuntimeException();
     }
 
-    final static public function unserialize(Decoder $decoder)
+    final public static function unserialize(Decoder $decoder)
     {
         $reflector  = new \ReflectionClass(get_called_class());
         $args       = array_merge(
             array(
-                $decoder->decode_uint32(),
-                $decoder->decode_string(),
-                $decoder->decode_boolean()
+                $decoder->decodeUint32(),
+                $decoder->decodeString(),
+                $decoder->decodeBoolean()
             ),
-            static::_unserialize($decoder)
+            static::unserializeSub($decoder)
         );
         return $reflector->newInstanceArgs($args);
     }
 
     public function getType()
     {
-        return $this->_type;
+        return $this->type;
     }
 
     public function getChannel()
     {
-        return $this->_channel;
+        return $this->channel;
     }
 
     public function wantsReply()
     {
-        return $this->_wantReply;
+        return $this->wantReply;
     }
 }
-

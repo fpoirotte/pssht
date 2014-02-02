@@ -15,61 +15,62 @@ use Clicky\Pssht\Messages\Base;
 use Clicky\Pssht\Wire\Encoder;
 use Clicky\Pssht\Wire\Decoder;
 
-class   DEBUG
-extends Base
+class DEBUG extends Base
 {
-    protected $_alwaysDisplay;
-    protected $_message;
-    protected $_language;
+    protected $alwaysDisplay;
+    protected $message;
+    protected $language;
 
     public function __construct($alwaysDisplay, $message, $language)
     {
-        if (!is_bool($alwaysDisplay))
+        if (!is_bool($alwaysDisplay)) {
             throw new \InvalidArgumentException();
-        if (!is_string($message))
+        }
+        if (!is_string($message)) {
             throw new \InvalidArgumentException();
-        if (!is_string($language))
+        }
+        if (!is_string($language)) {
             throw new \InvalidArgumentException();
+        }
 
-        $this->_alwaysDisplay   = $alwaysDisplay;
-        $this->_message         = $message;
-        $this->_language        = $language;
+        $this->alwaysDisplay    = $alwaysDisplay;
+        $this->message          = $message;
+        $this->language         = $language;
     }
 
-    static public function getMessageId()
+    public static function getMessageId()
     {
         return 4;
     }
 
     public function serialize(Encoder $encoder)
     {
-        $encoder->encode_boolean($this->_alwaysDisplay);
-        $encoder->encode_string($this->_message);
-        $encoder->encode_string($this->_language);
+        $encoder->encodeBoolean($this->alwaysDisplay);
+        $encoder->encodeString($this->message);
+        $encoder->encodeString($this->language);
     }
 
-    static public function unserialize(Decoder $decoder)
+    public static function unserialize(Decoder $decoder)
     {
         return new self(
-            $decoder->decode_boolean(),
-            $decoder->decode_string(),
-            $decoder->decode_string()
+            $decoder->decodeBoolean(),
+            $decoder->decodeString(),
+            $decoder->decodeString()
         );
     }
 
     public function mustAlwaysDisplay()
     {
-        return $this->_alwaysDisplay;
+        return $this->alwaysDisplay;
     }
 
     public function getMessage()
     {
-        return $this->_message;
+        return $this->message;
     }
 
     public function getLanguage()
     {
-        return $this->_language;
+        return $this->language;
     }
 }
-

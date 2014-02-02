@@ -15,12 +15,10 @@ use Clicky\Pssht\Messages\Base;
 use Clicky\Pssht\Wire\Encoder;
 use Clicky\Pssht\Wire\Decoder;
 
-class   NEWKEYS
-extends Base
+class NEWKEYS extends Base
 {
-    static public function getMessageId()
+    public static function getMessageId()
     {
         return 21;
     }
 }
-

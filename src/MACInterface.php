@@ -15,10 +15,9 @@ interface MACInterface
 {
     public function __construct($key);
 
-    static public function getName();
+    public static function getName();
 
     public function compute($data);
 
-    static public function getSize();
+    public static function getSize();
 }
-

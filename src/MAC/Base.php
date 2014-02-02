@@ -15,38 +15,38 @@ use Clicky\Pssht\MACInterface;
 use Clicky\Pssht\AvailabilityInterface;
 use Clicky\Pssht\MAC\BaseInterface;
 
-abstract class  Base
-implements      MACInterface,
-                AvailabilityInterface,
-                BaseInterface
+abstract class Base implements
+    MACInterface,
+    AvailabilityInterface,
+    BaseInterface
 {
-    protected $_key;
+    protected $key;
 
     final public function __construct($key)
     {
-        $this->_key = $key;
+        $this->key = $key;
     }
 
     final public function compute($data)
     {
         $cls = get_called_class();
-        return hash_hmac($cls::getHash(), $data, $this->_key, TRUE);
+        return hash_hmac($cls::getHash(), $data, $this->key, true);
     }
 
-    final static public function getSize()
+    final public static function getSize()
     {
         $cls = get_called_class();
-        return strlen(hash($cls::getHash(), '', TRUE));
+        return strlen(hash($cls::getHash(), '', true));
     }
 
-    final static public function isAvailable()
+    final public static function isAvailable()
     {
         if (!function_exists('hash_algos') ||
             !function_exists('hash') ||
-            !function_exists('hash_hmac'))
-            return FALSE;
+            !function_exists('hash_hmac')) {
+            return false;
+        }
         $cls = get_called_class();
-        return in_array($cls::getHash(), hash_algos(), TRUE);
+        return in_array($cls::getHash(), hash_algos(), true);
     }
 }
-

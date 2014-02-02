@@ -13,14 +13,13 @@ namespace Clicky\Pssht\MAC;
 
 use Clicky\Pssht\MACInterface;
 
-class       None
-implements  MACInterface
+class None implements MACInterface
 {
     public function __construct($key)
     {
     }
 
-    static public function getName()
+    public static function getName()
     {
         return 'none';
     }
@@ -30,9 +29,8 @@ implements  MACInterface
         return '';
     }
 
-    static public function getSize()
+    public static function getSize()
     {
         return 0;
     }
 }
-

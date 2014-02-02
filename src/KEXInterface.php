@@ -13,12 +13,11 @@ namespace Clicky\Pssht;
 
 interface KEXInterface
 {
-    static public function getName();
+    public static function getName();
 
-    static public function getGenerator();
+    public static function getGenerator();
 
-    static public function getPrime();
+    public static function getPrime();
 
     public function hash($data);
 }
-

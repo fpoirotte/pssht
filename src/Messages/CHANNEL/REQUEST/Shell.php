@@ -14,12 +14,10 @@ namespace Clicky\Pssht\Messages\CHANNEL\REQUEST;
 use Clicky\Pssht\Wire\Decoder;
 use Clicky\Pssht\Messages\CHANNEL\REQUEST\Base;
 
-class   Shell
-extends Base
+class Shell extends Base
 {
-    static protected function _unserialize(Decoder $decoder)
+    protected static function unserializeSub(Decoder $decoder)
     {
         return array();
     }
 }
-

@@ -15,4 +15,3 @@ interface RandomInterface
 {
     public function getBytes($count);
 }
-

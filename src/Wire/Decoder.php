@@ -11,81 +11,89 @@
 
 namespace Clicky\Pssht\Wire;
 
-use Clicky\Pssht\Wire\Exception;
-use Clicky\Pssht\Buffer;
-
 class Decoder
 {
-    protected $_buffer;
+    protected $buffer;
 
-    public function __construct(Buffer $buffer = NULL)
+    public function __construct(\Clicky\Pssht\Buffer $buffer = null)
     {
-        if ($buffer === NULL)
-            $buffer = new Buffer();
-        $this->_buffer = $buffer;
+        if ($buffer === null) {
+            $buffer = new \Clicky\Pssht\Buffer();
+        }
+
+        $this->buffer = $buffer;
     }
 
     public function getBuffer()
     {
-        return $this->_buffer;
+        return $this->buffer;
     }
 
-    public function decode_bytes($count = 1)
+    public function decodeBytes($count = 1)
     {
-        if (!is_int($count) || $count < 0)
-            throw new Exception();
-        if (!$count)
+        if (!is_int($count) || $count < 0) {
+            throw new \InvalidArgumentException();
+        }
+
+        if (!$count) {
             return '';
+        }
 
-        return $this->_buffer->get($count);
+        return $this->buffer->get($count);
     }
 
-    public function decode_boolean()
+    public function decodeBoolean()
     {
-        $value = $this->decode_bytes();
-        if ($value === NULL)
-            return NULL;
+        $value = $this->decodeBytes();
+        if ($value === null) {
+            return null;
+        }
         return ($value !== "\0");
     }
 
-    public function decode_uint32()
+    public function decodeUint32()
     {
-        $value = $this->decode_bytes(4);
-        if ($value === NULL)
-            return NULL;
+        $value = $this->decodeBytes(4);
+        if ($value === null) {
+            return null;
+        }
         $res = unpack('N', $value);
         return array_pop($res);
     }
 
-    public function decode_uint64()
+    public function decodeUint64()
     {
-        $value = $this->decode_bytes(8);
-        if ($value === NULL)
-            return NULL;
-        return gmp_init($value);
+        $value = $this->decodeBytes(8);
+        if ($value === null) {
+            return null;
+        }
+        return gmp_init(bin2hex($value), 16);
     }
 
-    public function decode_string()
+    public function decodeString()
     {
-        $len = $this->decode_uint32();
-        if ($len === NULL)
-            return NULL;
-        $value = $this->decode_bytes($len);
-        if ($value === NULL) {
-            $this->_buffer->unget(pack('N', $len));
-            return NULL;
+        $len = $this->decodeUint32();
+        if ($len === null) {
+            return null;
+        }
+        $value = $this->decodeBytes($len);
+        if ($value === null) {
+            $this->buffer->unget(pack('N', $len));
+            return null;
         }
         return $value;
     }
 
-    public function decode_mpint()
+    public function decodeMpint()
     {
-        $s = $this->decode_string();
-        if ($s === NULL)
-            return NULL;
+        $s = $this->decodeString();
+        if ($s === null) {
+            return null;
+        }
 
-        if ($s === '')
+        if ($s === '') {
             return gmp_init(0);
+        }
 
         $n = gmp_init(bin2hex($s), 16);
 
@@ -98,32 +106,34 @@ class Decoder
         return $n;
     }
 
-    public function decode_name_list($validationCallback = NULL)
+    public function decodeNameList($validationCallback = null)
     {
-        $s = $this->decode_string();
-        if ($s === NULL)
-            return NULL;
+        $s = $this->decodeString();
+        if ($s === null) {
+            return null;
+        }
 
         // Empty list.
-        if ($s === '')
+        if ($s === '') {
             $l = array();
-
-        else {
+        } else {
             // All the names in the list MUST be in US-ASCII.
-            if (addcslashes($s, "\x80..\xFF") !== $s)
-                throw new Exception();
+            if (addcslashes($s, "\x80..\xFF") !== $s) {
+                throw new \InvalidArgumentException();
+            }
 
             // The names in the list MUST NOT be empty.
             if ($s[0] === ',' || substr($s, -1) === ',' ||
-                strpos($s, ',,') !== FALSE)
-                throw new Exception();
+                strpos($s, ',,') !== false) {
+                throw new \InvalidArgumentException();
+            }
 
             $l = explode(',', $s);
         }
 
-        if ($validationCallback !== NULL)
+        if ($validationCallback !== null) {
             call_user_func($validationCallback, $l);
+        }
         return $l;
     }
 }
-

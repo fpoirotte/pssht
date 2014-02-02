@@ -11,27 +11,29 @@
 
 namespace Clicky\Pssht\Random;
 
-class       Fixed
-implements  \Clicky\Pssht\RandomInterface
+class Fixed implements \Clicky\Pssht\RandomInterface
 {
-    protected $_data;
+    protected $data;
 
     public function __construct($data)
     {
-        if (!is_string($data) || strlen($data) === 0)
+        if (!is_string($data) || strlen($data) === 0) {
             throw new \InvalidArgumentException();
-        $this->_data = $data;
+        }
+
+        $this->data = $data;
     }
 
     public function getBytes($count)
     {
-        if (!is_int($count) || $count <= 0)
+        if (!is_int($count) || $count <= 0) {
             throw new \InvalidArgumentException();
+        }
+
         return substr(
-            str_repeat($this->_data, (int) ($count / strlen($this->_data) + 1)),
+            str_repeat($this->data, (int) ($count / strlen($this->data) + 1)),
             0,
             $count
         );
     }
 }
-

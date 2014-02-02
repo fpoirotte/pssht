@@ -14,40 +14,40 @@ namespace Clicky\Pssht\PublicKey\SSH;
 use Clicky\Pssht\PublicKeyInterface;
 use Clicky\Pssht\Wire\Encoder;
 
-class       DSS
-implements  PublicKeyInterface
+class DSS implements PublicKeyInterface
 {
     const DER_HEADER = "\x30\x20\x30\x0c\x06\x08\x2a\x86\x48\x86\xf7\x0d\x02\x05\x05\x00\x04\x10";
 
-    protected $_key;
+    protected $key;
 
     public function __construct($file)
     {
-        $this->_key = openssl_pkey_get_private($file);
-        $details    = openssl_pkey_get_details($this->_key);
-        if ($details['type'] !== OPENSSL_KEYTYPE_DSA)
+        $this->key  = openssl_pkey_get_private($file);
+        $details    = openssl_pkey_get_details($this->key);
+        if ($details['type'] !== OPENSSL_KEYTYPE_DSA) {
             throw new \InvalidArgumentException();
+        }
     }
 
-    static public function getName()
+    public static function getName()
     {
         return 'ssh-dss';
     }
 
     public function serialize(Encoder $encoder)
     {
-        $details = openssl_pkey_get_details($this->_key);
-        $encoder->encode_string(self::getName());
-        $encoder->encode_mpint(gmp_init(bin2hex($details['dsa']['p']), 16));
-        $encoder->encode_mpint(gmp_init(bin2hex($details['dsa']['q']), 16));
-        $encoder->encode_mpint(gmp_init(bin2hex($details['dsa']['g']), 16));
-        $encoder->encode_mpint(gmp_init(bin2hex($details['dsa']['pub_key']), 16));
+        $details = openssl_pkey_get_details($this->key);
+        $encoder->encodeString(self::getName());
+        $encoder->encodeMpint(gmp_init(bin2hex($details['dsa']['p']), 16));
+        $encoder->encodeMpint(gmp_init(bin2hex($details['dsa']['q']), 16));
+        $encoder->encodeMpint(gmp_init(bin2hex($details['dsa']['g']), 16));
+        $encoder->encodeMpint(gmp_init(bin2hex($details['dsa']['pub_key']), 16));
     }
 
-    public function sign($message, $raw_output = FALSE)
+    public function sign($message, $raw_output = false)
     {
-        $details = openssl_pkey_get_details($this->_key);
-        $H = gmp_init(sha1($message, FALSE), 16);
+        $details = openssl_pkey_get_details($this->key);
+        $H = gmp_init(sha1($message, false), 16);
         $p = gmp_init(bin2hex($details['dsa']['p']), 16);
         $q = gmp_init(bin2hex($details['dsa']['q']), 16);
         $g = gmp_init(bin2hex($details['dsa']['g']), 16);
@@ -58,18 +58,20 @@ implements  PublicKeyInterface
                     $k = openssl_random_pseudo_bytes(20);
 
                     // If $k = 0, we generate a new random number.
-                    if (ltrim($k, "\0") === '')
+                    if (ltrim($k, "\0") === '') {
                          continue;
+                    }
 
-                   // We reduce entropy, but since 2^159 < $q < 2^160,
-                   // and we must have 0 < $k < $q, this is garanteed
-                   // to work.
-                   if (ord($k[0]) & 0x80)
-                       $k[0] = chr(ord($k[0]) & 0x7F);
+                    // We reduce entropy, but since 2^159 < $q < 2^160,
+                    // and we must have 0 < $k < $q, this is garanteed
+                    // to work.
+                    if (ord($k[0]) & 0x80) {
+                        $k[0] = chr(ord($k[0]) & 0x7F);
+                    }
 
                     $k      = gmp_init(bin2hex($k), 16);
                     $k_1    = gmp_invert($k, $q);
-                } while ($k_1 === FALSE);
+                } while ($k_1 === false);
 
                 $r = gmp_mod(gmp_powm($g, $k, $p), $q);
                 $s = gmp_mod(gmp_mul($k_1, gmp_add($H, gmp_mul($x, $r))), $q);
@@ -77,17 +79,17 @@ implements  PublicKeyInterface
 
             $r = str_pad(gmp_strval($r, 16), 20, '0', STR_PAD_LEFT);
             $s = str_pad(gmp_strval($s, 16), 20, '0', STR_PAD_LEFT);
-        } while ($this->check($message, pack('H*H*', $r, $s)) === FALSE);
+        } while ($this->check($message, pack('H*H*', $r, $s)) === false);
 
         return $raw_output ? pack('H*H*', $r, $s) : ($r . $s);
 
 #        $res = openssl_sign(
 #            $message,
 #            $signature,
-#            $this->_key,
+#            $this->key,
 #            OPENSSL_ALGO_DSS1
 #        );
-#        if ($res === FALSE)
+#        if ($res === false)
 #            throw new \RuntimeException();
 #        $signature = substr($signature, 0, 40);
 #        return ($raw_output ? $signature : bin2hex($signature));
@@ -97,11 +99,12 @@ implements  PublicKeyInterface
     {
         // The signature is the concatenation of $r & $s,
         // each being a 160 bits integer, hence this check.
-        if (strlen($signature) != 2 * 20)
+        if (strlen($signature) != 2 * 20) {
             throw new \InvalidArgumentException();
+        }
 
-        $details = openssl_pkey_get_details($this->_key);
-        $H  = gmp_init(sha1($message, FALSE), 16);
+        $details = openssl_pkey_get_details($this->key);
+        $H  = gmp_init(sha1($message, false), 16);
         $p  = gmp_init(bin2hex($details['dsa']['p']), 16);
         $q  = gmp_init(bin2hex($details['dsa']['q']), 16);
         $g  = gmp_init(bin2hex($details['dsa']['g']), 16);
@@ -116,4 +119,3 @@ implements  PublicKeyInterface
         return (gmp_cmp($v, $rp) === 0);
     }
 }
-

@@ -11,8 +11,7 @@
 
 namespace Clicky\Pssht\Messages;
 
-abstract class  Base
-implements      \Clicky\Pssht\MessageInterface
+abstract class Base implements \Clicky\Pssht\MessageInterface
 {
     final public function __construct()
     {
@@ -22,9 +21,8 @@ implements      \Clicky\Pssht\MessageInterface
     {
     }
 
-    final static public function unserialize(\Clicky\Pssht\Wire\Decoder $encoder)
+    final public static function unserialize(\Clicky\Pssht\Wire\Decoder $encoder)
     {
         return new static();
     }
 }
-

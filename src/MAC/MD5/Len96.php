@@ -11,14 +11,10 @@
 
 namespace Clicky\Pssht\MAC\MD5;
 
-use Clicky\Pssht\MAC\Base96;
-
-class       Len96
-extends     Base96
+class Len96 extends \Clicky\Pssht\MAC\Base96
 {
-    static public function getBaseClass()
+    public static function getBaseClass()
     {
         return '\\Clicky\\Pssht\\MAC\\MD5';
     }
 }
-

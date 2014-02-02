@@ -18,8 +18,7 @@ interface CompressionInterface
 
     public function __construct($mode);
 
-    static public function getName();
+    public static function getName();
 
     public function update($data);
 }
-

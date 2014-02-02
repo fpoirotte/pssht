@@ -11,8 +11,7 @@
 
 namespace Clicky\Pssht\Random;
 
-class       OpenSSL
-implements  \Clicky\Pssht\RandomInterface
+class OpenSSL implements \Clicky\Pssht\RandomInterface
 {
     public function __construct()
     {
@@ -20,13 +19,16 @@ implements  \Clicky\Pssht\RandomInterface
 
     public function getBytes($count)
     {
-        if (!is_int($count) || $count <= 0)
+        if (!is_int($count) || $count <= 0) {
             throw new \InvalidArgumentException();
+        }
+
         $value = openssl_random_pseudo_bytes($count, $strong);
+
         /// @FIXME: warn user or tweak the value for crypto-weak values
-        if (!$strong)
+        if (!$strong) {
             ;
+        }
         return $value;
     }
 }
-

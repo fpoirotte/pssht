@@ -15,31 +15,29 @@ use Clicky\Pssht\Messages\CHANNEL\REQUEST\Base;
 use Clicky\Pssht\Wire\Encoder;
 use Clicky\Pssht\Wire\Decoder;
 
-class   Exec
-extends Base
+class Exec extends Base
 {
-    protected $_command;
+    protected $command;
 
     public function __construct($channel, $type, $wantReply, $command)
     {
         parent::__construct($channel, $type, $wantReply);
-        $this->_command = $command;
+        $this->command = $command;
     }
 
     public function serialize(Encoder $encoder)
     {
         parent::serialize($encoder);
-        $encoder->encode_string($this->_command);
+        $encoder->encodeString($this->command);
     }
 
-    static protected function _unserialize(Decoder $decoder)
+    protected static function unserializeSub(Decoder $decoder)
     {
-        return array($decoder->decode_string());
+        return array($decoder->decodeString());
     }
 
     public function getCommand()
     {
-        return $this->_command;
+        return $this->command;
     }
 }
-

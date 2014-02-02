@@ -15,16 +15,15 @@ interface EncryptionInterface
 {
     public function __construct($iv, $key);
 
-    static public function getName();
+    public static function getName();
 
-    static public function getKeySize();
+    public static function getKeySize();
 
-    static public function getIVSize();
+    public static function getIVSize();
 
-    static public function getBlockSize();
+    public static function getBlockSize();
 
     public function encrypt($data);
 
     public function decrypt($data);
 }
-

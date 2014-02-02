@@ -11,19 +11,15 @@
 
 namespace Clicky\Pssht\MAC;
 
-use Clicky\Pssht\MAC\Base;
-
-class   Len512
-extends Base
+class Len512 extends \Clicky\Pssht\MAC\Base
 {
-    static public function getName()
+    public static function getName()
     {
         return 'hmac-sha2-512';
     }
 
-    static public function getHash()
+    public static function getHash()
     {
         return 'sha512';
     }
 }
-

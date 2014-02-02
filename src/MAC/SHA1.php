@@ -11,17 +11,15 @@
 
 namespace Clicky\Pssht\MAC;
 
-class   SHA1
-extends Base
+class SHA1 extends Base
 {
-    static public function getName()
+    public static function getName()
     {
         return 'hmac-sha1';
     }
 
-    static public function getHash()
+    public static function getHash()
     {
         return 'sha1';
     }
 }
-

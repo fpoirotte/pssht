@@ -13,6 +13,5 @@ namespace Clicky\Pssht\MAC;
 
 interface BaseInterface
 {
-    static public function getHash();
+    public static function getHash();
 }
-

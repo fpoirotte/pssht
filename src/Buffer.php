@@ -11,71 +11,87 @@
 
 namespace Clicky\Pssht;
 
-class       Buffer
-implements  \Countable
+class Buffer implements \Countable
 {
-    private $_buffer;
+    protected $data;
 
     public function __construct($data = '')
     {
-        if (!is_string($data))
+        if (!is_string($data)) {
             throw new \InvalidArgumentException();
-        $this->_buffer = $data;
+        }
+
+        $this->data = $data;
     }
 
     public function count()
     {
-        return strlen($this->_buffer);
+        return strlen($this->data);
     }
 
-    private function _get_length($limit)
+    protected function getLength($limit)
     {
-        $size = strlen($this->_buffer);
-        if ($limit <= 0)
+        $size = strlen($this->data);
+        if ($limit <= 0) {
             $limit += $size;
-        if ($limit > $size)
-            return NULL;
-        $res = (string) substr($this->_buffer, 0, $limit);
-        $this->_buffer = (string) substr($this->_buffer, $limit);
+        }
+
+        if ($limit > $size) {
+            return null;
+        }
+
+        $res = (string) substr($this->data, 0, $limit);
+        $this->data = (string) substr($this->data, $limit);
         return $res;
     }
 
-    private function _get_delim($limit)
+    protected function getDelimiter($limit)
     {
-        if ($limit === '')
+        if ($limit === '') {
             throw new \InvalidArgumentException();
-        $pos = strpos($this->_buffer, $limit);
-        if ($pos === FALSE)
-            return NULL;
+        }
+
+        $pos = strpos($this->data, $limit);
+        if ($pos === false) {
+            return null;
+        }
+
         $pos += strlen($limit);
-        $res = substr($this->_buffer, 0, $pos);
-        $this->_buffer = (string) substr($this->_buffer, $pos);
+        $res = substr($this->data, 0, $pos);
+        $this->data = (string) substr($this->data, $pos);
         return $res;
     }
 
     public function get($limit)
     {
-        if (is_int($limit))
-            return $this->_get_length($limit);
-        if (is_string($limit))
-            return $this->_get_delim($limit);
+        if (is_int($limit)) {
+            return $this->getLength($limit);
+        }
+
+        if (is_string($limit)) {
+            return $this->getDelimiter($limit);
+        }
+
         throw new \InvalidArgumentException();
     }
 
     public function unget($data)
     {
-        if (!is_string($data))
+        if (!is_string($data)) {
             throw new \InvalidArgumentException();
-        $this->_buffer = $data . $this->_buffer;
+        }
+
+        $this->data = $data . $this->data;
         return $this;
     }
 
     public function push($data)
     {
-        if (!is_string($data))
+        if (!is_string($data)) {
             throw new \InvalidArgumentException();
-        $this->_buffer .= $data;
+        }
+
+        $this->data .= $data;
         return $this;
     }
 }
-
