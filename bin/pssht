@@ -16,58 +16,69 @@ require_once(
     DIRECTORY_SEPARATOR . 'autoload.php'
 );
 
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\Config\FileLocator;
+use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Clicky\Pssht\Client;
 
 function escape($data)
 {
-#    return bin2hex($data);
     return addcslashes($data, "\x00..\x1F\x7F..\xFF");
 }
 
 function main()
 {
-    $sockets    = array();
-    $sockets[]  = stream_socket_server("tcp://0.0.0.0:22222");
+    $container  = new ContainerBuilder();
+    $loader     = new XmlFileLoader($container, new FileLocator(getcwd()));
+    $loader->load('pssht.xml');
+
+    $logging    = Plop::getInstance();
+    $sockets    = array('servers' => array(), 'clients' => array());
     $clients    = array();
-    $address    = stream_socket_get_name($sockets[0], FALSE);
-    echo "Listening for new connections on $address" . PHP_EOL;
+
+    $listen     = (array) $container->getParameter('listen');
+    foreach ($listen as $spec) {
+        $socket                 = stream_socket_server("tcp://$spec");
+        $sockets['servers'][]   = $socket;
+        $address                = stream_socket_get_name($socket, FALSE);
+        $logging->info("Listening for new connections on %s", array($address));
+    }
 
     while (TRUE) {
-        $read   = $except = $sockets;
+        $read   = array_merge($sockets['servers'], $sockets['clients']);
+        $except = $read;
         $write  = array();
 
         foreach ($clients as $id => $client) {
             if (count($client->getEncoder()->getBuffer()))
-                $write[] = $sockets[$id];
+                $write[] = $sockets['clients'][$id];
         }
 
         if (stream_select($read, $write, $except, NULL) === FALSE) {
             echo socket_strerror(socket_last_error()) . PHP_EOL;
-            foreach ($sockets as &$socket) {
-                fclose($socket);
+            foreach ($sockets as $socketType) {
+                foreach ($socketType as &$socket) {
+                    fclose($socket);
+                }
             }
             exit(1);
         }
 
         foreach ($read as $socket) {
-            if ($socket === $sockets[0]) {
-                $new = stream_socket_accept($sockets[0]);
+            if (in_array($socket, $sockets['servers'], TRUE)) {
+                $new = stream_socket_accept($socket);
                 if ($new === FALSE) {
                     echo socket_strerror(socket_last_error()) . PHP_EOL;
                 }
                 else {
-                    $sockets[]  = $new;
-                    $id         = array_search($new, $sockets, TRUE);
-                    $peer       = stream_socket_get_name($new, TRUE);
-                    echo "[#$id] New client connected from $peer" . PHP_EOL;
-
-                    $inBuffer   = new \Clicky\Pssht\Buffer();
-                    $outBuffer  = new \Clicky\Pssht\Buffer();
-                    $client = new Client(
-                        new \Clicky\Pssht\Wire\Encoder($outBuffer),
-                        new \Clicky\Pssht\Wire\Decoder($inBuffer)
+                    $sockets['clients'][] = $new;
+                    $id     = array_search($new, $sockets['clients'], TRUE);
+                    $peer   = stream_socket_get_name($new, TRUE);
+                    $logging->info(
+                        '#%(id)d New client connected from %(peer)s',
+                        array('id' => $id, 'peer' => $peer)
                     );
-                    $clients[$id] = $client;
+                    $clients[$id] = $container->get('client');
                 }
                 continue;
             }
@@ -75,15 +86,18 @@ function main()
             $data = fread($socket, 8192);
             if ($data === '') {
                 foreach ($except as $socket) {
-                    if ($socket === $sockets[0]) {
+                    if (in_array($socket, $sockets['servers'], TRUE)) {
                         continue;
                     }
 
                     $peer   = stream_socket_get_name($socket, TRUE);
-                    $id     = array_search($socket, $sockets, TRUE);
-                    echo "[#$id] Client disconnected from $peer" . PHP_EOL;
+                    $id     = array_search($socket, $sockets['clients'], TRUE);
+                    $logging->info(
+                        '#%(id)d Client disconnected from %(peer)s',
+                        array('id' => $id, 'peer' => $peer)
+                    );
                     fclose($socket);
-                    unset($sockets[$id]);
+                    unset($sockets['clients'][$id]);
                     unset($clients[$id]);
                 }
                 continue;
@@ -92,11 +106,14 @@ function main()
             if ($data !== FALSE) {
                 $peer   = stream_socket_get_name($socket, TRUE);
                 $length = strlen($data);
-                $id     = array_search($socket, $sockets, TRUE);
+                $id     = array_search($socket, $sockets['clients'], TRUE);
                 $clients[$id]->getDecoder()->getBuffer()->push($data);
 
-                echo "[#$id] Received $length bytes from $peer" . PHP_EOL;
-                echo escape($data) . PHP_EOL;
+                $logging->info(
+                    '#%(id)d Received %(length)d bytes from %(peer)s',
+                    array('id' => $id, 'peer' => $peer, 'length' => $length)
+                );
+                $logging->info('%s', array(escape($data)));
 
                 // Process messages in the buffer.
                 while ($clients[$id]->readMessage()) ;
@@ -104,7 +121,7 @@ function main()
         }
 
         foreach ($write as $socket) {
-            $id = array_search($socket, $sockets, TRUE);
+            $id = array_search($socket, $sockets['clients'], TRUE);
             if ($id === FALSE)
                 continue;
 
@@ -116,8 +133,12 @@ function main()
                 $written = fwrite($socket, $data);
                 if ($written === FALSE)
                     break;
-                echo "[#$id] Sent $written bytes to $peer" . PHP_EOL;
-                echo escape(substr($data, 0, $written)) . PHP_EOL;
+
+                $logging->info(
+                    "#%(id)d Send %(written)d bytes to %(peer)s",
+                    array('id' => $id, 'peer' => $peer, 'written' => $written)
+                );
+                $logging->info('%s', array(escape(substr($data, 0, $written))));
                 $data   = substr($data, $written);
                 $size  -= $written;
             }

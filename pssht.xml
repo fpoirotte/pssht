@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <parameters>
+        <!--
+            String or collection of strings specifying the addresses/ports
+            the server should listen on, in the form "address:port".
+            Use brackets to indicate an IPv6 address (eg. "[::1]").
+            If 0 is used as the port, a random port will be selected.
+        -->
+        <parameter key="listen">[::]:22222</parameter>
+    </parameters>
+
+    <services>
+        <!-- The "client" service is used to handle new clients. -->
+        <service id="client" scope="prototype" class="\Clicky\Pssht\Client"/>
+        <!-- End of "client" service. -->
+
+        <!-- The "logging" service is used to log messages. -->
+        <service id="logging" factory-class="Plop" factory-method="getInstance">
+            <call method="addLogger">
+                <argument type="service">
+                    <service id="logging.logger.root" class="Plop_Logger">
+                        <argument type="constant">NULL</argument>
+                        <argument type="constant">NULL</argument>
+                        <argument type="constant">NULL</argument>
+                        <argument type="service">
+                            <service class="Plop_HandlersCollection">
+                                <call method="offsetSet">
+                                    <argument type="constant">NULL</argument>
+                                    <argument type="service">
+                                        <service class="Plop_Handler_Stream">
+                                            <argument type="constant">STDERR</argument>
+                                            <call method="setFormatter">
+                                                <argument type="service">
+                                                    <service class="Plop_Formatter">
+                                                        <argument>[%%(asctime)s] %%(levelname)s: %%(message)s</argument>
+                                                        <argument>r</argument>
+                                                    </service>
+                                                </argument>
+                                            </call>
+                                        </service>
+                                    </argument>
+                                </call>
+                            </service>
+                        </argument>
+                    </service>
+                </argument>
+            </call>
+        </service>
+        <!-- End of "logging" service. -->
+    </services>
+</container>

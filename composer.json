@@ -22,7 +22,10 @@
         "php": ">=5.3.3",
         "ext-openssl": "*",
         "ext-mcrypt": "*",
-        "ext-gmp": "*"
+        "ext-gmp": "*",
+        "symfony/dependency-injection": "*",
+        "symfony/config": "*",
+        "erebot/plop": "*@dev"
     },
     "require-dev": {
         "phing/phing": "*",
