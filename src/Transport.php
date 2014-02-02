@@ -229,7 +229,7 @@ class Transport
         // Initial state: expect the client's identification string.
         if (!isset($this->context['identity']['client'])) {
             return $this->handlers[256]->handle(
-                NULL,
+                null,
                 $this->decoder,
                 $this,
                 $this->context
