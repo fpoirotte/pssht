@@ -15,7 +15,7 @@ use Clicky\Pssht\MessageInterface;
 use Clicky\Pssht\Wire\Encoder;
 use Clicky\Pssht\Wire\Decoder;
 
-class DISCONNECT implements MessageInterface
+class DISCONNECT extends \Exception implements MessageInterface
 {
     const SSH_DISCONNECT_HOST_NOT_ALLOWED_TO_CONNECT        =    1;
     const SSH_DISCONNECT_PROTOCOL_ERROR                     =    2;
@@ -37,20 +37,22 @@ class DISCONNECT implements MessageInterface
     protected $message;
     protected $language;
 
-    public function __construct($reasonCode, $reasonMessage, $language = '')
-    {
+    public function __construct(
+        $reasonCode = 0,
+        $reasonMessage = null,
+        $language = ''
+    ) {
         if (!is_int($reasonCode)) {
             throw new \InvalidArgumentException();
         }
-        if (!is_string($reasonMessage)) {
+        if (!is_string($reasonMessage) && $reasonMessage !== null) {
             throw new \InvalidArgumentException();
         }
         if (!is_string($language)) {
             throw new \InvalidArgumentException();
         }
 
-        $this->code        = $reasonCode;
-        $this->message     = $reasonMessage;
+        parent::__construct($reasonMessage, $reasonCode);
         $this->language    = $language;
     }
 

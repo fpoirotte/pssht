@@ -36,7 +36,7 @@ class FAILURE implements MessageInterface
 
     public static function unserialize(Decoder $decoder)
     {
-        return new self($decoder->decodeUint32());
+        return new static($decoder->decodeUint32());
     }
 
     public function getChannel()

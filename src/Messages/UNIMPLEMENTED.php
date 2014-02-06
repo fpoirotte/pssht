@@ -32,7 +32,7 @@ class UNIMPLEMENTED implements \Clicky\Pssht\MessageInterface
 
     public static function unserialize(\Clicky\Pssht\Wire\Decoder $decoder)
     {
-        return new self($decoder->decodeUint32());
+        return new static($decoder->decodeUint32());
     }
 
     public function getSequenceNo()

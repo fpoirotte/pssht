@@ -32,14 +32,23 @@ class REQUEST implements \Clicky\Pssht\HandlerInterface
         array &$context
     ) {
         $message    = \Clicky\Pssht\Messages\USERAUTH\REQUEST::unserialize($decoder);
-        $response   = new \Clicky\Pssht\Messages\USERAUTH\FAILURE(array(), false);
         if ($message->getUserName() === 'clicky' &&
             $message->getServiceName() === 'ssh-connection' &&
             $message->getMethodName() === 'none' &&
             $this->connection === null) {
+                $banner = $transport->getBanner();
+                if ($banner !== null) {
+                    $response = new \Clicky\Pssht\Messages\USERAUTH\BANNER($banner);
+                    $transport->writeMessage($response);
+                }
+
                 $response = new \Clicky\Pssht\Messages\USERAUTH\SUCCESS();
                 $this->connection = new \Clicky\Pssht\Connection($transport, $message);
+                $transport->writeMessage($response);
+                return true;
         }
+
+        $response = new \Clicky\Pssht\Messages\USERAUTH\FAILURE(array(), false);
         $transport->writeMessage($response);
         return true;
     }

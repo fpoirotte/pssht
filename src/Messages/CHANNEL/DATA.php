@@ -39,7 +39,7 @@ class DATA implements MessageInterface
 
     public static function unserialize(Decoder $decoder)
     {
-        return new self(
+        return new static(
             $decoder->decodeUint32(),
             $decoder->decodeString()
         );

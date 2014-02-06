@@ -24,6 +24,7 @@ class NEWKEYS implements \Clicky\Pssht\HandlerInterface
     ) {
         $response = new \Clicky\Pssht\Messages\NEWKEYS();
         $transport->writeMessage($response);
+        $logging = \Plop::getInstance();
 
         // Reset the various keys.
         $kexAlgo    = $context['kexAlgo'];
@@ -41,15 +42,33 @@ class NEWKEYS implements \Clicky\Pssht\HandlerInterface
             'E' => array($context['C2S']['MAC'], 'getSize'),
             'F' => array($context['C2S']['MAC'], 'getSize'),
         );
+
+        $shared = gmp_strval($context['DH']->getSharedSecret(), 16);
+        $shared = str_pad($shared, ((strlen($shared) + 1) >> 1) << 1, '0', STR_PAD_LEFT);
+        $logging->debug(
+            'Shared secret: %s',
+            array(wordwrap($shared, 16, ' ', true))
+        );
+        $logging->debug(
+            'Hash: %s',
+            array(wordwrap(bin2hex($exchangeHash), 16, ' ', true))
+        );
+
         foreach (array('A', 'B', 'C', 'D', 'E', 'F') as $keyIndex) {
             $key    = $kexAlgo->hash($sharedSecret . $exchangeHash . $keyIndex . $sessionId);
             $limit  = call_user_func($limiters[$keyIndex]);
-            $keyReq = max(24, $limit);
-            while (strlen($key) < $keyReq) {
+            while (strlen($key) < $limit) {
                 $key .= $kexAlgo->hash($sharedSecret . $exchangeHash . $key);
             }
             $key = (string) substr($key, 0, $limit);
             $context['keys'][$keyIndex] = $key;
+            $logging->debug(
+                'Key %(keyName)s: %(keyValue)s',
+                array(
+                    'keyName' => $keyIndex,
+                    'keyValue' => wordwrap(bin2hex($key), 16, ' ', true),
+                )
+            );
         }
 
         // Encryption
@@ -57,26 +76,35 @@ class NEWKEYS implements \Clicky\Pssht\HandlerInterface
         $transport->setDecryptor(
             new $cls($context['keys']['A'], $context['keys']['C'])
         );
+        $logging->info('C2S Encryption: %s', array($cls));
+
         $cls = $context['S2C']['Encryption'];
         $transport->setEncryptor(
             new $cls($context['keys']['B'], $context['keys']['D'])
         );
+        $logging->info('S2C Encryption: %s', array($cls));
 
         // MAC
         $cls            = $context['C2S']['MAC'];
         $transport->setInputMAC(new $cls($context['keys']['E']));
+        $logging->info('C2S MAC: %s', array($cls));
+
         $cls            = $context['S2C']['MAC'];
         $transport->setOutputMAC(new $cls($context['keys']['F']));
+        $logging->info('S2C MAC: %s', array($cls));
 
         // Compression
         $cls                = $context['C2S']['Compression'];
         $transport->setUncompressor(
             new $cls(CompressionInterface::MODE_UNCOMPRESS)
         );
+        $logging->info('C2S Compression: %s', array($cls));
+
         $cls                = $context['S2C']['Compression'];
         $transport->setCompressor(
             new $cls(CompressionInterface::MODE_COMPRESS)
         );
+        $logging->info('S2C Compression: %s', array($cls));
 
         return true;
     }

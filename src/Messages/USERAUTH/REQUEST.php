@@ -52,7 +52,7 @@ class REQUEST implements MessageInterface
 
     public static function unserialize(Decoder $decoder)
     {
-        return new self(
+        return new static(
             $decoder->decodeString(),
             $decoder->decodeString(),
             $decoder->decodeString()

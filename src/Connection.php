@@ -59,7 +59,7 @@ class Connection implements \Clicky\Pssht\HandlerInterface
             $logging = \Plop::getInstance();
             $logging->debug(
                 'Calling %(handler)s for channel #%(channel)d ' .
-                'and message type #%(msgType)d',
+                'with message type #%(msgType)d',
                 array(
                     'handler' => get_class($handler) . '::handle',
                     'channel' => $localChannel,

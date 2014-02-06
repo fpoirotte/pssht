@@ -83,7 +83,7 @@ class Algorithms
     {
         static $instance = null;
         if ($instance === null) {
-            $instance = new self();
+            $instance = new static();
         }
         return $instance;
     }

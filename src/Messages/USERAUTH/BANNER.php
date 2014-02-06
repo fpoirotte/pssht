@@ -9,22 +9,19 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\Messages;
+namespace Clicky\Pssht\Messages\USERAUTH;
 
+use Clicky\Pssht\MessageInterface;
 use Clicky\Pssht\Wire\Encoder;
 use Clicky\Pssht\Wire\Decoder;
 
-class DEBUG implements \Clicky\Pssht\MessageInterface
+class BANNER implements MessageInterface
 {
-    protected $alwaysDisplay;
     protected $message;
     protected $language;
 
-    public function __construct($alwaysDisplay, $message, $language)
+    public function __construct($message, $language = '')
     {
-        if (!is_bool($alwaysDisplay)) {
-            throw new \InvalidArgumentException();
-        }
         if (!is_string($message)) {
             throw new \InvalidArgumentException();
         }
@@ -32,19 +29,17 @@ class DEBUG implements \Clicky\Pssht\MessageInterface
             throw new \InvalidArgumentException();
         }
 
-        $this->alwaysDisplay    = $alwaysDisplay;
-        $this->message          = $message;
-        $this->language         = $language;
+        $this->message  = $message;
+        $this->language = $language;
     }
 
     public static function getMessageId()
     {
-        return 4;
+        return 53;
     }
 
     public function serialize(Encoder $encoder)
     {
-        $encoder->encodeBoolean($this->alwaysDisplay);
         $encoder->encodeString($this->message);
         $encoder->encodeString($this->language);
     }
@@ -52,15 +47,9 @@ class DEBUG implements \Clicky\Pssht\MessageInterface
     public static function unserialize(Decoder $decoder)
     {
         return new static(
-            $decoder->decodeBoolean(),
             $decoder->decodeString(),
             $decoder->decodeString()
         );
-    }
-
-    public function mustAlwaysDisplay()
-    {
-        return $this->alwaysDisplay;
     }
 
     public function getMessage()

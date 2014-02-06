@@ -9,6 +9,7 @@
 */
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 
@@ -22,8 +23,9 @@ function main()
     $container  = new ContainerBuilder();
     $loader     = new XmlFileLoader($container, new FileLocator(getcwd()));
     $loader->load('pssht.xml');
+    $container->get('logging', ContainerInterface::NULL_ON_INVALID_REFERENCE);
+    $logging    = \Plop::getInstance();
 
-    $logging    = Plop::getInstance();
     $sockets    = array('servers' => array(), 'clients' => array());
     $clients    = array();
 
@@ -98,15 +100,28 @@ function main()
                 $id     = array_search($socket, $sockets['clients'], true);
                 $clients[$id]->getDecoder()->getBuffer()->push($data);
 
-                $logging->debug(
+                $logging->log(
+                    5,
                     '#%(id)d Received %(length)d bytes from %(peer)s',
                     array('id' => $id, 'peer' => $peer, 'length' => $length)
                 );
-                $logging->debug('%s', array(escape($data)));
+                $logging->log(5, '%s', array(escape($data)));
 
                 // Process messages in the buffer.
-                while ($clients[$id]->readMessage()) {
-                    // Each message gets processed by readMessage().
+                try {
+                    while ($clients[$id]->readMessage()) {
+                        // Each message gets processed by readMessage().
+                    }
+                } catch (\Clicky\Pssht\Messages\DISCONNECT $e) {
+                    $peer   = stream_socket_get_name($socket, true);
+                     $logging->info(
+                        '#%(id)d Client disconnected from %(peer)s',
+                        array('id' => $id, 'peer' => $peer)
+                    );
+                    fclose($socket);
+                    unset($sockets['clients'][$id]);
+                    unset($clients[$id]);
+                    continue;
                 }
             }
         }
@@ -127,11 +142,12 @@ function main()
                     break;
                 }
 
-                $logging->debug(
+                $logging->log(
+                    5,
                     "#%(id)d Sent %(written)d bytes to %(peer)s",
                     array('id' => $id, 'peer' => $peer, 'written' => $written)
                 );
-                $logging->debug('%s', array(escape(substr($data, 0, $written))));
+                $logging->log(5, '%s', array(escape(substr($data, 0, $written))));
                 $data   = substr($data, $written);
                 $size  -= $written;
             }

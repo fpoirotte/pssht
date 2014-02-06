@@ -34,7 +34,11 @@ class REQUEST extends Base
         switch ($type) {
             case 'exec':
             case 'shell':
-                $cls = '\\Clicky\\Pssht\\Messages\\CHANNEL\\REQUEST\\' . ucfirst($type);
+            case 'pty-req':
+                // Normalize the name.
+                // Eg. "pty-req" becomes "PtyReq".
+                $cls = str_replace(' ', '', ucwords(str_replace('-', ' ', $type)));
+                $cls = '\\Clicky\\Pssht\\Messages\\CHANNEL\\REQUEST\\' . $cls;
                 $message = $cls::unserialize($decoder);
                 break;
 
@@ -50,15 +54,18 @@ class REQUEST extends Base
             return true;
         }
 
-        if ($type === 'shell') {
+        if (in_array($type, array('shell', 'exec'), true)) {
             $response = new \Clicky\Pssht\Messages\CHANNEL\SUCCESS($remoteChannel);
         } else {
             $response = new \Clicky\Pssht\Messages\CHANNEL\FAILURE($remoteChannel);
         }
         $transport->writeMessage($response);
 
-        if ($type === 'shell') {
-            new \Clicky\Pssht\XRL($transport, $this->connection, $message);
+        if (in_array($type, array('shell', 'exec'), true)) {
+            $cls = $transport->getApplicationFactory();
+            if ($cls !== null) {
+                new $cls($transport, $this->connection, $message);
+            }
         }
 
         return true;

@@ -10,11 +10,16 @@
             If 0 is used as the port, a random port will be selected.
         -->
         <parameter key="listen">[::]:22222</parameter>
+        <parameter key="application">\Clicky\Pssht\XRL</parameter>
+        <parameter key="banner">This is a test banner&#10;</parameter>
     </parameters>
 
     <services>
         <!-- The "client" service is used to handle new clients. -->
-        <service id="client" scope="prototype" class="\Clicky\Pssht\Transport"/>
+        <service id="client" scope="prototype" class="\Clicky\Pssht\Transport">
+            <call method="setApplicationFactory"><argument>%application%</argument></call>
+            <call method="setBanner"><argument>%banner%</argument></call>
+        </service>
         <!-- End of "client" service. -->
 
         <!-- The "logging" service is used to log messages. -->
@@ -45,6 +50,9 @@
                                 </call>
                             </service>
                         </argument>
+                        <call method="setLevel">
+                            <argument type="constant">Plop::DEBUG</argument>
+                        </call>
                     </service>
                 </argument>
             </call>

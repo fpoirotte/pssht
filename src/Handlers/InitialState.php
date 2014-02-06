@@ -27,9 +27,8 @@ class InitialState implements \Clicky\Pssht\HandlerInterface
 
         $context['identity']['client'] = (string) substr($ident, 0, -2);
 
-        /// @FIXME: implement disconnect method (with reason/code).
         if (strncmp($ident, 'SSH-2.0-', 8) !== 0) {
-            $this->disconnect(null);
+            throw new \Clicky\Pssht\Messages\DISCONNECT();
         }
 
         $random = new \Clicky\Pssht\Random\OpenSSL();

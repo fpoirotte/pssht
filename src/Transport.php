@@ -32,6 +32,8 @@ class Transport
     protected $outMAC;
     protected $context;
     protected $handlers;
+    protected $appFactory;
+    protected $banner;
 
     public function __construct(
         \Clicky\Pssht\Wire\Encoder $encoder = null,
@@ -55,7 +57,12 @@ class Transport
         $this->inMAC        = new \Clicky\Pssht\MAC\None(null);
         $this->outMAC       = new \Clicky\Pssht\MAC\None(null);
         $this->context      = array();
+        $this->appFactory   = null;
+        $this->banner       = null;
         $this->handlers     = array(
+            \Clicky\Pssht\Messages\DISCONNECT::getMessageId() =>
+                new \Clicky\Pssht\Handlers\DISCONNECT(),
+
             \Clicky\Pssht\Messages\IGNORE::getMessageId() =>
                 new \Clicky\Pssht\Handlers\IGNORE(),
 
@@ -166,6 +173,28 @@ class Transport
         return $this;
     }
 
+    public function getApplicationFactory()
+    {
+        return $this->applicationFactory;
+    }
+
+    public function setApplicationFactory($factory)
+    {
+        $this->applicationFactory = $factory;
+        return $this;
+    }
+
+    public function getBanner()
+    {
+        return $this->banner;
+    }
+
+    public function setBanner($message)
+    {
+        $this->banner = $message;
+        return $this;
+    }
+
     public function setHandler($type, \Clicky\Pssht\HandlerInterface $handler)
     {
         if (!is_int($type) || $type < 0 || $type > 255) {
@@ -190,11 +219,14 @@ class Transport
 
     public function writeMessage(\Clicky\Pssht\MessageInterface $message)
     {
+        $logging = \Plop::getInstance();
+
         // Serialize the message.
         $encoder    = new Encoder();
         $encoder->encodeBytes(chr($message::getMessageId()));
         $message->serialize($encoder);
         $payload    = $encoder->getBuffer()->get(0);
+        $logging->debug('Sending payload: %s', array(\escape($payload)));
 
         // Compress the payload if necessary.
         $payload    = $this->compressor->update($payload);
@@ -222,10 +254,17 @@ class Transport
         $mac = $this->outMAC->compute(pack('N', $this->outSeqNo) . $packet);
         $this->outSeqNo = ++$this->outSeqNo & 0xFFFFFFFF;
         $this->encoder->encodeBytes($mac);
+
+        $logging->debug(
+            'Sending %(type)s message',
+            array('type' => get_class($message))
+        );
     }
 
     public function readMessage()
     {
+        $logging = \Plop::getInstance();
+
         // Initial state: expect the client's identification string.
         if (!isset($this->context['identity']['client'])) {
             return $this->handlers[256]->handle(
@@ -303,17 +342,28 @@ class Transport
         $payload    = $this->uncompressor->update($payload);
         $decoder    = new Decoder(new Buffer($payload));
         $msgType    = ord($decoder->decodeBytes(1));
+        $logging->debug('Received payload: %s', array(\escape($payload)));
 
         $res = true;
         if (isset($this->handlers[$msgType])) {
             $handler = $this->handlers[$msgType];
-            $logging = \Plop::getInstance();
             $logging->debug(
-                'Calling %(handler)s',
-                array('handler' => get_class($handler) . '::handle')
+                'Calling %(handler)s with message type #%(msgType)d',
+                array(
+                    'handler' => get_class($handler) . '::handle',
+                    'msgType' => $msgType,
+                )
             );
-            $res = $handler->handle($msgType, $decoder, $this, $this->context);
+            try {
+                $res = $handler->handle($msgType, $decoder, $this, $this->context);
+            } catch (\Clicky\Pssht\Messages\DISCONNECT $e) {
+                if ($e->getCode() !== 0) {
+                    $this->writeMessage($e);
+                }
+                throw $e;
+            }
         } else {
+            $logging->warn('Unimplemented message type (%d)', array($msgType));
             $response = new \Clicky\Pssht\Messages\UNIMPLEMENTED($this->inSeqNo);
             $this->writeMessage($response);
         }
