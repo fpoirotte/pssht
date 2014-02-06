@@ -9,20 +9,10 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\Encryption\CBC;
+namespace Clicky\Pssht\Encryption\Stream;
 
 class Arcfour extends \Clicky\Pssht\Encryption\Base
 {
-    public static function getMode()
-    {
-        return 'MCRYPT_MODE_CBC';
-    }
-
-    public static function getAlgorithm()
-    {
-        return 'MCRYPT_ARCFOUR_IV';
-    }
-
     public static function getName()
     {
         return 'arcfour';

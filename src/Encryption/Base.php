@@ -22,7 +22,7 @@ abstract class Base implements
 {
     protected $mcrypt;
 
-    final public function __construct($iv, $key)
+    public function __construct($iv, $key)
     {
         $this->mcrypt = mcrypt_module_open(
             constant(static::getAlgorithm()),
@@ -91,7 +91,7 @@ abstract class Base implements
     public static function getMode()
     {
         $cls    = explode('\\', get_called_class());
-        $mode   = $cls[count($cls) - 2];
+        $mode   = strtoupper($cls[count($cls) - 2]);
         return 'MCRYPT_MODE_' . $mode;
     }
 
