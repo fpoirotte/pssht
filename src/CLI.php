@@ -114,7 +114,7 @@ function main()
                     }
                 } catch (\Clicky\Pssht\Messages\DISCONNECT $e) {
                     $peer   = stream_socket_get_name($socket, true);
-                     $logging->info(
+                    $logging->info(
                         '#%(id)d Client disconnected from %(peer)s',
                         array('id' => $id, 'peer' => $peer)
                     );
