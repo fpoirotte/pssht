@@ -13,18 +13,13 @@ namespace Clicky\Pssht\Encryption\CBC;
 
 class CAST128 extends \Clicky\Pssht\Encryption\Base
 {
-    public static function getMode()
-    {
-        return 'MCRYPT_MODE_CBC';
-    }
-
     public static function getAlgorithm()
     {
         return 'MCRYPT_CAST_128';
     }
 
-    public static function getName()
+    public static function getKeySize()
     {
-        return 'cast128-cbc';
+        return 128 >> 3;
     }
 }

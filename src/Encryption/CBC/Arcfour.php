@@ -11,15 +11,25 @@
 
 namespace Clicky\Pssht\Encryption\CBC;
 
-class TripleDES extends \Clicky\Pssht\Encryption\Base
+class Arcfour extends \Clicky\Pssht\Encryption\Base
 {
+    public static function getMode()
+    {
+        return 'MCRYPT_MODE_CBC';
+    }
+
+    public static function getAlgorithm()
+    {
+        return 'MCRYPT_ARCFOUR_IV';
+    }
+
     public static function getName()
     {
-        return '3des-cbc';
+        return 'arcfour';
     }
 
     public static function getKeySize()
     {
-        return 24;
+        return 128 >> 3;
     }
 }

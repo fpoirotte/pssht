@@ -11,15 +11,10 @@
 
 namespace Clicky\Pssht\Encryption\CBC;
 
-class TripleDES extends \Clicky\Pssht\Encryption\Base
+class Twofish128 extends Twofish256
 {
-    public static function getName()
-    {
-        return '3des-cbc';
-    }
-
     public static function getKeySize()
     {
-        return 24;
+        return 128 >> 3;
     }
 }

@@ -9,12 +9,8 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\Encryption\CBC;
+namespace Clicky\Pssht\Encryption\CTR;
 
-class AES192 extends AES256
+class Twofish192 extends \Clicky\Pssht\Encryption\CBC\Twofish192
 {
-    public static function getKeySize()
-    {
-        return 192 >> 3;
-    }
 }

@@ -13,18 +13,8 @@ namespace Clicky\Pssht\Encryption\CBC;
 
 class Twofish extends \Clicky\Pssht\Encryption\Base
 {
-    public static function getMode()
+    public static function getKeySize()
     {
-        return 'MCRYPT_MODE_CBC';
-    }
-
-    public static function getAlgorithm()
-    {
-        return 'MCRYPT_TWOFISH';
-    }
-
-    public static function getName()
-    {
-        return 'twofish-cbc';
+        return 256 >> 3;
     }
 }

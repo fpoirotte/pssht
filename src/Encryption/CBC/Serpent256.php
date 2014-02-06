@@ -11,15 +11,15 @@
 
 namespace Clicky\Pssht\Encryption\CBC;
 
-class TripleDES extends \Clicky\Pssht\Encryption\Base
+class Serpent256 extends \Clicky\Pssht\Encryption\Base
 {
-    public static function getName()
+    public static function getAlgorithm()
     {
-        return '3des-cbc';
+        return 'MCRYPT_SERPENT';
     }
 
     public static function getKeySize()
     {
-        return 24;
+        return 256 >> 3;
     }
 }

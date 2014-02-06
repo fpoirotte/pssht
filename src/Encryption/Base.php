@@ -41,15 +41,19 @@ abstract class Base implements
 
     final public static function isAvailable()
     {
-        return defined(static::getAlgorithm()) && defined(static::getMode());
-    }
-
-    final public static function getKeySize()
-    {
-        return mcrypt_get_key_size(
+        if (!defined(static::getAlgorithm()) || !defined(static::getMode())) {
+            return false;
+        }
+        $res = @mcrypt_module_open(
             constant(static::getAlgorithm()),
-            constant(static::getMode())
+            '',
+            constant(static::getMode()),
+            ''
         );
+        if ($res !== false) {
+            mcrypt_module_close($res);
+        }
+        return (bool) $res;
     }
 
     final public static function getIVSize()
@@ -76,5 +80,24 @@ abstract class Base implements
     final public function decrypt($data)
     {
         return mdecrypt_generic($this->mcrypt, $data);
+    }
+
+    public static function getAlgorithm()
+    {
+        $algo = strtoupper(substr(strrchr(get_called_class(), '\\'), 1));
+        return 'MCRYPT_' . $algo;
+    }
+
+    public static function getMode()
+    {
+        $cls    = explode('\\', get_called_class());
+        $mode   = $cls[count($cls) - 2];
+        return 'MCRYPT_MODE_' . $mode;
+    }
+
+    public static function getName()
+    {
+        $algo = strtolower(substr(strrchr(get_called_class(), '\\'), 1));
+        return $algo . '-' . strtolower(substr(static::getMode(), 12));
     }
 }

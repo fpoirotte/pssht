@@ -13,18 +13,13 @@ namespace Clicky\Pssht\Encryption\CBC;
 
 class AES256 extends \Clicky\Pssht\Encryption\Base
 {
-    public static function getMode()
-    {
-        return 'MCRYPT_MODE_CBC';
-    }
-
     public static function getAlgorithm()
     {
-        return 'MCRYPT_RIJNDAEL_256';
+        return 'MCRYPT_RIJNDAEL_128';
     }
 
-    public static function getName()
+    public static function getKeySize()
     {
-        return 'aes256-cbc@foo';
+        return 256 >> 3;
     }
 }

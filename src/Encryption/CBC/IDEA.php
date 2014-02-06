@@ -13,18 +13,8 @@ namespace Clicky\Pssht\Encryption\CBC;
 
 class IDEA extends \Clicky\Pssht\Encryption\Base
 {
-    public static function getMode()
+    public static function getKeySize()
     {
-        return 'MCRYPT_MODE_CBC';
-    }
-
-    public static function getAlgorithm()
-    {
-        return 'MCRYPT_IDEA';
-    }
-
-    public static function getName()
-    {
-        return 'idea-cbc';
+        return 128 >> 3;
     }
 }
