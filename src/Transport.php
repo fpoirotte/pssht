@@ -231,33 +231,59 @@ class Transport
         // Compress the payload if necessary.
         $payload    = $this->compressor->update($payload);
         $size       = strlen($payload);
-
-        // Compute padding size.
         $blockSize  = max(8, $this->encryptor->getBlockSize());
-        $padSize    = $blockSize - ((1 + 4 + $size) % $blockSize);
+
+        // Compute padding requirements.
+        // See http://www.openssh.com/txt/release-6.2
+        // for more information on EtM (Encrypt-then-MAC).
+        if ($this->outMAC instanceof \Clicky\Pssht\MAC\EtM\EtMInterface) {
+            $padSize    = $blockSize - ((1 + $size) % $blockSize);
+        } else {
+            $padSize    = $blockSize - ((1 + 4 + $size) % $blockSize);
+        }
         if ($padSize < 4) {
             $padSize = ($padSize + $blockSize) % 256;
         }
         $padding = openssl_random_pseudo_bytes($padSize);
 
-        // Create the packet.
+        // Create the packet. Every content passed to $encoder
+        // will be encrypted, except possibly for the packet
+        // length (see below).
         $encoder->encodeUint32(1 + $size + $padSize);
+        if ($this->outMAC instanceof \Clicky\Pssht\MAC\EtM\EtMInterface) {
+            // Send the packet length in plaintext.
+            $encSize = $encoder->getBuffer()->get(0);
+            $this->encoder->encodeBytes($encSize);
+        }
         $encoder->encodeBytes(chr($padSize));
         $encoder->encodeBytes($payload);
         $encoder->encodeBytes($padding);
-        $packet = $encoder->getBuffer()->get(0);
+        $packet     = $encoder->getBuffer()->get(0);
+        $encrypted  = $this->encryptor->encrypt($packet);
 
-        // Write the encrypted packet on the wire.
-        $this->encoder->encodeBytes($this->encryptor->encrypt($packet));
+        // Compute the MAC.
+        if ($this->outMAC instanceof \Clicky\Pssht\MAC\EtM\EtMInterface) {
+            $mac = $this->outMAC->compute(pack('N', $this->outSeqNo) . $encSize . $encrypted);
+        } else {
+            $mac = $this->outMAC->compute(pack('N', $this->outSeqNo) . $packet);
+        }
 
-        // Write the MAC if necessary.
-        $mac = $this->outMAC->compute(pack('N', $this->outSeqNo) . $packet);
-        $this->outSeqNo = ++$this->outSeqNo & 0xFFFFFFFF;
+        // Send the packet on the wire.
+        $this->encoder->encodeBytes($encrypted);
         $this->encoder->encodeBytes($mac);
+        $this->outSeqNo = ++$this->outSeqNo & 0xFFFFFFFF;
 
         $logging->debug(
-            'Sending %(type)s message',
-            array('type' => get_class($message))
+            'Sending %(type)s packet ' .
+            '(size: %(size)d, payload: %(payload)d, ' .
+            'block: %(block)d, padding: %(padding)d)',
+            array(
+                'type' => get_class($message),
+                'size' => strlen($encrypted),
+                'payload' => $size,
+                'block' => $blockSize,
+                'padding' => $padSize,
+            )
         );
     }
 
@@ -276,29 +302,47 @@ class Transport
         }
 
         $blockSize  = max($this->decryptor->getBlockSize(), 8);
-        $encPayload = $this->decoder->getBuffer()->get($blockSize);
-        if ($encPayload === null) {
-            return false;
+        $firstRead  = $blockSize;
+
+        // See http://www.openssh.com/txt/release-6.2
+        // for more information on EtM (Encrypt-then-MAC).
+        if ($this->inMAC instanceof \Clicky\Pssht\MAC\EtM\EtMInterface) {
+            $firstRead  = 4;
+            $encPayload = $this->decoder->getBuffer()->get(4);
+            if ($encPayload === null) {
+                return false;
+            }
+            $unencrypted = $encPayload;
+        } else {
+            $encPayload = $this->decoder->getBuffer()->get($blockSize);
+            if ($encPayload === null) {
+                return false;
+            }
+            $unencrypted = $this->decryptor->decrypt($encPayload);
         }
-        $unencrypted    = $this->decryptor->decrypt($encPayload);
         $buffer         = new Buffer($unencrypted);
         $decoder        = new Decoder($buffer);
         $packetLength   = $decoder->decodeUint32();
 
         // Read the rest of the message.
-        $toRead         =
-            // Remove what we already read.
-            // Note: we must account for the "packet length" field
-            // not being included in $packetLength itself.
-            4 - $blockSize +
+        if ($this->inMAC instanceof \Clicky\Pssht\MAC\EtM\EtMInterface) {
+            $toRead = $packetLength;
+        } else {
+            $toRead         =
+                // Remove what we already read.
+                // Note: we must account for the "packet length" field
+                // not being included in $packetLength itself.
+                4 - $blockSize +
 
-            // Rest of the encrypted data.
-            $packetLength;
+                // Rest of the encrypted data.
+                $packetLength;
+        }
 
         if ($toRead < 0) {
             throw new \RuntimeException();
         }
 
+        $unencrypted2 = '';
         if ($toRead !== 0) {
             $encPayload2 = $this->decoder->getBuffer()->get($toRead);
             if ($encPayload2 === null) {
@@ -323,9 +367,16 @@ class Transport
                 return false;
             }
 
+            if ($this->inMAC instanceof \Clicky\Pssht\MAC\EtM\EtMInterface) {
+                // $encPayload actually contains packet length (in plaintext).
+                $macData = $encPayload . $encPayload2;
+            } else {
+                $macData = $unencrypted . $unencrypted2;
+            }
+
             $expectedMAC = $this->inMAC->compute(
                 pack('N', $this->inSeqNo) .
-                ((string) substr($unencrypted . $unencrypted2, 0, $packetLength + 4))
+                ((string) substr($macData, 0, $packetLength + 4))
             );
 
             if ($expectedMAC !== $actualMAC) {
