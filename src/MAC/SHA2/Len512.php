@@ -9,7 +9,7 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\MAC;
+namespace Clicky\Pssht\MAC\SHA2;
 
 class Len512 extends \Clicky\Pssht\MAC\Base
 {

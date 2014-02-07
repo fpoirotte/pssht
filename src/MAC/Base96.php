@@ -28,7 +28,7 @@ abstract class Base96 implements
         $this->subhash = new $cls($key);
     }
 
-    final public static function getName()
+    public static function getName()
     {
         $cls = static::getBaseClass();
         return $cls::getName() . '-96';
