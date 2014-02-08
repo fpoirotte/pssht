@@ -118,6 +118,16 @@ class REQUEST implements \Clicky\Pssht\HandlerInterface
         $response = new \Clicky\Pssht\Messages\USERAUTH\SUCCESS();
         $this->connection = new \Clicky\Pssht\Connection($transport);
         $transport->writeMessage($response);
+
+        $compressor = $transport->getCompressor();
+        if ($compressor instanceof \Clicky\Pssht\DelayedCompressionInterface) {
+            $compressor->setAuthenticated();
+        }
+        $uncompressor = $transport->getUncompressor();
+        if ($uncompressor instanceof \Clicky\Pssht\DelayedCompressionInterface) {
+            $uncompressor->setAuthenticated();
+        }
+
         return true;
     }
 
