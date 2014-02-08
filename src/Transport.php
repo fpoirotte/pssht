@@ -234,7 +234,7 @@ class Transport
         $blockSize  = max(8, $this->encryptor->getBlockSize());
 
         // Compute padding requirements.
-        // See http://www.openssh.com/txt/release-6.2
+        // See http://api.libssh.org/rfc/PROTOCOL
         // for more information on EtM (Encrypt-then-MAC).
         if ($this->outMAC instanceof \Clicky\Pssht\MAC\EtM\EtMInterface) {
             $padSize    = $blockSize - ((1 + $size) % $blockSize);
@@ -304,7 +304,7 @@ class Transport
         $blockSize  = max($this->decryptor->getBlockSize(), 8);
         $firstRead  = $blockSize;
 
-        // See http://www.openssh.com/txt/release-6.2
+        // See http://api.libssh.org/rfc/PROTOCOL
         // for more information on EtM (Encrypt-then-MAC).
         if ($this->inMAC instanceof \Clicky\Pssht\MAC\EtM\EtMInterface) {
             $firstRead  = 4;
