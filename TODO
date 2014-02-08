@@ -1,0 +1,39 @@
+-   Add the rest of OpenSSH's extensions
+    from http://api.libssh.org/rfc/PROTOCOL:
+    -   UMAC algorithms
+    -   Additional public key algorithms:
+        -   "ssh-rsa-cert-v00@openssh.com"
+        -   "ssh-dsa-cert-v00@openssh.com",
+        -   "ecdsa-sha2-nistp256-cert-v01@openssh.com",
+        -   "ecdsa-sha2-nistp384-cert-v01@openssh.com" and
+        -   "ecdsa-sha2-nistp521-cert-v01@openssh.com"
+    -   Elliptic Curve cryptography
+    -   Channel write close extension "eow@openssh.com"
+    -   disallow additional sessions extension "no-more-sessions@openssh.com"
+    -   Test delayed zlib support
+
+-   Dig through http://api.libssh.org/master/ to see if there are
+    other extensions that may be of interest.
+
+-   Take a closer look at
+    http://books.google.fr/books?id=9FSaScltd-kC&printsec=frontcover&
+        hl=fr&source=gbs_ge_summary_r&cad=0#v=onepage&q&f=false
+    The book lists several aliases / additional algorithms used by
+    various implementations of the secure shell.
+
+-   UMAC:
+    -   http://tools.ietf.org/html/draft-miller-secsh-umac-01
+    -   http://en.wikipedia.org/wiki/UMAC
+    -   http://tools.ietf.org/html/rfc4418
+
+-   GCM / AEAD:
+    -   http://tools.ietf.org/html/rfc5116
+    -   http://csrc.nist.gov/publications/nistpubs/800-38D/SP-800-38D.pdf
+    -   http://tools.ietf.org/html/rfc5647
+
+-   Suite B crypto suites:
+    -   http://www.rfc-editor.org/rfc/rfc6239.txt
+
+-   P6R's public key subsystem:
+    -   http://www.rfc-editor.org/rfc/rfc7076.txt
+
