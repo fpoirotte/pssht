@@ -9,13 +9,13 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\Messages\USERAUTH;
+namespace Clicky\Pssht\Messages\USERAUTH\REQUEST;
 
 use Clicky\Pssht\MessageInterface;
 use Clicky\Pssht\Wire\Encoder;
 use Clicky\Pssht\Wire\Decoder;
 
-class REQUEST implements MessageInterface
+abstract class Base implements MessageInterface
 {
     protected $user;
     protected $service;
@@ -50,13 +50,23 @@ class REQUEST implements MessageInterface
         $encoder->encodeString($this->method);
     }
 
-    public static function unserialize(Decoder $decoder)
+    protected static function unserializeSub(Decoder $decoder)
     {
-        return new static(
-            $decoder->decodeString(),
-            $decoder->decodeString(),
-            $decoder->decodeString()
+        throw new \RuntimeException();
+    }
+
+    final public static function unserialize(Decoder $decoder)
+    {
+        $reflector  = new \ReflectionClass(get_called_class());
+        $args       = array_merge(
+            array(
+                $decoder->decodeString(),
+                $decoder->decodeString(),
+                $decoder->decodeString()
+            ),
+            static::unserializeSub($decoder)
         );
+        return $reflector->newInstanceArgs($args);
     }
 
     public function getUserName()

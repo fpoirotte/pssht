@@ -14,4 +14,8 @@ namespace Clicky\Pssht;
 interface PublicKeyInterface
 {
     public static function getName();
+
+    public static function loadPrivate($pem, $passphrase = '');
+
+    public static function loadPublic($b64);
 }

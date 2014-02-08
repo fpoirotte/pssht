@@ -18,15 +18,63 @@ class RSA implements PublicKeyInterface
 {
     const DER_HEADER = "\x30\x21\x30\x09\x06\x05\x2b\x0e\x03\x02\x1a\x05\x00\x04\x14";
 
-    protected $key;
+    protected $bits;
+    protected $n;
+    protected $e;
+    protected $d;
 
-    public function __construct($file)
+    protected function __construct($bits, $n, $e, $d = null)
     {
-        $this->key  = openssl_pkey_get_private($file);
-        $details    = openssl_pkey_get_details($this->key);
+        $this->bits = $bits;
+        $this->n    = $n;
+        $this->e    = $e;
+        $this->d    = $d;
+    }
+
+    public static function loadPrivate($pem, $passphrase = '')
+    {
+        if (!is_string($pem)) {
+            throw new \InvalidArgumentException();
+        }
+
+        if (!is_string($passphrase)) {
+            throw new \InvalidArgumentException();
+        }
+
+        $key        = openssl_pkey_get_private($pem, $passphrase);
+        $details    = openssl_pkey_get_details($key);
         if ($details['type'] !== OPENSSL_KEYTYPE_RSA) {
             throw new \InvalidArgumentException();
         }
+        return new static(
+            $details['bits'],
+            gmp_init(bin2hex($details['rsa']['n']), 16),
+            gmp_init(bin2hex($details['rsa']['e']), 16),
+            gmp_init(bin2hex($details['rsa']['d']), 16)
+        );
+    }
+
+    public static function loadPublic($b64)
+    {
+        $decoder = new \Clicky\Pssht\Wire\Decoder();
+        $decoder->getBuffer()->push(base64_decode($b64));
+        $type       = $decoder->decodeString();
+        if ($type !== static::getName()) {
+            throw new \InvalidArgumentException();
+        }
+
+        $e          = $decoder->decodeMpint();
+        $decoder2   = new \Clicky\Pssht\Wire\Decoder(clone $decoder->getBuffer());
+        $n          = $decoder->decodeMpint();
+        $raw        = $decoder2->decodeString();
+        if ($raw[0] === "\x00") {
+            $raw = (string) substr($raw, 1);
+        }
+
+        if (!isset($e, $n)) {
+            throw new \InvalidArgumentException();
+        }
+        return new static(strlen($raw) << 3, $n, $e);
     }
 
     public static function getName()
@@ -36,48 +84,50 @@ class RSA implements PublicKeyInterface
 
     public function serialize(Encoder $encoder)
     {
-        $details = openssl_pkey_get_details($this->key);
         $encoder->encodeString(self::getName());
-        $encoder->encodeMpint(gmp_init(bin2hex($details['rsa']['e']), 16));
-        $encoder->encodeMpint(gmp_init(bin2hex($details['rsa']['n']), 16));
+        $encoder->encodeMpint($this->e);
+        $encoder->encodeMpint($this->n);
     }
 
     public function sign($message, $raw_output = false)
     {
-        $res = openssl_sign(
-            $message,
-            $signature,
-            $this->key,
-            OPENSSL_ALGO_SHA1
-        );
-        if ($res === false) {
+        if ($this->d === null) {
             throw new \RuntimeException();
         }
-        return ($raw_output ? $signature : bin2hex($signature));
+
+        $H      = sha1($message, true);
+        $T      = self::DER_HEADER . $H;
+        $tLen   = strlen($T);
+        $emLen  = ($this->bits + 7) >> 3;
+        if ($emLen < $tLen + 11) {
+             throw new \RuntimeException();
+        }
+        $PS     = str_repeat("\xFF", $emLen - $tLen - 3);
+        $EM     = gmp_init(bin2hex("\x00\x01" . $PS . "\x00" . $T), 16);
+        if (gmp_cmp($EM, $this->n) >= 0) {
+            throw new \RuntimeException();
+        }
+        $s = str_pad(
+            gmp_strval(gmp_powm($EM, $this->d, $this->n), 16),
+            $emLen * 2,
+            '0',
+            STR_PAD_LEFT
+        );
+        return $raw_output ? pack('H*', $s) : $s;
     }
 
     public function check($message, $signature)
     {
-#        return openssl_verify(
-#            $message,
-#            $signature,
-#            $this->key,
-#            OPENSSL_ALGO_SHA1
-#        );
-
         // Decode given signature.
-        $details = openssl_pkey_get_details($this->key);
-        $emLen = ($details['bits'] + 7) >> 3;
+        $emLen = ($this->bits + 7) >> 3;
         if (strlen($signature) !== $emLen) {
             throw new \InvalidArgumentException();
         }
         $s = gmp_init(bin2hex($signature), 16);
-        $n = gmp_init(bin2hex($details['rsa']['n']), 16);
-        $e = gmp_init(bin2hex($details['rsa']['e']), 16);
-        if (gmp_cmp($s, $n) >= 0) {
+        if (gmp_cmp($s, $this->n) >= 0) {
             throw new \InvalidArgumentException();
         }
-        $m      = gmp_powm($s, $e, $n);
+        $m      = gmp_powm($s, $this->e, $this->n);
         $EM     = bin2hex(pack('H*', str_pad(gmp_strval($m, 16), $emLen * 2, '0', STR_PAD_LEFT)));
 
         // Generate actual signature.

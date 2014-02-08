@@ -18,15 +18,62 @@ class DSS implements PublicKeyInterface
 {
     const DER_HEADER = "\x30\x20\x30\x0c\x06\x08\x2a\x86\x48\x86\xf7\x0d\x02\x05\x05\x00\x04\x10";
 
-    protected $key;
+    protected $p;
+    protected $q;
+    protected $g;
+    protected $y;
+    protected $x;
 
-    public function __construct($file)
+    public function __construct($p, $q, $g, $y, $x = null)
     {
-        $this->key  = openssl_pkey_get_private($file);
-        $details    = openssl_pkey_get_details($this->key);
+        $this->p = $p;
+        $this->q = $q;
+        $this->g = $g;
+        $this->y = $y;
+        $this->x = $x;
+    }
+
+    public static function loadPrivate($pem, $passphrase = '')
+    {
+        if (!is_string($pem)) {
+            throw new \InvalidArgumentException();
+        }
+
+        if (!is_string($passphrase)) {
+            throw new \InvalidArgumentException();
+        }
+
+        $key        = openssl_pkey_get_private($pem, $passphrase);
+        $details    = openssl_pkey_get_details($key);
         if ($details['type'] !== OPENSSL_KEYTYPE_DSA) {
             throw new \InvalidArgumentException();
         }
+        return new static(
+            gmp_init(bin2hex($details['dsa']['p']), 16),
+            gmp_init(bin2hex($details['dsa']['q']), 16),
+            gmp_init(bin2hex($details['dsa']['g']), 16),
+            gmp_init(bin2hex($details['dsa']['pub_key']), 16),
+            gmp_init(bin2hex($details['dsa']['priv_key']), 16)
+        );
+    }
+
+    public static function loadPublic($b64)
+    {
+        $decoder = new \Clicky\Pssht\Wire\Decoder();
+        $decoder->getBuffer()->push(base64_decode($b64));
+        $type       = $decoder->decodeString();
+        if ($type !== static::getName()) {
+            throw new \InvalidArgumentException();
+        }
+
+        $p = $decoder->decodeMpint();
+        $q = $decoder->decodeMpint();
+        $g = $decoder->decodeMpint();
+        $y = $decoder->decodeMpint();
+        if (!isset($p, $q, $g, $y)) {
+            throw new \InvalidArgumentException();
+        }
+        return new static($p, $q, $g, $y);
     }
 
     public static function getName()
@@ -36,22 +83,20 @@ class DSS implements PublicKeyInterface
 
     public function serialize(Encoder $encoder)
     {
-        $details = openssl_pkey_get_details($this->key);
         $encoder->encodeString(self::getName());
-        $encoder->encodeMpint(gmp_init(bin2hex($details['dsa']['p']), 16));
-        $encoder->encodeMpint(gmp_init(bin2hex($details['dsa']['q']), 16));
-        $encoder->encodeMpint(gmp_init(bin2hex($details['dsa']['g']), 16));
-        $encoder->encodeMpint(gmp_init(bin2hex($details['dsa']['pub_key']), 16));
+        $encoder->encodeMpint($this->p);
+        $encoder->encodeMpint($this->q);
+        $encoder->encodeMpint($this->g);
+        $encoder->encodeMpint($this->y);
     }
 
     public function sign($message, $raw_output = false)
     {
-        $details = openssl_pkey_get_details($this->key);
+        if ($this->x === null) {
+            throw new \RuntimeException();
+        }
+
         $H = gmp_init(sha1($message, false), 16);
-        $p = gmp_init(bin2hex($details['dsa']['p']), 16);
-        $q = gmp_init(bin2hex($details['dsa']['q']), 16);
-        $g = gmp_init(bin2hex($details['dsa']['g']), 16);
-        $x = gmp_init(bin2hex($details['dsa']['priv_key']), 16);
         do {
             do {
                 do {
@@ -62,19 +107,19 @@ class DSS implements PublicKeyInterface
                          continue;
                     }
 
-                    // We reduce entropy, but since 2^159 < $q < 2^160,
-                    // and we must have 0 < $k < $q, this is garanteed
+                    // We reduce entropy, but since 2^159 < $this->q < 2^160,
+                    // and we must have 0 < $k < $this->q, this is garanteed
                     // to work.
                     if (ord($k[0]) & 0x80) {
                         $k[0] = chr(ord($k[0]) & 0x7F);
                     }
 
                     $k      = gmp_init(bin2hex($k), 16);
-                    $k_1    = gmp_invert($k, $q);
+                    $k_1    = gmp_invert($k, $this->q);
                 } while ($k_1 === false);
 
-                $r = gmp_mod(gmp_powm($g, $k, $p), $q);
-                $s = gmp_mod(gmp_mul($k_1, gmp_add($H, gmp_mul($x, $r))), $q);
+                $r = gmp_mod(gmp_powm($this->g, $k, $this->p), $this->q);
+                $s = gmp_mod(gmp_mul($k_1, gmp_add($H, gmp_mul($this->x, $r))), $this->q);
             } while ($r === 0 || $s === 0);
 
             $r = str_pad(gmp_strval($r, 16), 20, '0', STR_PAD_LEFT);
@@ -82,17 +127,6 @@ class DSS implements PublicKeyInterface
         } while ($this->check($message, pack('H*H*', $r, $s)) === false);
 
         return $raw_output ? pack('H*H*', $r, $s) : ($r . $s);
-
-#        $res = openssl_sign(
-#            $message,
-#            $signature,
-#            $this->key,
-#            OPENSSL_ALGO_DSS1
-#        );
-#        if ($res === false)
-#            throw new \RuntimeException();
-#        $signature = substr($signature, 0, 40);
-#        return ($raw_output ? $signature : bin2hex($signature));
     }
 
     public function check($message, $signature)
@@ -103,19 +137,13 @@ class DSS implements PublicKeyInterface
             throw new \InvalidArgumentException();
         }
 
-        $details = openssl_pkey_get_details($this->key);
-        $H  = gmp_init(sha1($message, false), 16);
-        $p  = gmp_init(bin2hex($details['dsa']['p']), 16);
-        $q  = gmp_init(bin2hex($details['dsa']['q']), 16);
-        $g  = gmp_init(bin2hex($details['dsa']['g']), 16);
-        $y  = gmp_init(bin2hex($details['dsa']['pub_key']), 16);
-        $rp = gmp_init(bin2hex(substr($signature, 0, 20)), 16);
-        $sp = gmp_init(bin2hex(substr($signature, 20)), 16);
-
-        $w      = gmp_invert($sp, $q);
-        $g_u1   = gmp_powm($g, gmp_mod(gmp_mul($H, $w), $q), $p);
-        $y_u2   = gmp_powm($y, gmp_mod(gmp_mul($rp, $w), $q), $p);
-        $v      = gmp_mod(gmp_mod(gmp_mul($g_u1, $y_u2), $p), $q);
+        $H      = gmp_init(sha1($message, false), 16);
+        $rp     = gmp_init(bin2hex(substr($signature, 0, 20)), 16);
+        $sp     = gmp_init(bin2hex(substr($signature, 20)), 16);
+        $w      = gmp_invert($sp, $this->q);
+        $g_u1   = gmp_powm($this->g, gmp_mod(gmp_mul($H, $w), $this->q), $this->p);
+        $y_u2   = gmp_powm($this->y, gmp_mod(gmp_mul($rp, $w), $this->q), $this->p);
+        $v      = gmp_mod(gmp_mod(gmp_mul($g_u1, $y_u2), $this->p), $this->q);
         return (gmp_cmp($v, $rp) === 0);
     }
 }

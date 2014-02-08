@@ -13,6 +13,13 @@ namespace Clicky\Pssht\Handlers\KEXDH;
 
 class INIT implements \Clicky\Pssht\HandlerInterface
 {
+    protected $serverKey;
+
+    public function __construct(\Clicky\Pssht\PublicKeyInterface $serverKey)
+    {
+        $this->serverKey = $serverKey;
+    }
+
     // SSH_MSG_KEXDH_INIT = 30
     public function handle(
         $msgType,
@@ -25,11 +32,7 @@ class INIT implements \Clicky\Pssht\HandlerInterface
         $kexAlgo    = new $kexAlgo();
         $response   = new \Clicky\Pssht\Messages\KEXDH\REPLY(
             $message,
-            new \Clicky\Pssht\PublicKey\SSH\RSA(
-                'file://' .
-                dirname(dirname(dirname(__DIR__))) .
-                '/tests/data/rsa2048'
-            ),
+            $this->serverKey,
             $transport->getEncryptor(),
             $transport->getDecryptor(),
             $kexAlgo,

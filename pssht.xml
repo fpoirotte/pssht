@@ -17,6 +17,11 @@
     <services>
         <!-- The "client" service is used to handle new clients. -->
         <service id="client" scope="prototype" class="\Clicky\Pssht\Transport">
+            <argument type="service">
+                <service factory-class="\Clicky\Pssht\PublicKey\SSH\RSA" factory-method="loadPrivate">
+                    <argument>file://tests/data/rsa2048</argument>
+                </service>
+            </argument>
             <call method="setApplicationFactory"><argument>%application%</argument></call>
             <call method="setBanner"><argument>%banner%</argument></call>
         </service>
@@ -51,7 +56,7 @@
                             </service>
                         </argument>
                         <call method="setLevel">
-                            <argument type="constant">Plop::DEBUG</argument>
+                            <argument type="constant">Plop::INFO</argument>
                         </call>
                     </service>
                 </argument>

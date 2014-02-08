@@ -20,6 +20,7 @@ use Clicky\Pssht\MACInterface;
 
 class Transport
 {
+    protected $address;
     protected $inSeqNo;
     protected $outSeqNo;
     protected $encoder;
@@ -36,6 +37,7 @@ class Transport
     protected $banner;
 
     public function __construct(
+        \Clicky\Pssht\PublicKeyInterface $serverKey,
         \Clicky\Pssht\Wire\Encoder $encoder = null,
         \Clicky\Pssht\Wire\Decoder $decoder = null
     ) {
@@ -46,6 +48,7 @@ class Transport
             $decoder = new \Clicky\Pssht\Wire\Decoder();
         }
 
+        $this->address      = null;
         $this->inSeqNo      = 0;
         $this->outSeqNo     = 0;
         $this->encoder      = $encoder;
@@ -79,7 +82,7 @@ class Transport
                 new \Clicky\Pssht\Handlers\NEWKEYS(),
 
             \Clicky\Pssht\Messages\KEXDH\INIT::getMessageId() =>
-                new \Clicky\Pssht\Handlers\KEXDH\INIT(),
+                new \Clicky\Pssht\Handlers\KEXDH\INIT($serverKey),
 
             256 => new \Clicky\Pssht\Handlers\InitialState(),
         );
@@ -87,6 +90,25 @@ class Transport
         $ident = "SSH-2.0-pssht_1.0.x_dev";
         $this->context['identity']['server'] = $ident;
         $this->encoder->encodeBytes($ident . "\r\n");
+    }
+
+    public function setAddress($address)
+    {
+        if (!is_string($address)) {
+            throw new \InvalidArgumentException();
+        }
+
+        if ($this->address !== null) {
+            throw new \RuntimeException();
+        }
+
+        $this->address = $address;
+        return $this;
+    }
+
+    public function getAddress()
+    {
+        return $this->address;
     }
 
     public function getEncoder()
@@ -236,7 +258,7 @@ class Transport
         // Compute padding requirements.
         // See http://api.libssh.org/rfc/PROTOCOL
         // for more information on EtM (Encrypt-then-MAC).
-        if ($this->outMAC instanceof \Clicky\Pssht\MAC\EtM\EtMInterface) {
+        if ($this->outMAC instanceof \Clicky\Pssht\MAC\OpensshCom\EtM\EtMInterface) {
             $padSize    = $blockSize - ((1 + $size) % $blockSize);
         } else {
             $padSize    = $blockSize - ((1 + 4 + $size) % $blockSize);
@@ -250,7 +272,7 @@ class Transport
         // will be encrypted, except possibly for the packet
         // length (see below).
         $encoder->encodeUint32(1 + $size + $padSize);
-        if ($this->outMAC instanceof \Clicky\Pssht\MAC\EtM\EtMInterface) {
+        if ($this->outMAC instanceof \Clicky\Pssht\MAC\OpensshCom\EtM\EtMInterface) {
             // Send the packet length in plaintext.
             $encSize = $encoder->getBuffer()->get(0);
             $this->encoder->encodeBytes($encSize);
@@ -262,7 +284,7 @@ class Transport
         $encrypted  = $this->encryptor->encrypt($packet);
 
         // Compute the MAC.
-        if ($this->outMAC instanceof \Clicky\Pssht\MAC\EtM\EtMInterface) {
+        if ($this->outMAC instanceof \Clicky\Pssht\MAC\OpensshCom\EtM\EtMInterface) {
             $mac = $this->outMAC->compute(pack('N', $this->outSeqNo) . $encSize . $encrypted);
         } else {
             $mac = $this->outMAC->compute(pack('N', $this->outSeqNo) . $packet);
@@ -306,7 +328,7 @@ class Transport
 
         // See http://api.libssh.org/rfc/PROTOCOL
         // for more information on EtM (Encrypt-then-MAC).
-        if ($this->inMAC instanceof \Clicky\Pssht\MAC\EtM\EtMInterface) {
+        if ($this->inMAC instanceof \Clicky\Pssht\MAC\OpensshCom\EtM\EtMInterface) {
             $firstRead  = 4;
             $encPayload = $this->decoder->getBuffer()->get(4);
             if ($encPayload === null) {
@@ -325,7 +347,7 @@ class Transport
         $packetLength   = $decoder->decodeUint32();
 
         // Read the rest of the message.
-        if ($this->inMAC instanceof \Clicky\Pssht\MAC\EtM\EtMInterface) {
+        if ($this->inMAC instanceof \Clicky\Pssht\MAC\OpensshCom\EtM\EtMInterface) {
             $toRead = $packetLength;
         } else {
             $toRead         =
@@ -367,7 +389,7 @@ class Transport
                 return false;
             }
 
-            if ($this->inMAC instanceof \Clicky\Pssht\MAC\EtM\EtMInterface) {
+            if ($this->inMAC instanceof \Clicky\Pssht\MAC\OpensshCom\EtM\EtMInterface) {
                 // $encPayload actually contains packet length (in plaintext).
                 $macData = $encPayload . $encPayload2;
             } else {

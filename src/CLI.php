@@ -76,7 +76,9 @@ function main()
                     '#%(id)d New client connected from %(peer)s',
                     array('id' => $id, 'peer' => $peer)
                 );
-                $clients[$id] = $container->get('client');
+                $client         = $container->get('client');
+                $clients[$id]   = $client;
+                $client->setAddress(substr($peer, 0, strrpos($peer, ':')));
                 continue;
             }
 
