@@ -11,7 +11,7 @@
 
 namespace Clicky\Pssht\MAC\OpensshCom\EtM\SHA2;
 
-use \Clicky\Pssht\MAC\EtM\EtMInterface;
+use \Clicky\Pssht\MAC\OpensshCom\EtM\EtMInterface;
 
 class Len256 extends \Clicky\Pssht\MAC\SHA2\Len256 implements EtMInterface
 {

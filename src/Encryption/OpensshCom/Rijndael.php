@@ -11,7 +11,7 @@
 
 namespace Clicky\Pssht\Encryption\OpensshCom;
 
-class Rijndael extends AES256
+class Rijndael extends \Clicky\Pssht\Encryption\CBC\AES256
 {
     public static function getName()
     {
