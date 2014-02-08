@@ -9,8 +9,12 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\MAC\EtM;
+namespace Clicky\Pssht\MAC\OpensshCom\EtM;
 
-interface EtMInterface
+class SHA1 extends \Clicky\Pssht\MAC\SHA1 implements EtMInterface
 {
+    public static function getName()
+    {
+        return 'hmac-sha1-etm@openssh.com';
+    }
 }

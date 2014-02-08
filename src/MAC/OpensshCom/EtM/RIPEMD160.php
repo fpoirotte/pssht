@@ -9,14 +9,12 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\MAC\EtM\SHA2;
+namespace Clicky\Pssht\MAC\OpensshCom\EtM;
 
-use \Clicky\Pssht\MAC\EtM\EtMInterface;
-
-class Len512 extends \Clicky\Pssht\MAC\SHA2\Len512 implements EtMInterface
+class RIPEMD160 extends \Clicky\Pssht\MAC\RIPEMD160 implements EtMInterface
 {
     public static function getName()
     {
-        return 'hmac-sha2-512-etm@openssh.com';
+        return 'hmac-ripemd160-etm@openssh.com';
     }
 }

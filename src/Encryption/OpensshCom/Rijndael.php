@@ -9,14 +9,12 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\MAC\EtM\SHA1;
+namespace Clicky\Pssht\Encryption\OpensshCom;
 
-use \Clicky\Pssht\MAC\EtM\EtMInterface;
-
-class Len96 extends \Clicky\Pssht\MAC\SHA1\Len96 implements EtMInterface
+class Rijndael extends AES256
 {
     public static function getName()
     {
-        return 'hmac-sha1-96-etm@openssh.com';
+        return 'rijndael-cbc@lysator.liu.se';
     }
 }

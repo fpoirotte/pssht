@@ -9,12 +9,8 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\Encryption\CBC;
+namespace Clicky\Pssht\MAC\OpensshCom\EtM;
 
-class Rijndael extends AES256
+interface EtMInterface
 {
-    public static function getName()
-    {
-        return 'rijndael-cbc@lysator.liu.se';
-    }
 }

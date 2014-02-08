@@ -9,14 +9,14 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\MAC\EtM\MD5;
+namespace Clicky\Pssht\MAC\OpensshCom\EtM\SHA1;
 
 use \Clicky\Pssht\MAC\EtM\EtMInterface;
 
-class Len96 extends \Clicky\Pssht\MAC\MD5\Len96 implements EtMInterface
+class Len96 extends \Clicky\Pssht\MAC\SHA1\Len96 implements EtMInterface
 {
     public static function getName()
     {
-        return 'hmac-md5-96-etm@openssh.com';
+        return 'hmac-sha1-96-etm@openssh.com';
     }
 }
