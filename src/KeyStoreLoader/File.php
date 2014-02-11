@@ -17,7 +17,7 @@ class File
 
     public function __construct(\Clicky\Pssht\KeyStore $store = null)
     {
-        if ($store === NULL) {
+        if ($store === null) {
             $store = new \Clicky\Pssht\KeyStore();
         }
 
