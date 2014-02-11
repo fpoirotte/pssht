@@ -38,6 +38,7 @@ class Transport
 
     public function __construct(
         \Clicky\Pssht\PublicKeyInterface $serverKey,
+        \Clicky\Pssht\Handlers\SERVICE\REQUEST $authMethods,
         \Clicky\Pssht\Wire\Encoder $encoder = null,
         \Clicky\Pssht\Wire\Decoder $decoder = null
     ) {
@@ -73,7 +74,7 @@ class Transport
                 new \Clicky\Pssht\Handlers\DEBUG(),
 
             \Clicky\Pssht\Messages\SERVICE\REQUEST::getMessageId() =>
-                new \Clicky\Pssht\Handlers\SERVICE\REQUEST(),
+                $authMethods,
 
             \Clicky\Pssht\Messages\KEXINIT::getMessageId() =>
                 new \Clicky\Pssht\Handlers\KEXINIT(),

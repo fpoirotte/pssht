@@ -21,7 +21,8 @@ class REQUEST implements \Clicky\Pssht\HandlerInterface
 
     public function __construct(array $methods)
     {
-        $realMethods = array();
+        $method         = new \Clicky\Pssht\Authentication\None();
+        $realMethods    = array($method->getName() => $method);
         foreach ($methods as $method) {
             if (!($method instanceof \Clicky\Pssht\AuthenticationInterface)) {
                 throw new \InvalidArgumentException();

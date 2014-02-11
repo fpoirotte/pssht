@@ -17,30 +17,9 @@ class REQUEST implements \Clicky\Pssht\HandlerInterface
 {
     protected $userAuthRequestHandler;
 
-    public function __construct()
+    public function __construct(\Clicky\Pssht\Handlers\USERAUTH\REQUEST $methods)
     {
-        /// @FIXME: use DI for this
-        $store  = new \Clicky\Pssht\KeyStore();
-        $loader = new \Clicky\Pssht\KeyStoreLoader\File($store);
-        $loader->load('clicky', '/home/clicky/.ssh/authorized_keys');
-
-        $store2 = new \Clicky\Pssht\KeyStore();
-        $loader = new \Clicky\Pssht\KeyStoreLoader\File($store2);
-        $loader->load('clicky2', '/etc/ssh/ssh_host_rsa_key.pub');
-        $loader->load('clicky2', '/etc/ssh/ssh_host_dsa_key.pub');
-
-        $this->userAuthRequestHandler = new \Clicky\Pssht\Handlers\USERAUTH\REQUEST(
-            array(
-                new \Clicky\Pssht\Authentication\None(),
-                new \Clicky\Pssht\Authentication\Password(
-                    array(
-                        'clicky' => 'test',
-                    )
-                ),
-                new \Clicky\Pssht\Authentication\PublicKey($store),
-                new \Clicky\Pssht\Authentication\HostBased($store2),
-            )
-        );
+        $this->userAuthRequestHandler = $methods;
     }
 
     // SSH_MSG_SERVICE_REQUEST = 5

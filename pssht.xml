@@ -3,6 +3,8 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <parameters>
+        <!-- GENERAL SETTINGS -->
+
         <!--
             String or collection of strings specifying the addresses/ports
             the server should listen on, in the form "address:port".
@@ -10,18 +12,82 @@
             If 0 is used as the port, a random port will be selected.
         -->
         <parameter key="listen">[::]:22222</parameter>
+
+        <!--
+            Application to run after a connection has been accepted.
+            This class' constructor will be called with the following
+            arguments:
+            *   \Clicky\Pssht\Transport (transport layer for the session)
+            *   \Clicky\Pssht\Connection (connection layer for the session)
+            *   \Clicky\Pssht\MessageInterface (SSH message which caused
+                a new instance of the application to be created; usually
+                an instance of \Clicky\Pssht\Messages\CHANNEL\REQUEST\Exec
+                or \Clicky\Pssht\Messages\CHANNEL\REQUEST\Shell)
+        -->
         <parameter key="application">\Clicky\Pssht\XRL</parameter>
-        <parameter key="banner">This is a test banner&#10;</parameter>
+
+        <!--
+            A banner (eg. legal disclaimer) to display upon connection.
+            Do not forget to add a trailing carriage return / linefeed
+            if needed (using "&#13;" or "&#10;" respectively).
+        -->
+        <parameter key="banner">Hello world!&#10;</parameter>
+
+        <!-- Path to the server's (PEM-encoded) private key. -->
+        <parameter key="server_key.file">file://%pssht.base_dir%/tests/data/rsa2048</parameter>
+        <!-- Passphrase for the server's private key. -->
+        <parameter key="server_key.passphrase"/>
+
+
+        <!-- AUTHENTICATION SETTINGS -->
+
+        <!-- Allows user "clicky" to log in with password "pssht". -->
+        <parameter key="auth.passwords" type="collection">
+            <parameter key="clicky">pssht</parameter>
+        </parameter>
+
+        <!--
+            Allows user "clicky" to log in using when of the public keys
+            authorized to access the account the server was started under.
+        -->
+        <parameter key="auth.pubkeys" type="collection">
+            <parameter key="clicky" type="collection">
+                <parameter>%HOME%/.ssh/authorized_keys</parameter>
+            </parameter>
+        </parameter>
+
+        <!--
+            Allows user "clicky" to log in using the server's public key.
+            Note:   this configuration does not really make sense,
+                    but shows just how easy it is to configure the server
+                    for varying needs.
+        -->
+        <parameter key="auth.hostbased" type="collection">
+            <parameter key="clicky" type="collection">
+                <parameter></parameter>
+            </parameter>
+        </parameter>
     </parameters>
+
+
+    <!--
+        SERVICE DEFINITIONS.
+        Skip to the "authMethods" service if you want to disable
+        some of the default authentication methods.
+    -->
 
     <services>
         <!-- The "client" service is used to handle new clients. -->
         <service id="client" scope="prototype" class="\Clicky\Pssht\Transport">
             <argument type="service">
-                <service factory-class="\Clicky\Pssht\PublicKey\SSH\RSA" factory-method="loadPrivate">
-                    <argument>file://tests/data/rsa2048</argument>
+                <service
+                    factory-class="\Clicky\Pssht\PublicKey\SSH\RSA"
+                    factory-method="loadPrivate">
+                    <argument>%server_key.file%</argument>
+                    <argument>%server_key.passphrase%</argument>
                 </service>
             </argument>
+            <argument type="service" id="authMethods"/>
             <call method="setApplicationFactory"><argument>%application%</argument></call>
             <call method="setBanner"><argument>%banner%</argument></call>
         </service>
@@ -56,12 +122,87 @@
                             </service>
                         </argument>
                         <call method="setLevel">
-                            <argument type="constant">Plop::INFO</argument>
+                            <argument type="constant">Plop::DEBUG</argument>
                         </call>
                     </service>
                 </argument>
             </call>
         </service>
         <!-- End of "logging" service. -->
+
+        <!--
+            The "authMethods" service is used to indicate which authentication
+            methods (and credentials) are allowed to connect.
+        -->
+        <service id="authMethods" public="false" class="\Clicky\Pssht\Handlers\SERVICE\REQUEST">
+            <argument type="service">
+                <service class="\Clicky\Pssht\Handlers\USERAUTH\REQUEST">
+                    <argument type="collection">
+
+                        <!--
+                            Password-based authentication.
+                            Remove or comment the following XML block
+                            to disable password-based authentication.
+                        -->
+                        <argument type="service">
+                            <service class="\Clicky\Pssht\Authentication\Password">
+                                <argument>%auth.passwords%</argument>
+                            </service>
+                        </argument>
+                        <!-- End of password-based authentication. -->
+
+                        <!--
+                            Public key-based authentication.
+                            Remove or comment the following XML block
+                            to disable public key-based authentication.
+                        -->
+                        <argument type="service">
+                            <service class="\Clicky\Pssht\Authentication\PublicKey">
+                                <argument type="service">
+                                    <service public="false"
+                                        factory-service="authPublicKeysLoader"
+                                        factory-method="getStore"/>
+                                </argument>
+                            </service>
+                        </argument>
+                        <!-- End of public key-based authentication. -->
+
+                        <!--
+                            Host-based authentication.
+                            Remove or comment the following XML block
+                            to disable host-based authentication.
+                        -->
+                        <argument type="service">
+                            <service class="\Clicky\Pssht\Authentication\HostBased">
+                                <argument type="service">
+                                    <service public="false"
+                                        factory-service="authPublicKeysLoader"
+                                        factory-method="getStore"/>
+                                </argument>
+                            </service>
+                        </argument>
+                        <!-- End of host-based authentication. -->
+
+                    </argument>
+                </service>
+            </argument>
+        </service>
+        <!-- End of "authMethods" service. -->
+
+
+        <!-- The following services are factories used by other services. -->
+        <service id="authPublicKeysLoader" public="false"
+            class="\Clicky\Pssht\KeyStoreLoader\File">
+            <call method="loadBulk">
+                <argument>%auth.pubkeys%</argument>
+            </call>
+        </service>
+        <service id="authHostBasedLoader" public="false"
+            class="\Clicky\Pssht\KeyStoreLoader\File">
+            <call method="loadBulk">
+                <argument>%auth.hostbased%</argument>
+            </call>
+        </service>
+        <!-- End of factory services. -->
     </services>
 </container>

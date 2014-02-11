@@ -15,8 +15,12 @@ class File
 {
     protected $store;
 
-    public function __construct(\Clicky\Pssht\KeyStore $store)
+    public function __construct(\Clicky\Pssht\KeyStore $store = null)
     {
+        if ($store === NULL) {
+            $store = new \Clicky\Pssht\KeyStore();
+        }
+
         $this->store    = $store;
     }
 
@@ -50,5 +54,29 @@ class File
                 }
             }
         }
+    }
+
+    public function loadBulk(array $bulk)
+    {
+        foreach ($bulk as $user => $files) {
+            if (!is_string($user)) {
+                throw new \InvalidArgumentException();
+            }
+
+            if (!is_array($files) && !is_string($files)) {
+                throw new \InvalidArgumentException();
+            }
+
+            $files = (array) $files;
+            foreach ($files as $file) {
+                $this->load($user, $file);
+            }
+        }
+        return $this;
+    }
+
+    public function getStore()
+    {
+        return $this->store;
     }
 }

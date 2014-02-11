@@ -21,6 +21,10 @@ function escape($data)
 function main()
 {
     $container  = new ContainerBuilder();
+    $container->setParameter('CWD', getcwd());
+    $container->setParameter('HOME', getenv('HOME'));
+    $container->setParameter('pssht.base_dir', dirname(__DIR__));
+
     $loader     = new XmlFileLoader($container, new FileLocator(getcwd()));
     $loader->load('pssht.xml');
     $container->get('logging', ContainerInterface::NULL_ON_INVALID_REFERENCE);
