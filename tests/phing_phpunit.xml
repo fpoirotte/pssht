@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<project name="Erebot_buildenv_phpunit">
+    <phpunit codecoverage="true">
+        <formatter type="plain" usefile="false"/>
+        <batchtest><fileset refid="tests"/></batchtest>
+    </phpunit>
+</project>

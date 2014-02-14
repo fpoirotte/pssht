@@ -16,8 +16,8 @@ What we're not specifically aiming for, but still interested in:
     scp/sftp subsystems, etc.)
 
 
-Installation
-------------
+Installation & Usage
+--------------------
 
 Download the `composer.phar <https://getcomposer.org/composer.phar>`_
 executable or use the installer.
@@ -41,6 +41,12 @@ Run Composer.
 ..  sourcecode:: bash
 
     $ php composer.phar install
+
+Run the server.
+
+..  sourcecode:: bash
+
+    $ php bin/pssht
 
 
 Configuration

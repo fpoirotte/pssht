@@ -33,7 +33,8 @@
         "phpmd/phpmd": "*",
         "sebastian/phpcpd": "*",
         "phpunit/phpunit": "*",
-        "squizlabs/php_codesniffer": "*"
+        "squizlabs/php_codesniffer": "*",
+        "erebot/buildenv": "*@dev"
     },
     "suggest": {
         "ext-http": "~1.0"

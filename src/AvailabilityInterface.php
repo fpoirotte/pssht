@@ -11,6 +11,10 @@
 
 namespace Clicky\Pssht;
 
+/**
+ * Interface for an algorithm whose availability
+ * is constrained by external factors.
+ */
 interface AvailabilityInterface
 {
     public static function isAvailable();

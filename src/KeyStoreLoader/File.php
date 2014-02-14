@@ -11,10 +11,22 @@
 
 namespace Clicky\Pssht\KeyStoreLoader;
 
+/**
+ * Public keys loader from a file.
+ */
 class File
 {
+    /// Storage object for the keys.
     protected $store;
 
+    /**
+     * Construct a new loader.
+     *
+     *  \param \Clicky\Pssht\KeyStore $store
+     *      (optional) Object where the keys will be stored.
+     *      If omitted, a new (empty) store is automatically
+     *      created.
+     */
     public function __construct(\Clicky\Pssht\KeyStore $store = null)
     {
         if ($store === null) {
@@ -24,6 +36,21 @@ class File
         $this->store    = $store;
     }
 
+    /**
+     * Load the keys in the given file as if they belonged
+     * to the specified user.
+     *
+     *  \param string $user
+     *      User the keys belong to.
+     *
+     *  \param string $file
+     *      File containing the keys to load.
+     *      It should follow the format of OpenSSH's
+     *      authorized_keys file.
+     *
+     *  \retval File
+     *      Returns this loader.
+     */
     public function load($user, $file)
     {
         if (!is_string($user)) {
@@ -54,8 +81,22 @@ class File
                 }
             }
         }
+
+        return $this;
     }
 
+    /**
+     * Bulk-load keys.
+     *
+     *  \param array $bulk
+     *      An array with information on the keys to load.
+     *      The keys in the array indicate users while
+     *      the values contain (an array of) files containing
+     *      the keys to load.
+     *
+     *  \retval File
+     *      Returns this loader.
+     */
     public function loadBulk(array $bulk)
     {
         foreach ($bulk as $user => $files) {
@@ -75,6 +116,12 @@ class File
         return $this;
     }
 
+    /**
+     * Return the key store associated with this loader.
+     *
+     *  \retval \Clicky\Pssht\KeyStore
+     *      The store for this loader.
+     */
     public function getStore()
     {
         return $this->store;

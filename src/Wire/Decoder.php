@@ -11,10 +11,21 @@
 
 namespace Clicky\Pssht\Wire;
 
+/**
+ * Decode SSH-encoded (RFC 4251) values.
+ */
 class Decoder
 {
+    /// Buffer the encoded values are read from.
     protected $buffer;
 
+    /**
+     * Construct a new decoder.
+     *
+     *  \param \Clicky\Pssht\Buffer $buffer
+     *      (optional) Buffer to read from.
+     *      If omitted, a new empty buffer is used.
+     */
     public function __construct(\Clicky\Pssht\Buffer $buffer = null)
     {
         if ($buffer === null) {
@@ -24,11 +35,30 @@ class Decoder
         $this->buffer = $buffer;
     }
 
+    /**
+     * Get the buffer associated with this decoder.
+     *
+     *  \retval \Clicky\Pssht\Buffer $buffer
+     *      The buffer associated with this decoder.
+     */
     public function getBuffer()
     {
         return $this->buffer;
     }
 
+    /**
+     * Decode a series of bytes ("byte" type).
+     *
+     *  \param int $count
+     *      (optional) Number of bytes to decode.
+     *      Defaults to 1.
+     *
+     *  \retval string
+     *      A string of exactly $count bytes.
+     *
+     *  \retval null
+     *      The buffer did not contain enough data.
+     */
     public function decodeBytes($count = 1)
     {
         if (!is_int($count) || $count < 0) {
@@ -42,6 +72,15 @@ class Decoder
         return $this->buffer->get($count);
     }
 
+    /**
+     * Decode a boolean value ("boolean" type).
+     *
+     *  \retval boolean
+     *      Decoded value.
+     *
+     *  \retval null
+     *      The buffer did not contain enough data.
+     */
     public function decodeBoolean()
     {
         $value = $this->decodeBytes();
@@ -51,6 +90,15 @@ class Decoder
         return ($value !== "\0");
     }
 
+    /**
+     * Decode a 32 bits unsigned value ("uint32" type).
+     *
+     *  \retval int
+     *      Decoded value.
+     *
+     *  \retval null
+     *      The buffer did not contain enough data.
+     */
     public function decodeUint32()
     {
         $value = $this->decodeBytes(4);
@@ -61,6 +109,16 @@ class Decoder
         return array_pop($res);
     }
 
+    /**
+     * Decode a 64 bits unsigned value ("uint64" type).
+     *
+     *  \retval resource
+     *      GMP resource representing the decoded
+     *      64 bits unsigned value.
+     *
+     *  \retval null
+     *      The buffer did not contain enough data.
+     */
     public function decodeUint64()
     {
         $value = $this->decodeBytes(8);
@@ -70,6 +128,15 @@ class Decoder
         return gmp_init(bin2hex($value), 16);
     }
 
+    /**
+     * Decode a character string ("string" type).
+     *
+     *  \retval string
+     *      Decoded value.
+     *
+     *  \retval null
+     *      The buffer did not contain enough data.
+     */
     public function decodeString()
     {
         $len = $this->decodeUint32();
@@ -84,6 +151,16 @@ class Decoder
         return $value;
     }
 
+    /**
+     * Decode an arbitrary precision number ("mpint" type).
+     *
+     *  \retval resource
+     *      GMP resource representing the decoded
+     *      arbitrary precision number.
+     *
+     *  \retval null
+     *      The buffer did not contain enough data.
+     */
     public function decodeMpint()
     {
         $s = $this->decodeString();
@@ -106,6 +183,15 @@ class Decoder
         return $n;
     }
 
+    /**
+     * Decode a list of names ("name-list" type).
+     *
+     *  \retval array
+     *      A list of algorithm names.
+     *
+     *  \retval null
+     *      The buffer did not contain enough data.
+     */
     public function decodeNameList($validationCallback = null)
     {
         $s = $this->decodeString();

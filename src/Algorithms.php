@@ -11,12 +11,23 @@
 
 namespace Clicky\Pssht;
 
+/**
+ * A singleton that gives access to supported algorithms.
+ */
 class Algorithms
 {
+    /// Array with currently available algorithms.
     protected $algos;
+
+    /// A backup of $algos when it was first populated.
     protected $savedAlgos;
+
+    /// Mapping between algorithm types and their corresponding interface.
     protected $interfaces;
 
+    /**
+     * Construct the only instance of this singleton.
+     */
     private function __construct()
     {
         $this->interfaces = array(
@@ -74,11 +85,18 @@ class Algorithms
         $this->savedAlgos = $this->algos;
     }
 
+    /// Prevent cloning of the singleton.
     public function __clone()
     {
         throw new \RuntimeException();
     }
 
+    /**
+     * Retrieve the singleton.
+     *
+     *  \retval Algorithms
+     *      The singleton.
+     */
     public static function factory()
     {
         static $instance = null;
@@ -88,6 +106,21 @@ class Algorithms
         return $instance;
     }
 
+    /**
+     * Check for valid classnames.
+     *
+     *  \param string $type
+     *      Expected type of class (algorithm name).
+     *
+     *  \param string $name
+     *      Name of the class.
+     *
+     *  \retval string
+     *      Full classname (with namespace).
+     *
+     *  \retval null
+     *      No valid class found with this type and name.
+     */
     protected function getValidClass($type, $name)
     {
         $w = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_1234567890\\';
@@ -123,6 +156,18 @@ class Algorithms
         return $class;
     }
 
+    /**
+     * Check for valid algorithm names.
+     *
+     *  \param string $class
+     *      Name of the class whose algorithm name must be checked.
+     *
+     *  \retval string
+     *      The class' algorithm name.
+     *
+     *  \retval null
+     *      No valid algorithm name for the given class.
+     */
     protected function getValidAlgorithm($class)
     {
         $w =    'abcdefghijklmnopqrstuvwxyz' .
@@ -135,6 +180,23 @@ class Algorithms
         return $name;
     }
 
+    /**
+     * Register a new algorithm.
+     *
+     *  \param string $type
+     *      Type of algorithm provided by the class.
+     *
+     *  \param string|object $class
+     *      Class or object that provides the algorithm.
+     *
+     *  \retval Algorithms
+     *      Returns the singleton.
+     *
+     *  \note
+     *      A class registered with this method will overwrite
+     *      any previously registered class with the same
+     *      algorithm name.
+     */
     public function register($type, $class)
     {
         if (is_object($class)) {
@@ -156,6 +218,18 @@ class Algorithms
         return $this;
     }
 
+    /**
+     * Unregister an algorithm.
+     *
+     *  \param string $type
+     *      Algorithm type.
+     *
+     *  \param string $name
+     *      Name of the algorithm to unregister.
+     *
+     *  \retval Algorithms
+     *      Returns the singleton.
+     */
     public function unregister($type, $name)
     {
         if (!is_string($type) || !isset($this->algos[$type])) {
@@ -168,6 +242,21 @@ class Algorithms
         return $this;
     }
 
+    /**
+     * Restore an algorithm.
+     *
+     * Reset the class in charge of providing
+     * a given algorithm to its initial value.
+     *
+     *  \param string $type
+     *      Algorithm type.
+     *
+     *  \param string $name
+     *      Name of the algorithm to restore.
+     *
+     *  \retval Algorithms
+     *      Returns the singleton.
+     */
     public function restore($type, $name)
     {
         if (!is_string($type) || !isset($this->algos[$type])) {
@@ -179,6 +268,17 @@ class Algorithms
         return $this;
     }
 
+    /**
+     * Get a list of all registered algorithms
+     * with the given type.
+     *
+     *  \param string $type
+     *      Type of algorithms to retrieve.
+     *
+     *  \retval array
+     *      A list with the names of all the algorithms
+     *      currently registered with the given type.
+     */
     public function getAlgorithms($type)
     {
         if (!is_string($type) || !isset($this->algos[$type])) {
@@ -187,6 +287,17 @@ class Algorithms
         return array_keys($this->algos[$type]);
     }
 
+    /**
+     * Get a list of all registered classes
+     * with the given type.
+     *
+     *  \param string $type
+     *      Type of algorithms to retrieve.
+     *
+     *  \retval array
+     *      A list with the names of the classes currently
+     *      registered providing algorithms of the given type.
+     */
     public function getClasses($type)
     {
         if (!is_string($type) || !isset($this->algos[$type])) {
@@ -195,9 +306,30 @@ class Algorithms
         return $this->algos[$type];
     }
 
+    /**
+     * Get the class responsible for providing
+     * the algorithm with the given type and name.
+     *
+     *  \param string $type
+     *      Type of algorithm to retrieve.
+     *
+     *  \param string $name
+     *      Name of the algorithm.
+     *
+     *  \retval string
+     *      Full name (with namespace) of the class
+     *      providing the given algorithm.
+     *
+     *  \retval null
+     *      No class provides an algorithm with the given
+     *      type and name.
+     */
     public function getClass($type, $name)
     {
         if (!is_string($type) || !isset($this->algos[$type])) {
+            throw new \InvalidArgumentException();
+        }
+        if (!is_string($name)) {
             throw new \InvalidArgumentException();
         }
         if (!isset($this->algos[$type][$name])) {
@@ -206,6 +338,21 @@ class Algorithms
         return $this->algos[$type][$name];
     }
 
+    /**
+     * Sort algorithms based on preferences.
+     *
+     *  \param string $a
+     *      Name of the first algorithm.
+     *
+     *  \param string $b
+     *      Name of the second algorithm.
+     *
+     *  \retval int
+     *      An integer that is less than zero if the first algorithm
+     *      should be preferred, equal to zero if both algorithms have
+     *      the same preference and greater than zero when the second
+     *      algorithm should be preferred.
+     */
     public static function sortAlgorithms($a, $b)
     {
         static $preferences = array(

@@ -11,10 +11,21 @@
 
 namespace Clicky\Pssht\Wire;
 
+/**
+ * SSH-encode (RFC 4251) values.
+ */
 class Encoder
 {
+    /// Buffer where the encoded values will be appended.
     protected $buffer;
 
+    /**
+     * Construct a new encoder.
+     *
+     *  \param \Clicky\Pssht\Buffer $buffer
+     *      (optional) Buffer to write to.
+     *      If omitted, a new empty buffer is used.
+     */
     public function __construct(\Clicky\Pssht\Buffer $buffer = null)
     {
         if ($buffer === null) {
@@ -24,31 +35,70 @@ class Encoder
         $this->buffer = $buffer;
     }
 
+    /**
+     * Get the buffer associated with this encoder.
+     *
+     *  \retval \Clicky\Pssht\Buffer $buffer
+     *      The buffer associated with this encoder.
+     */
     public function getBuffer()
     {
         return $this->buffer;
     }
 
-    protected function write($value)
-    {
-        $this->buffer->push($value);
-    }
-
+    /**
+     * Encode raw bytes ("byte" type).
+     *
+     *  \param string $value
+     *      Raw array of bytes.
+     *
+     *  \retval Encoder
+     *      Returns this encoder.
+     */
     public function encodeBytes($value)
     {
-        $this->write($value);
+        $this->buffer->push($value);
+        return $this;
     }
 
+    /**
+     * Encode a boolean ("boolean" type).
+     *
+     *  \param string $value
+     *      Boolean value to encode.
+     *
+     *  \retval Encoder
+     *      Returns this encoder.
+     */
     public function encodeBoolean($value)
     {
         return $this->encodeBytes(((bool) $value) ? "\x01" : "\x00");
     }
 
+    /**
+     * Encode a 32 bits unsigned value ("uint32" type).
+     *
+     *  \param string $value
+     *      32 bits unsigned value to encode.
+     *
+     *  \retval Encoder
+     *      Returns this encoder.
+     */
     public function encodeUint32($value)
     {
         return $this->encodeBytes(pack('N', $value));
     }
 
+    /**
+     * Encode a 64 bits unsigned value ("uint64" type).
+     *
+     *  \param resource $value
+     *      GMP resource representing the 64 bits unsigned value
+     *      to encode.
+     *
+     *  \retval Encoder
+     *      Returns this encoder.
+     */
     public function encodeUint64($value)
     {
         $s = gmp_strval($value, 16);
@@ -56,6 +106,15 @@ class Encoder
         return $this->encodeBytes(pack('H*', $s));
     }
 
+    /**
+     * Encode a string ("string" type).
+     *
+     *  \param string $value
+     *      Character string to encode.
+     *
+     *  \retval Encoder
+     *      Returns this encoder.
+     */
     public function encodeString($value)
     {
         return $this->encodeBytes(
@@ -64,6 +123,16 @@ class Encoder
         );
     }
 
+    /**
+     * Encode an arbitrary precision number ("mpint" type).
+     *
+     *  \param resource $value
+     *      GMP resource representing the arbitrary precision
+     *      number to encode.
+     *
+     *  \retval Encoder
+     *      Returns this encoder.
+     */
     public function encodeMpint($value)
     {
         if (gmp_cmp($value, "0") == 0) {
@@ -80,6 +149,15 @@ class Encoder
         return $this->encodeString($s);
     }
 
+    /**
+     * Encode a list of names ("name-list" type).
+     *
+     *  \param array $value
+     *      A list of algorithm names.
+     *
+     *  \retval Encoder
+     *      Returns this encoder.
+     */
     public function encodeNameList(array $values)
     {
         $s = implode(',', $values);

@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<project name="Erebot_buildenv_behat">
+    <exec command="vendor/bin/behat tests/features" checkreturn="true" logoutput="true"/>
+</project>
