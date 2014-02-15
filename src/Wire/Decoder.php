@@ -75,7 +75,7 @@ class Decoder
     /**
      * Decode a boolean value ("boolean" type).
      *
-     *  \retval boolean
+     *  \retval bool
      *      Decoded value.
      *
      *  \retval null

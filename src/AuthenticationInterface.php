@@ -11,24 +11,70 @@
 
 namespace Clicky\Pssht;
 
-interface AuthenticationInterface
+/**
+ * Interface for an authentication method.
+ */
+interface AuthenticationInterface extends AlgorithmInterface
 {
+    /// The message passed the check.
     const CHECK_OK      = 1;
+
+    /// The message was rejected by the check.
     const CHECK_REJECT  = 2;
+
+    /// The message should be ignored.
     const CHECK_IGNORE  = 3;
 
+
+    /// The authentication was successful.
     const AUTH_ACCEPT   = 1;
+
+    /// The authentication failed.
     const AUTH_REJECT   = 2;
+
+    /// The authentication failed and the method should be removed.
     const AUTH_REMOVE   = 3;
 
-    public static function getName();
-
+    /**
+     * Check the contents of an authentication request.
+     *
+     *  \param \Clicky\Pssht\Messages\USERAUTH\REQUEST\Base $message,
+     *      Message to check.
+     *
+     *  \param \Clicky\Pssht\Transport $transport
+     *      Transport layer the message originated from.
+     *
+     *  \param array $context
+     *      Context for the SSH session.
+     *
+     *  \retval opaque
+     *      Either AuthenticationInterface::CHECK_OK
+     *      or AuthenticationInterface::CHECK_REJECT
+     *      or AuthenticationInterface::CHECK_IGNORE.
+     */
     public function check(
         \Clicky\Pssht\Messages\USERAUTH\REQUEST\Base $message,
         \Clicky\Pssht\Transport $transport,
         array &$context
     );
 
+    /**
+     * Handle an authentication request.
+     *
+     *  \param \Clicky\Pssht\Messages\USERAUTH\REQUEST\Base $message,
+     *      Authenticate request to handle.
+     *
+     *  \param \Clicky\Pssht\Transport $transport
+     *      Transport layer the message originated from.
+     *
+     *  \param array $context
+     *      Context for the SSH session.
+     *
+     *  \retval opaque
+     *      Either AuthenticationInterface::AUTH_ACCEPT
+     *      or AuthenticationInterface::AUTH_REJECT
+     *      or AuthenticationInterface::AUTH_IGNORE.
+     */
     public function authenticate(
         \Clicky\Pssht\Messages\USERAUTH\REQUEST\Base $message,
         \Clicky\Pssht\Transport $transport,

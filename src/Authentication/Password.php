@@ -13,10 +13,21 @@ namespace Clicky\Pssht\Authentication;
 
 use Clicky\Pssht\AuthenticationInterface;
 
+/**
+ * Password authentication.
+ */
 class Password implements AuthenticationInterface
 {
+    /// Credentials of allowed users.
     protected $credentials;
 
+    /**
+     * Construct a new password authentication handler.
+     *
+     *  \param array $credentials
+     *      Array with allowed users as keys
+     *      and their respective passwords as values.
+     */
     public function __construct(array $credentials)
     {
         $this->credentials = $credentials;

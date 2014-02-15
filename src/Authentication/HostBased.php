@@ -13,10 +13,20 @@ namespace Clicky\Pssht\Authentication;
 
 use Clicky\Pssht\AuthenticationInterface;
 
+/**
+ * Host based authentication.
+ */
 class HostBased implements AuthenticationInterface
 {
+    /// Store for the host keys.
     protected $store;
 
+    /**
+     * Construct a new host based authentication handler.
+     *
+     *  \param \Clicky\Pssht\KeyStore $store
+     *      Store containing the host keys to authorize.
+     */
     public function __construct(\Clicky\Pssht\KeyStore $store)
     {
         $this->store = $store;

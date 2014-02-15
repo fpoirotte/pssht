@@ -11,8 +11,26 @@
 
 namespace Clicky\Pssht;
 
+/**
+ * Interface for an SSH message handler.
+ */
 interface HandlerInterface
 {
+    /**
+     * Handle an SSH message.
+     *
+     *  \param int $msgType
+     *      Message identifier.
+     *
+     *  \param \Clicky\Pssht\Wire\Decoder $decoder
+     *      Decoder for the message.
+     *
+     *  \param \Clicky\Pssht\Transport $transport
+     *      Transport layer the message was received from.
+     *
+     *  \param array $context
+     *      Context for the SSH connection.
+     */
     public function handle(
         $msgType,
         \Clicky\Pssht\Wire\Decoder $decoder,

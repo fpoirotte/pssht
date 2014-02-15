@@ -11,11 +11,32 @@
 
 namespace Clicky\Pssht;
 
+/**
+ * Interface for an SSH message.
+ */
 interface MessageInterface
 {
+    /**
+     * Retrieve the message's identifier.
+     *
+     *  \retval int
+     *      Message identifier.
+     */
     public static function getMessageId();
 
+    /**
+     * Serialize the message.
+     *
+     *  \param \Clicky\Pssht\Wire\Encoder $encoder
+     *      Encoder to use to perform serialization.
+     */
     public function serialize(\Clicky\Pssht\Wire\Encoder $encoder);
 
+    /**
+     * Unserialize some data into a message.
+     *
+     *  \param \Clicky\Pssht\Wire\Decoder $decoder
+     *      Decoder to use to perform unserialization.
+     */
     public static function unserialize(\Clicky\Pssht\Wire\Decoder $encoder);
 }

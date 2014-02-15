@@ -11,8 +11,12 @@
 
 namespace Clicky\Pssht\Random;
 
+/**
+ * OpenSSL-based pseudo-random number generator.
+ */
 class OpenSSL implements \Clicky\Pssht\RandomInterface
 {
+    /// Construct a new PRNG.
     public function __construct()
     {
     }

@@ -13,6 +13,12 @@ namespace Clicky\Pssht\Authentication;
 
 use Clicky\Pssht\AuthenticationInterface;
 
+/**
+ * Anonymous authentication.
+ *
+ * For security reasons, this class rejects all authentication requests
+ * and is only used to list supported authentication methods.
+ */
 class None implements AuthenticationInterface
 {
     public static function getName()

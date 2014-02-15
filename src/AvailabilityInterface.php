@@ -17,5 +17,12 @@ namespace Clicky\Pssht;
  */
 interface AvailabilityInterface
 {
+    /**
+     * Determine whether the algorithm is available.
+     *
+     *  \retval boolean
+     *      \b true if the algorithm is available,
+     *      \b false otherwise.
+     */
     public static function isAvailable();
 }

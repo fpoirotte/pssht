@@ -11,19 +11,65 @@
 
 namespace Clicky\Pssht;
 
-interface EncryptionInterface
+/**
+ * Interface for an encryption/decryption algorithm.
+ */
+interface EncryptionInterface extends AlgorithmInterface
 {
+    /**
+     * Construct an encryption/decryption algorithm.
+     *
+     *  \param string $iv
+     *      Initialization vector for the algorithm.
+     *
+     *  \param string $key
+     *      Encryption/decrytion key.
+     */
     public function __construct($iv, $key);
 
-    public static function getName();
-
+    /**
+     * Get the algorithm's key size.
+     *
+     *  \retval int
+     *      Key size (in bytes).
+     */
     public static function getKeySize();
 
+    /**
+     * Get the algorithm's IV size.
+     *
+     *  \retval int
+     *      Initialization vector size (in bytes).
+     */
     public static function getIVSize();
 
+    /**
+     * Get the algorithm's block size.
+     *
+     *  \retval int
+     *      Block size (in bytes).
+     */
     public static function getBlockSize();
 
+    /**
+     * Encrypt data using the algorithm.
+     *
+     *  \param string $data
+     *      Data to encrypt.
+     *
+     *  \retval string
+     *      Encrypted data.
+     */
     public function encrypt($data);
 
+    /**
+     * Decrypt data using the algorithm.
+     *
+     *  \param string $data
+     *      Data to decrypt.
+     *
+     *  \retval string
+     *      Decrypted data.
+     */
     public function decrypt($data);
 }

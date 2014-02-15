@@ -11,10 +11,20 @@
 
 namespace Clicky\Pssht\Random;
 
+/**
+ * Fake PRNG that returns a fixed string.
+ */
 class Fixed implements \Clicky\Pssht\RandomInterface
 {
+    /// Fixed data to return.
     protected $data;
 
+    /**
+     * Construct a new fake PRNG.
+     *
+     *  \param string $data
+     *      Fixed data to return.
+     */
     public function __construct($data)
     {
         if (!is_string($data) || strlen($data) === 0) {

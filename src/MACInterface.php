@@ -11,13 +11,36 @@
 
 namespace Clicky\Pssht;
 
-interface MACInterface
+/**
+ * Interface for a MAC algorithm.
+ */
+interface MACInterface extends AlgorithmInterface
 {
+    /**
+     * Construct a new MAC algorithm.
+     *
+     *  \param string $key
+     *      Key for the MAC algorithm.
+     */
     public function __construct($key);
 
-    public static function getName();
-
+    /**
+     * Compute the MAC for some data.
+     *
+     *  \param string $data
+     *      Data whose MAC must be computed.
+     *
+     *  \retval string
+     *      MAC for the given data.
+     */
     public function compute($data);
 
+    /**
+     * Get the size of a MAC signature
+     * generated with this algorithm.
+     *
+     *  \retval int
+     *      MAC size in bytes.
+     */
     public static function getSize();
 }

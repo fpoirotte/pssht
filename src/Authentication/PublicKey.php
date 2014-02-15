@@ -13,10 +13,20 @@ namespace Clicky\Pssht\Authentication;
 
 use Clicky\Pssht\AuthenticationInterface;
 
+/**
+ * Public key authentication.
+ */
 class PublicKey implements AuthenticationInterface
 {
+    /// Store for the public keys.
     protected $store;
 
+    /**
+     * Construct a new public key authentication handler.
+     *
+     *  \param \Clicky\Pssht\KeyStore $store
+     *      Store containing the public keys to authorize.
+     */
     public function __construct(\Clicky\Pssht\KeyStore $store)
     {
         $this->store = $store;

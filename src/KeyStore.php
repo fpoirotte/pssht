@@ -11,15 +11,31 @@
 
 namespace Clicky\Pssht;
 
+/**
+ * Provides storage for public/private keys.
+ */
 class KeyStore
 {
+    /// Public/private keys currently stored.
     protected $keys;
 
+    /**
+     * Construct a new store.
+     */
     public function __construct()
     {
         $this->keys = array();
     }
 
+    /**
+     * Return the identifier for a key.
+     *
+     *  \param PublicKeyInterface $key
+     *      Public or private key.
+     *
+     *  \retval string
+     *      SSH identifier for the key.
+     */
     protected function getIdentifier(PublicKeyInterface $key)
     {
         $encoder = new \Clicky\Pssht\Wire\Encoder();
@@ -27,6 +43,15 @@ class KeyStore
         return $encoder->getBuffer()->get(0);
     }
 
+    /**
+     * Add a new key in the store.
+     *
+     *  \param string $user
+     *      User the key belongs to.
+     *
+     *  \param PublicKeyInterface $key
+     *      Public/private key to add.
+     */
     public function add($user, PublicKeyInterface $key)
     {
         if (!is_string($user)) {
@@ -36,6 +61,15 @@ class KeyStore
         $this->keys[$user][$this->getIdentifier($key)] = $key;
     }
 
+    /**
+     * Remove a key from the store.
+     *
+     *  \param string $user
+     *      User the key belongs to.
+     *
+     *  \param PublicKeyInterface $key
+     *      Public/private key to remove.
+     */
     public function remove($user, PublicKeyInterface $key)
     {
         if (!is_string($user)) {
@@ -45,6 +79,16 @@ class KeyStore
         unset($this->keys[$user][$this->getIdentifier($key)]);
     }
 
+    /**
+     * Retrieve a list of the keys currently
+     * stored for the given user.
+     *
+     *  \param string $user
+     *      User whose keys should be retrieved.
+     *
+     *  \retval array
+     *      Public/private keys for the given user.
+     */
     public function get($user)
     {
         if (!is_string($user)) {
@@ -58,6 +102,20 @@ class KeyStore
         return new \ArrayIterator($this->keys[$user]);
     }
 
+    /**
+     * Test whether a given key as been registered
+     * for a specific user.
+     *
+     *  \param string $user
+     *      User for which the key is tested.
+     *
+     *  \param string|PublicKeyInterface $key
+     *      Key to test.
+     *
+     *  \retval bool
+     *      \c true if the given key has been registered
+     *      for the given user, \c false otherwise.
+     */
     public function exists($user, $key)
     {
         if (!is_string($user)) {
@@ -74,6 +132,16 @@ class KeyStore
         return isset($this->keys[$user][$key]);
     }
 
+    /**
+     * Return the number of keys currently registered
+     * for the given user.
+     *
+     *  \param string $user
+     *      User whose keys must be counted.
+     *
+     *  \retval int
+     *      Number of available keys for the given user.
+     */
     public function count($user)
     {
         if (!is_string($user)) {

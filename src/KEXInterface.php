@@ -11,13 +11,36 @@
 
 namespace Clicky\Pssht;
 
-interface KEXInterface
+/**
+ * Interface for a Key Exchange algorithm.
+ */
+interface KEXInterface extends AlgorithmInterface
 {
-    public static function getName();
-
+    /**
+     * Get the generator to use for key exchange.
+     *
+     *  \retval int
+     *      Key exchange generator.
+     */
     public static function getGenerator();
 
+    /**
+     * Get the prime number to use for key exchange.
+     *
+     *  \retval resource
+     *      GMP resource with the primer number
+     *      to use for key exchange.
+     */
     public static function getPrime();
 
+    /**
+     * Hash the given data.
+     *
+     *  \param string $data
+     *      Data to hash.
+     *
+     *  \retval string
+     *      Hash for the given data.
+     */
     public function hash($data);
 }
