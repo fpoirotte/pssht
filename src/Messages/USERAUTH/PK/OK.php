@@ -14,6 +14,9 @@ namespace Clicky\Pssht\Messages\USERAUTH\PK;
 use Clicky\Pssht\Wire\Encoder;
 use Clicky\Pssht\Wire\Decoder;
 
+/**
+ * SSH_MSG_USERAUTH_PK_OK message (RFC 4252).
+ */
 class OK implements \Clicky\Pssht\MessageInterface
 {
     protected $algorithm;
@@ -41,6 +44,7 @@ class OK implements \Clicky\Pssht\MessageInterface
     {
         $encoder->encodeString($this->algorithm);
         $encoder->encodeString($this->key);
+        return $this;
     }
 
     public static function unserialize(Decoder $decoder)

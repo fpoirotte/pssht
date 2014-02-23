@@ -11,6 +11,10 @@
 
 namespace Clicky\Pssht\Encryption\CBC;
 
+/**
+ * Blowfish cipher in CBC mode
+ * (OPTIONAL in RFC 4253).
+ */
 class Blowfish extends \Clicky\Pssht\Encryption\Base
 {
     public static function getKeySize()

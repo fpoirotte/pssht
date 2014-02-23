@@ -22,7 +22,7 @@ class File
     /**
      * Construct a new loader.
      *
-     *  \param \Clicky\Pssht\KeyStore $store
+     *  \param KeyStore $store
      *      (optional) Object where the keys will be stored.
      *      If omitted, a new (empty) store is automatically
      *      created.
@@ -119,7 +119,7 @@ class File
     /**
      * Return the key store associated with this loader.
      *
-     *  \retval \Clicky\Pssht\KeyStore
+     *  \retval KeyStore
      *      The store for this loader.
      */
     public function getStore()

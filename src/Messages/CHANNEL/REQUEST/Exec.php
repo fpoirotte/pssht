@@ -15,6 +15,10 @@ use Clicky\Pssht\Messages\CHANNEL\REQUEST\Base;
 use Clicky\Pssht\Wire\Encoder;
 use Clicky\Pssht\Wire\Decoder;
 
+/**
+ * SSH_MSG_CHANNEL_REQUEST message (RFC 4254)
+ * for the "exec" request type.
+ */
 class Exec extends Base
 {
     protected $command;
@@ -29,6 +33,7 @@ class Exec extends Base
     {
         parent::serialize($encoder);
         $encoder->encodeString($this->command);
+        return $this;
     }
 
     protected static function unserializeSub(Decoder $decoder)

@@ -12,7 +12,7 @@
 namespace Clicky\Pssht\Wire;
 
 /**
- * Decode SSH-encoded (RFC 4251) values.
+ * Decode SSH-encoded values (RFC 4251).
  */
 class Decoder
 {
@@ -22,7 +22,7 @@ class Decoder
     /**
      * Construct a new decoder.
      *
-     *  \param \Clicky\Pssht\Buffer $buffer
+     *  \param Buffer $buffer
      *      (optional) Buffer to read from.
      *      If omitted, a new empty buffer is used.
      */
@@ -38,7 +38,7 @@ class Decoder
     /**
      * Get the buffer associated with this decoder.
      *
-     *  \retval \Clicky\Pssht\Buffer $buffer
+     *  \retval Buffer $buffer
      *      The buffer associated with this decoder.
      */
     public function getBuffer()
@@ -186,8 +186,16 @@ class Decoder
     /**
      * Decode a list of names ("name-list" type).
      *
+     *  \param callable $validationCallback
+     *      (optional) Callback to call with the list as its sole
+     *      argument for validation before it is returned.
+     *      The callback should throw \\InvalidArgumentException
+     *      if any of the values is invalid.
+     *      By default, this method already validates the values
+     *      using the rules for "name-list" type given in RFC 4251.
+     *
      *  \retval array
-     *      A list of algorithm names.
+     *      List of decoded algorithm names.
      *
      *  \retval null
      *      The buffer did not contain enough data.

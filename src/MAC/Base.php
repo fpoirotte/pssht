@@ -15,11 +15,15 @@ use Clicky\Pssht\MACInterface;
 use Clicky\Pssht\AvailabilityInterface;
 use Clicky\Pssht\MAC\BaseInterface;
 
+/**
+ * Abstract class representing a MAC algorithm.
+ */
 abstract class Base implements
     MACInterface,
     AvailabilityInterface,
     BaseInterface
 {
+    /// Secret key for MAC operations.
     protected $key;
 
     final public function __construct($key)

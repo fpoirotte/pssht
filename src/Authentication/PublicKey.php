@@ -24,7 +24,7 @@ class PublicKey implements AuthenticationInterface
     /**
      * Construct a new public key authentication handler.
      *
-     *  \param \Clicky\Pssht\KeyStore $store
+     *  \param KeyStore $store
      *      Store containing the public keys to authorize.
      */
     public function __construct(\Clicky\Pssht\KeyStore $store)

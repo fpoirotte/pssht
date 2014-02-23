@@ -11,6 +11,9 @@
 
 namespace Clicky\Pssht\Handlers;
 
+/**
+ * Handler for the SSH protocol's initial state.
+ */
 class InitialState implements \Clicky\Pssht\HandlerInterface
 {
     // Initial state

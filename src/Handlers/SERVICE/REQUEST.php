@@ -13,6 +13,9 @@ namespace Clicky\Pssht\Handlers\SERVICE;
 
 use Clicky\Pssht\Messages\DISCONNECT;
 
+/**
+ * Handler for SSH_MSG_SERVICE_REQUEST messages.
+ */
 class REQUEST implements \Clicky\Pssht\HandlerInterface
 {
     protected $userAuthRequestHandler;

@@ -11,6 +11,11 @@
 
 namespace Clicky\Pssht\KEX;
 
+/**
+ * Diffie-Hellman key exchange with SHA-1 as HASH,
+ * and Oakley Group 2 [RFC2409] (1024-bit MODP Group);
+ * REQUIRED in RFC 4253.
+ */
 class DHGroup1SHA1 implements \Clicky\Pssht\KEXInterface
 {
     public static function getName()

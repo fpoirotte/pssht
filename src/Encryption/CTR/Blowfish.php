@@ -11,6 +11,10 @@
 
 namespace Clicky\Pssht\Encryption\CTR;
 
+/**
+ * Blowfish cipher in CTR mode
+ * (OPTIONAL in RFC 4344).
+ */
 class Blowfish extends \Clicky\Pssht\Encryption\CBC\Blowfish
 {
 }

@@ -11,6 +11,9 @@
 
 namespace Clicky\Pssht\Messages\USERAUTH;
 
+/**
+ * SSH_MSG_USERAUTH_SUCCESS message (RFC 4252).
+ */
 class SUCCESS extends \Clicky\Pssht\Messages\Base
 {
     public static function getMessageId()

@@ -15,11 +15,15 @@ use Clicky\Pssht\EncryptionInterface;
 use Clicky\Pssht\AvailabilityInterface;
 use Clicky\Pssht\Encryption\BaseInterface;
 
+/**
+ * Abstract base for encryption ciphers.
+ */
 abstract class Base implements
     EncryptionInterface,
     AvailabilityInterface,
     BaseInterface
 {
+    /// mcrypt handle for the cipher.
     protected $mcrypt;
 
     public function __construct($iv, $key)

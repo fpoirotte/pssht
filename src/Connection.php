@@ -15,10 +15,20 @@ use Clicky\Pssht\Messages\USERAUTH\REQUEST;
 use Clicky\Pssht\Wire\Encoder;
 use Clicky\Pssht\Wire\Decoder;
 
+/**
+ * Connection layer for the SSH protocol (RFC 4254).
+ */
 class Connection implements \Clicky\Pssht\HandlerInterface
 {
+    /// Opened SSH channels.
     protected $channels;
 
+    /**
+     * Construct a new SSH connection layer.
+     *
+     *  \param Transport $transport
+     *      SSH transport layer.
+     */
     public function __construct(
         \Clicky\Pssht\Transport $transport
     ) {
@@ -71,7 +81,16 @@ class Connection implements \Clicky\Pssht\HandlerInterface
         return true;
     }
 
-    public function allocateChannel(\Clicky\Pssht\MessageInterface $message)
+    /**
+     * Allocate a new communication channel.
+     *
+     *  \param \Clicky\Pssht\Messages\CHANNEL\OPEN $message
+     *      Original message requesting channel allocation.
+     *
+     *  \return int
+     *      Newly allocated channel's identifier.
+     */
+    public function allocateChannel(\Clicky\Pssht\Messages\CHANNEL\OPEN $message)
     {
         for ($i = 0; isset($this->channels[$i]); ++$i) {
             // Do nothing.
@@ -81,6 +100,15 @@ class Connection implements \Clicky\Pssht\HandlerInterface
         return $i;
     }
 
+    /**
+     * Free a channel allocation.
+     *
+     *  \param int $id
+     *      Channel identifier.
+     *
+     *  \retval Connection
+     *      Returns this connection.
+     */
     public function freeChannel($id)
     {
         if (!is_int($id)) {
@@ -92,6 +120,15 @@ class Connection implements \Clicky\Pssht\HandlerInterface
         return $this;
     }
 
+    /**
+     * Retrieve the channel associated with a message.
+     *
+     *  \param int|Clicky\Pssht\Messages\CHANNEL\REQUEST\Base $message
+     *      Either a message or the message's channel identifier.
+     *
+     *  \retval int
+     *      Remote channel associated with the message.
+     */
     public function getChannel($message)
     {
         if (is_int($message)) {
@@ -100,8 +137,20 @@ class Connection implements \Clicky\Pssht\HandlerInterface
         return $this->channels[$message->getChannel()];
     }
 
+    /**
+     * Register a handler.
+     *
+     *  \param int|Clicky\Pssht\Messages\CHANNEL\REQUEST\Base $message
+     *      Either a message or the message's channel identifier.
+     *
+     *  \param int $type
+     *      Message type.
+     *
+     *  \param HandlerInterface $handler
+     *      Handler to associate with the message.
+     */
     public function setHandler(
-        \Clicky\Pssht\MessageInterface $message,
+        $message,
         $type,
         \Clicky\Pssht\HandlerInterface $handler
     ) {
@@ -109,12 +158,31 @@ class Connection implements \Clicky\Pssht\HandlerInterface
             throw new \InvalidArgumentException();
         }
 
-        $this->handlers[$message->getChannel()][$type] = $handler;
+        if (!is_int($message)) {
+            if (!($message instanceof \Clicky\Pssht\Messages\CHANNEL\REQUEST\Base)) {
+                throw new \InvalidArgumentException();
+            }
+            $message = $message->getChannel();
+        }
+
+        $this->handlers[$message][$type] = $handler;
         return $this;
     }
 
+    /**
+     * Unregister a handler.
+     *
+     *  \param int|Clicky\Pssht\Messages\CHANNEL\REQUEST\Base $message
+     *      Either a message or the message's channel identifier.
+     *
+     *  \param int $type
+     *      Message type.
+     *
+     *  \param HandlerInterface $handler
+     *      Handler to unregister.
+     */
     public function unsetHandler(
-        \Clicky\Pssht\MessageInterface $message,
+        $message,
         $type,
         \Clicky\Pssht\HandlerInterface $handler
     ) {
@@ -122,9 +190,16 @@ class Connection implements \Clicky\Pssht\HandlerInterface
             throw new \InvalidArgumentException();
         }
 
-        if (isset($this->handlers[$message->getChannel()][$type]) &&
-            $this->handlers[$message->getChannel()][$type] === $handler) {
-            unset($this->handlers[$message->getChannel()][$type]);
+        if (!is_int($message)) {
+            if (!($message instanceof \Clicky\Pssht\Messages\CHANNEL\REQUEST\Base)) {
+                throw new \InvalidArgumentException();
+            }
+            $message = $message->getChannel();
+        }
+
+        if (isset($this->handlers[$message][$type]) &&
+            $this->handlers[$message][$type] === $handler) {
+            unset($this->handlers[$message][$type]);
         }
         return $this;
     }

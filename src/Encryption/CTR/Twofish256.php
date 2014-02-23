@@ -11,6 +11,10 @@
 
 namespace Clicky\Pssht\Encryption\CTR;
 
+/**
+ * Twofish cipher in CTR mode with a 256-bit key
+ * (OPTIONAL in RFC 4344).
+ */
 class Twofish256 extends \Clicky\Pssht\Encryption\CBC\Twofish256
 {
 }

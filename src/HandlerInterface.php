@@ -22,10 +22,10 @@ interface HandlerInterface
      *  \param int $msgType
      *      Message identifier.
      *
-     *  \param \Clicky\Pssht\Wire\Decoder $decoder
+     *  \param Decoder $decoder
      *      Decoder for the message.
      *
-     *  \param \Clicky\Pssht\Transport $transport
+     *  \param Transport $transport
      *      Transport layer the message was received from.
      *
      *  \param array $context

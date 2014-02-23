@@ -11,6 +11,10 @@
 
 namespace Clicky\Pssht\MAC\SHA2;
 
+/**
+ * MAC generation using the SHA2 hashing algorithm
+ * with a 512 bits long MAC (aka "SHA-512").
+ */
 class Len512 extends \Clicky\Pssht\MAC\Base
 {
     public static function getName()

@@ -11,9 +11,10 @@
 
 namespace Clicky\Pssht\MAC;
 
-use Clicky\Pssht\MACInterface;
-
-class None implements MACInterface
+/**
+ * Null MAC generation (= no MAC).
+ */
+class None implements \Clicky\Pssht\MACInterface
 {
     public function __construct($key)
     {

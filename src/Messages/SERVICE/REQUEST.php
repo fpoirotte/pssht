@@ -11,6 +11,9 @@
 
 namespace Clicky\Pssht\Messages\SERVICE;
 
+/**
+ * SSH_MSG_SERVICE_REQUEST message (RFC 4253).
+ */
 class REQUEST extends \Clicky\Pssht\Messages\SERVICE\Base
 {
     public static function getMessageId()

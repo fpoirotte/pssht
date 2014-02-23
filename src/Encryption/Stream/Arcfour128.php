@@ -11,6 +11,10 @@
 
 namespace Clicky\Pssht\Encryption\Stream;
 
+/**
+ * Arcfour cipher in stream mode with a 128-bit key
+ * and 1536 discarded bytes (defined in RFC 4345).
+ */
 class Arcfour128 extends Arcfour256
 {
     public static function getName()

@@ -15,6 +15,9 @@ use Clicky\Pssht\MessageInterface;
 use Clicky\Pssht\Wire\Encoder;
 use Clicky\Pssht\Wire\Decoder;
 
+/**
+ * SSH_MSG_CHANNEL_EXTENDED_DATA message (RFC 4254).
+ */
 class DATA implements MessageInterface
 {
     const SSH_EXTENDED_DATA_STDERR = 1;
@@ -40,6 +43,7 @@ class DATA implements MessageInterface
         $encoder->encodeUint32($this->channel);
         $encoder->encodeUint32($this->code);
         $encoder->encodeString($this->data);
+        return $this;
     }
 
     public static function unserialize(Decoder $decoder)

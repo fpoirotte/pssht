@@ -15,11 +15,16 @@ use Clicky\Pssht\MACInterface;
 use Clicky\Pssht\AvailabilityInterface;
 use Clicky\Pssht\MAC\Base96Interface;
 
+/**
+ * Abstract base class for a MAC truncated
+ * after 96 bits.
+ */
 abstract class Base96 implements
     MACInterface,
     AvailabilityInterface,
     Base96Interface
 {
+    /// Subhash performing the real MAC operation.
     protected $subhash;
 
     final public function __construct($key)

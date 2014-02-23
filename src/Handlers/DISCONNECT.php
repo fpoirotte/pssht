@@ -11,6 +11,9 @@
 
 namespace Clicky\Pssht\Handlers;
 
+/**
+ * Handler for SSH_MSG_DISCONNECT messages.
+ */
 class DISCONNECT implements \Clicky\Pssht\HandlerInterface
 {
     // SSH_MSG_DISCONNECT = 1

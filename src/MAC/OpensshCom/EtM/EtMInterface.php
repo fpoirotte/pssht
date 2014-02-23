@@ -11,6 +11,9 @@
 
 namespace Clicky\Pssht\MAC\OpensshCom\EtM;
 
+/**
+ * Interface for Encrypt-then-MAC mode.
+ */
 interface EtMInterface
 {
 }

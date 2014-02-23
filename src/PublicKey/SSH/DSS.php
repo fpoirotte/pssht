@@ -14,16 +14,52 @@ namespace Clicky\Pssht\PublicKey\SSH;
 use Clicky\Pssht\PublicKeyInterface;
 use Clicky\Pssht\Wire\Encoder;
 
+/**
+ * Public key using the Digital Signature Algorithm (DSA),
+ * as used in the Digital Signature Standard (DSS).
+ */
 class DSS implements PublicKeyInterface
 {
+    /// DER header for DSA.
     const DER_HEADER = "\x30\x20\x30\x0c\x06\x08\x2a\x86\x48\x86\xf7\x0d\x02\x05\x05\x00\x04\x10";
 
+    /// DSA parameter p.
     protected $p;
+
+    /// DSA prime number.
     protected $q;
+
+    /// DSA parameter g.
     protected $g;
+
+    /// Public key.
     protected $y;
+
+    /// Private key.
     protected $x;
 
+
+    /**
+     * Construct a new public/private DSA key.
+     *
+     *  \param resource $p
+     *      GMP resource containing the p parameter for DSA.
+     *
+     *  \param resource $q
+     *      GMP resource containing the q parameter for DSA.
+     *
+     *  \param resource $g
+     *      GMP resource containing the g parameter for DSA.
+     *
+     *  \param resource $y
+     *      GMP resource containing the public key.
+     *
+     *  \param resource $x
+     *      (optional) GMP resource containing the private key.
+     *      If omitted, only the public part of the key is
+     *      loaded, meaning that signature generation will be
+     *      unavailable.
+     */
     public function __construct($p, $q, $g, $y, $x = null)
     {
         $this->p = $p;

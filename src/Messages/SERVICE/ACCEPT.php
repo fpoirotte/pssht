@@ -11,6 +11,9 @@
 
 namespace Clicky\Pssht\Messages\SERVICE;
 
+/**
+ * SSH_MSG_SERVICE_ACCEPT message (RFC 4253).
+ */
 class ACCEPT extends \Clicky\Pssht\Messages\SERVICE\Base
 {
     public static function getMessageId()

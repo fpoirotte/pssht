@@ -11,6 +11,9 @@
 
 namespace Clicky\Pssht\Handlers;
 
+/**
+ * Handler for SSH_MSG_IGNORE messages.
+ */
 class IGNORE implements \Clicky\Pssht\HandlerInterface
 {
     // SSH_MSG_IGNORE = 2

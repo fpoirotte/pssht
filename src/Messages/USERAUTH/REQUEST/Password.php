@@ -14,6 +14,10 @@ namespace Clicky\Pssht\Messages\USERAUTH\REQUEST;
 use Clicky\Pssht\Wire\Encoder;
 use Clicky\Pssht\Wire\Decoder;
 
+/**
+ * SSH_MSG_USERAUTH_REQUEST message (RFC 4252)
+ * for the "password" method.
+ */
 class Password extends \Clicky\Pssht\Messages\USERAUTH\REQUEST\Base
 {
     protected $password;
@@ -42,6 +46,7 @@ class Password extends \Clicky\Pssht\Messages\USERAUTH\REQUEST\Base
         if ($this->newPassword !== null) {
             $encoder->encodeString($this->newPassword);
         }
+        return $this;
     }
 
     protected static function unserializeSub(Decoder $decoder)

@@ -11,14 +11,19 @@
 
 namespace Clicky\Pssht\Messages;
 
+/**
+ * Abstract SSH message.
+ */
 abstract class Base implements \Clicky\Pssht\MessageInterface
 {
+    /// Construct the message.
     final public function __construct()
     {
     }
 
     final public function serialize(\Clicky\Pssht\Wire\Encoder $encoder)
     {
+        return $this;
     }
 
     final public static function unserialize(\Clicky\Pssht\Wire\Decoder $encoder)

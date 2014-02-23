@@ -11,6 +11,9 @@
 
 namespace Clicky\Pssht\MAC;
 
+/**
+ * MAC generation using the SHA1 hashing algorithm.
+ */
 class SHA1 extends Base
 {
     public static function getName()

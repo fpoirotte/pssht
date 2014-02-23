@@ -15,6 +15,10 @@ use Clicky\Pssht\Messages\CHANNEL\REQUEST\Base;
 use Clicky\Pssht\Wire\Encoder;
 use Clicky\Pssht\Wire\Decoder;
 
+/**
+ * SSH_MSG_CHANNEL_REQUEST message (RFC 4254)
+ * for the "exit-status" request type.
+ */
 class ExitStatus extends Base
 {
     protected $status;
@@ -29,6 +33,7 @@ class ExitStatus extends Base
     {
         parent::serialize($encoder);
         $encoder->encodeUint32($this->status);
+        return $this;
     }
 
     protected static function unserializeSub(Decoder $decoder)

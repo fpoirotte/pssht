@@ -14,8 +14,8 @@ namespace Clicky\Pssht;
 /**
  * Interface for delayed compression.
  */
-interface DelayedCompressionInterface
+interface DelayedCompressionInterface extends CompressionInterface
 {
-    /// Sets a flag indicating user-authentication success.
+    /// Sets a flag indicating that user authentication success.
     public function setAuthenticated();
 }

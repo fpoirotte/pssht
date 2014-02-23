@@ -17,6 +17,9 @@ use Clicky\Pssht\Wire\Encoder;
 use Clicky\Pssht\Wire\Decoder;
 use Clicky\Pssht\Algorithms;
 
+/**
+ * SSH_MSG_KEXINIT message (RFC 4253).
+ */
 class KEXINIT implements MessageInterface
 {
     protected $cookie;
@@ -118,6 +121,7 @@ class KEXINIT implements MessageInterface
         $encoder->encodeNameList($this->langS2C);
         $encoder->encodeBoolean($this->firstKexPacket);
         $encoder->encodeUint32(0); // Reserved for future extension.
+        return $this;
     }
 
     public static function unserialize(Decoder $decoder)

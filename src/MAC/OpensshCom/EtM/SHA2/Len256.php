@@ -13,6 +13,9 @@ namespace Clicky\Pssht\MAC\OpensshCom\EtM\SHA2;
 
 use \Clicky\Pssht\MAC\OpensshCom\EtM\EtMInterface;
 
+/**
+ * MAC generation using an SHA-256 hash in Encrypt-then-MAC mode.
+ */
 class Len256 extends \Clicky\Pssht\MAC\SHA2\Len256 implements EtMInterface
 {
     public static function getName()

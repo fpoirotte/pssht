@@ -24,7 +24,7 @@ class HostBased implements AuthenticationInterface
     /**
      * Construct a new host based authentication handler.
      *
-     *  \param \Clicky\Pssht\KeyStore $store
+     *  \param KeyStore $store
      *      Store containing the host keys to authorize.
      */
     public function __construct(\Clicky\Pssht\KeyStore $store)

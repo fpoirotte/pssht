@@ -14,6 +14,9 @@ namespace Clicky\Pssht\Handlers\USERAUTH;
 use Clicky\Pssht\Messages\Disconnect;
 use Clicky\Pssht\AuthenticationInterface;
 
+/**
+ * Handler for SSH_MSG_USERAUTH_REQUEST messages.
+ */
 class REQUEST implements \Clicky\Pssht\HandlerInterface
 {
     protected $methods;

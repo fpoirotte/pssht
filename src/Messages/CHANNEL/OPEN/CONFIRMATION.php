@@ -15,6 +15,9 @@ use Clicky\Pssht\MessageInterface;
 use Clicky\Pssht\Wire\Encoder;
 use Clicky\Pssht\Wire\Decoder;
 
+/**
+ * SSH_MSG_CHANNEL_OPEN_CONFIRMATION message (RFC 4254).
+ */
 class CONFIRMATION implements MessageInterface
 {
     protected $recipientChannel;
@@ -41,6 +44,7 @@ class CONFIRMATION implements MessageInterface
         $encoder->encodeUint32($this->senderChannel);
         $encoder->encodeUint32($this->initialWindowSize);
         $encoder->encodeUint32($this->maximumPacketSize);
+        return $this;
     }
 
     public static function unserialize(Decoder $decoder)

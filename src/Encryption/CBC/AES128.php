@@ -11,6 +11,10 @@
 
 namespace Clicky\Pssht\Encryption\CBC;
 
+/**
+ * AES cipher in CBC mode with a 128-bit key
+ * (RECOMMENDED in RFC 4253).
+ */
 class AES128 extends AES256
 {
     public static function getKeySize()

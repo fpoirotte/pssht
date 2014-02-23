@@ -11,6 +11,10 @@
 
 namespace Clicky\Pssht\Encryption\CTR;
 
+/**
+ * IDEA cipher in CTR mode
+ * (OPTIONAL in RFC 4344).
+ */
 class IDEA extends \Clicky\Pssht\Encryption\CBC\IDEA
 {
 }

@@ -11,6 +11,9 @@
 
 namespace Clicky\Pssht\Handlers\CHANNEL;
 
+/**
+ * Handler for SSH_MSG_CHANNEL_CLOSE messages.
+ */
 class OPEN extends Base
 {
     // SSH_MSG_CHANNEL_OPEN = 90

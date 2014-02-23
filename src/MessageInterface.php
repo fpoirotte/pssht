@@ -27,16 +27,22 @@ interface MessageInterface
     /**
      * Serialize the message.
      *
-     *  \param \Clicky\Pssht\Wire\Encoder $encoder
+     *  \param Encoder $encoder
      *      Encoder to use to perform serialization.
+     *
+     *  \retval MessageInterface
+     *      Returns this message.
      */
     public function serialize(\Clicky\Pssht\Wire\Encoder $encoder);
 
     /**
      * Unserialize some data into a message.
      *
-     *  \param \Clicky\Pssht\Wire\Decoder $decoder
+     *  \param Decoder $decoder
      *      Decoder to use to perform unserialization.
+     *
+     *  \retval MessageInterface
+     *      Unserialized message.
      */
-    public static function unserialize(\Clicky\Pssht\Wire\Decoder $encoder);
+    public static function unserialize(\Clicky\Pssht\Wire\Decoder $decoder);
 }

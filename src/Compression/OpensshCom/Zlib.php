@@ -11,8 +11,13 @@
 
 namespace Clicky\Pssht\Compression\OpensshCom;
 
-class Zlib implements \Clicky\Pssht\DelayedCompressionInterface
+/**
+ * Delayed ZLIB compression.
+ */
+class Zlib extends \Clicky\Pssht\Compression\Zlib implements
+    \Clicky\Pssht\DelayedCompressionInterface
 {
+    /// Flag indicating whether user authentication succeeded or not.
     protected $authenticated;
 
     public function __construct($mode)

@@ -11,6 +11,9 @@
 
 namespace Clicky\Pssht\Messages;
 
+/**
+ * SSH_MSG_UNIMPLEMENTED message (RFC 4253).
+ */
 class UNIMPLEMENTED implements \Clicky\Pssht\MessageInterface
 {
     protected $sequenceNo;
@@ -28,6 +31,7 @@ class UNIMPLEMENTED implements \Clicky\Pssht\MessageInterface
     public function serialize(\Clicky\Pssht\Wire\Encoder $encoder)
     {
         $encoder->encodeUint32($this->sequenceNo);
+        return $this;
     }
 
     public static function unserialize(\Clicky\Pssht\Wire\Decoder $decoder)

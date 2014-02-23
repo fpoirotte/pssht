@@ -15,6 +15,10 @@ use Clicky\Pssht\Messages\CHANNEL\REQUEST\Base;
 use Clicky\Pssht\Wire\Encoder;
 use Clicky\Pssht\Wire\Decoder;
 
+/**
+ * SSH_MSG_CHANNEL_REQUEST message (RFC 4254)
+ * for the "exit-signal" request type.
+ */
 class ExitSignal extends Base
 {
     protected $signal;
@@ -38,6 +42,7 @@ class ExitSignal extends Base
         $encoder->encodeBoolean($this->coreDumped);
         $encoder->encodeString($this->error);
         $encoder->encodeString($this->language);
+        return $this;
     }
 
     protected static function unserializeSub(Decoder $decoder)

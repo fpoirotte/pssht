@@ -12,7 +12,7 @@
 namespace Clicky\Pssht\Wire;
 
 /**
- * SSH-encode (RFC 4251) values.
+ * SSH-encode values (RFC 4251).
  */
 class Encoder
 {
@@ -22,7 +22,7 @@ class Encoder
     /**
      * Construct a new encoder.
      *
-     *  \param \Clicky\Pssht\Buffer $buffer
+     *  \param Buffer $buffer
      *      (optional) Buffer to write to.
      *      If omitted, a new empty buffer is used.
      */
@@ -38,7 +38,7 @@ class Encoder
     /**
      * Get the buffer associated with this encoder.
      *
-     *  \retval \Clicky\Pssht\Buffer $buffer
+     *  \retval Buffer $buffer
      *      The buffer associated with this encoder.
      */
     public function getBuffer()
@@ -152,7 +152,7 @@ class Encoder
     /**
      * Encode a list of names ("name-list" type).
      *
-     *  \param array $value
+     *  \param array $values
      *      A list of algorithm names.
      *
      *  \retval Encoder

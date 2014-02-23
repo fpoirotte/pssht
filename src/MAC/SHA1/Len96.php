@@ -11,6 +11,9 @@
 
 namespace Clicky\Pssht\MAC\SHA1;
 
+/**
+ * MAC generation using a truncated SHA1 hash.
+ */
 class Len96 extends \Clicky\Pssht\MAC\Base96
 {
     public static function getBaseClass()

@@ -14,15 +14,45 @@ namespace Clicky\Pssht\PublicKey\SSH;
 use Clicky\Pssht\PublicKeyInterface;
 use Clicky\Pssht\Wire\Encoder;
 
+/**
+ * Public key using the RSA algorithm.
+ */
 class RSA implements PublicKeyInterface
 {
+    /// DER header for RSA.
     const DER_HEADER = "\x30\x21\x30\x09\x06\x05\x2b\x0e\x03\x02\x1a\x05\x00\x04\x14";
 
+    /// Size of the key in bits.
     protected $bits;
+
+    /// Modulus.
     protected $n;
+
+    /// Public exponent.
     protected $e;
+
+    /// Private exponent.
     protected $d;
 
+    /**
+     * Construct a new public/private RSA key.
+     *
+     *  \param int $bits
+     *      Key size in bits.
+     *
+     *  \param resource $n
+     *      GMP resource representing the modulus to use
+     *      during computations.
+     *
+     *  \param resource $e
+     *      GMP resource for the public exponent.
+     *
+     *  \param resource $d
+     *      (optional) GMP resource for the private exponent.
+     *      If omitted, only the public part of the key is
+     *      loaded, meaning that signature generation will be
+     *      unavailable.
+     */
     protected function __construct($bits, $n, $e, $d = null)
     {
         $this->bits = $bits;

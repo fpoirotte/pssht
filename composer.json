@@ -34,7 +34,7 @@
         "sebastian/phpcpd": "*",
         "phpunit/phpunit": "*",
         "squizlabs/php_codesniffer": "*",
-        "erebot/buildenv": "*@dev"
+        "erebot/buildenv": "master-dev"
     },
     "suggest": {
         "ext-http": "~1.0"

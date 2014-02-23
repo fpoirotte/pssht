@@ -13,6 +13,9 @@ namespace Clicky\Pssht\Encryption;
 
 use Clicky\Pssht\EncryptionInterface;
 
+/**
+ * Null cipher (OPTIONAL and NOT RECOMMENDED in RFC 4253).
+ */
 class None implements EncryptionInterface
 {
     public function __construct($iv, $key)

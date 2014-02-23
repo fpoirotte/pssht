@@ -11,6 +11,10 @@
 
 namespace Clicky\Pssht\Encryption\CTR;
 
+/**
+ * AES cipher in CTR mode with a 128-bit key
+ * (RECOMMENDED in RFC 4344).
+ */
 class AES128 extends \Clicky\Pssht\Encryption\CBC\AES128
 {
 }

@@ -11,6 +11,10 @@
 
 namespace Clicky\Pssht\Encryption\CBC;
 
+/**
+ * Serpent cipher in CBC mode with a 192-bit key
+ * (OPTIONAL in RFC 4253).
+ */
 class Serpent192 extends Serpent256
 {
     public static function getKeySize()

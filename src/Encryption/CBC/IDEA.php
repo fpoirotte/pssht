@@ -11,6 +11,10 @@
 
 namespace Clicky\Pssht\Encryption\CBC;
 
+/**
+ * IDEA cipher in CBC mode
+ * (OPTIONAL in RFC 4253).
+ */
 class IDEA extends \Clicky\Pssht\Encryption\Base
 {
     public static function getKeySize()

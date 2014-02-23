@@ -11,7 +11,22 @@
 
 namespace Clicky\Pssht\MAC;
 
+/**
+ * Interface for MAC algorithms where the output
+ * is truncated after 96 bits.
+ */
 interface Base96Interface
 {
+    /**
+     * Return the name of the class wrapped by this method
+     * and implementing the real MAC algorithm to use.
+     *
+     *  \retval string
+     *      Name of a base class to use to generate MACs.
+     *
+     *  \note
+     *      The base class returned by this method must implement
+     *      the \\Clicky\\Pssht\\MACInterface interface.
+     */
     public static function getBaseClass();
 }

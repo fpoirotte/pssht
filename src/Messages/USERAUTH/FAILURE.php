@@ -15,6 +15,9 @@ use Clicky\Pssht\MessageInterface;
 use Clicky\Pssht\Wire\Encoder;
 use Clicky\Pssht\Wire\Decoder;
 
+/**
+ * SSH_MSG_USERAUTH_FAILURE message (RFC 4252).
+ */
 class FAILURE implements MessageInterface
 {
     protected $methods;
@@ -45,6 +48,7 @@ class FAILURE implements MessageInterface
     {
         $encoder->encodeNameList($this->methods);
         $encoder->encodeBoolean($this->partial);
+        return $this;
     }
 
     public static function unserialize(Decoder $decoder)

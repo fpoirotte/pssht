@@ -11,6 +11,9 @@
 
 namespace Clicky\Pssht\MAC;
 
+/**
+ * MAC generation using the RIPEMD160 hashing algorithm.
+ */
 class RIPEMD160 extends Base
 {
     public static function getName()

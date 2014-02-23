@@ -15,6 +15,10 @@ use Clicky\Pssht\Messages\CHANNEL\REQUEST\Base;
 use Clicky\Pssht\Wire\Encoder;
 use Clicky\Pssht\Wire\Decoder;
 
+/**
+ * SSH_MSG_CHANNEL_REQUEST message (RFC 4254)
+ * for the "pty-req" request type.
+ */
 class PtyReq extends Base
 {
     protected $term;
@@ -53,6 +57,7 @@ class PtyReq extends Base
         $encoder->encodeUint32($this->widthInPixels);
         $encoder->encodeUint32($this->heightInPixels);
         $encoder->encodeString($this->modes);
+        return $this;
     }
 
     protected static function unserializeSub(Decoder $decoder)

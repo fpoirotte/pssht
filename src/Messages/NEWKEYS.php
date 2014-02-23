@@ -11,11 +11,10 @@
 
 namespace Clicky\Pssht\Messages;
 
-use Clicky\Pssht\Messages\Base;
-use Clicky\Pssht\Wire\Encoder;
-use Clicky\Pssht\Wire\Decoder;
-
-class NEWKEYS extends Base
+/**
+ * SSH_MSG_NEWKEYS message (RFC 4253).
+ */
+class NEWKEYS extends \Clicky\Pssht\Messages\Base
 {
     public static function getMessageId()
     {

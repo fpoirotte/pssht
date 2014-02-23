@@ -11,6 +11,9 @@
 
 namespace Clicky\Pssht\MAC\OpensshCom\EtM;
 
+/**
+ * MAC generation using the SHA1 hash in Encrypt-then-MAC mode.
+ */
 class SHA1 extends \Clicky\Pssht\MAC\SHA1 implements EtMInterface
 {
     public static function getName()

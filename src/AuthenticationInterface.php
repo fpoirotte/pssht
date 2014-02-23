@@ -19,7 +19,7 @@ interface AuthenticationInterface extends AlgorithmInterface
     /// The message passed the check.
     const CHECK_OK      = 1;
 
-    /// The message was rejected by the check.
+    /// The message should be rejected.
     const CHECK_REJECT  = 2;
 
     /// The message should be ignored.
@@ -35,13 +35,14 @@ interface AuthenticationInterface extends AlgorithmInterface
     /// The authentication failed and the method should be removed.
     const AUTH_REMOVE   = 3;
 
+
     /**
      * Check the contents of an authentication request.
      *
-     *  \param \Clicky\Pssht\Messages\USERAUTH\REQUEST\Base $message,
+     *  \param Base $message
      *      Message to check.
      *
-     *  \param \Clicky\Pssht\Transport $transport
+     *  \param Transport $transport
      *      Transport layer the message originated from.
      *
      *  \param array $context
@@ -61,10 +62,10 @@ interface AuthenticationInterface extends AlgorithmInterface
     /**
      * Handle an authentication request.
      *
-     *  \param \Clicky\Pssht\Messages\USERAUTH\REQUEST\Base $message,
+     *  \param Base $message
      *      Authenticate request to handle.
      *
-     *  \param \Clicky\Pssht\Transport $transport
+     *  \param Transport $transport
      *      Transport layer the message originated from.
      *
      *  \param array $context
@@ -73,7 +74,7 @@ interface AuthenticationInterface extends AlgorithmInterface
      *  \retval opaque
      *      Either AuthenticationInterface::AUTH_ACCEPT
      *      or AuthenticationInterface::AUTH_REJECT
-     *      or AuthenticationInterface::AUTH_IGNORE.
+     *      or AuthenticationInterface::AUTH_REMOVE.
      */
     public function authenticate(
         \Clicky\Pssht\Messages\USERAUTH\REQUEST\Base $message,

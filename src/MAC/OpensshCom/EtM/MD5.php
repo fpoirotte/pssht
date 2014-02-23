@@ -11,6 +11,9 @@
 
 namespace Clicky\Pssht\MAC\OpensshCom\EtM;
 
+/**
+ * MAC generation using the MD5 hash in Encrypt-then-MAC mode.
+ */
 class MD5 extends \Clicky\Pssht\MAC\MD5 implements EtMInterface
 {
     public static function getName()

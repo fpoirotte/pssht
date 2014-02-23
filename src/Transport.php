@@ -18,23 +18,56 @@ use Clicky\Pssht\CompressionInterface;
 use Clicky\Pssht\EncryptionInterface;
 use Clicky\Pssht\MACInterface;
 
+/**
+ * Transport layer for the SSH protocol (RFC 4253).
+ */
 class Transport
 {
+    /// Address (ip:port) of the client.
     protected $address;
+
+    /// Input sequence number.
     protected $inSeqNo;
+
+    /// Output sequence number.
     protected $outSeqNo;
+
+    /// SSH encoder.
     protected $encoder;
+
+    /// SSH decoder.
     protected $decoder;
+
+    /// Output cipher.
     protected $encryptor;
-    protected $ecryptor;
+
+    /// Input cipher.
+    protected $decryptor;
+
+    /// Output compression.
     protected $compressor;
+
+    /// Input compression.
     protected $uncompressor;
+
+    /// Input MAC.
     protected $inMAC;
+
+    /// Output MAC.
     protected $outMAC;
+
+    /// Context for this SSH connection.
     protected $context;
+
+    /// Registered handlers for this SSH connection.
     protected $handlers;
+
+    /// Factory for the application.
     protected $appFactory;
+
+    /// SSH banner.
     protected $banner;
+
 
     public function __construct(
         \Clicky\Pssht\PublicKeyInterface $serverKey,

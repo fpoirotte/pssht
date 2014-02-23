@@ -13,8 +13,12 @@ namespace Clicky\Pssht\Compression;
 
 use Clicky\Pssht\CompressionInterface;
 
+/**
+ * Null compression (= no compression).
+ */
 class None implements CompressionInterface
 {
+    /// Compression/decompression mode.
     protected $mode;
 
     public function __construct($mode)

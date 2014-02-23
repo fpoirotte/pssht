@@ -13,6 +13,9 @@ namespace Clicky\Pssht\Handlers;
 
 use Clicky\Pssht\CompressionInterface;
 
+/**
+ * Handler for SSH_MSG_NEWKEYS messages.
+ */
 class NEWKEYS implements \Clicky\Pssht\HandlerInterface
 {
     // SSH_MSG_NEWKEYS = 21

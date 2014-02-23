@@ -15,6 +15,9 @@ use Clicky\Pssht\MessageInterface;
 use Clicky\Pssht\Wire\Encoder;
 use Clicky\Pssht\Wire\Decoder;
 
+/**
+ * Abstract SSH_MSG_CHANNEL_REQUEST message (RFC 4254).
+ */
 abstract class Base implements MessageInterface
 {
     protected $channel;
@@ -38,6 +41,7 @@ abstract class Base implements MessageInterface
         $encoder->encodeUint32($this->channel);
         $encoder->encodeString($this->type);
         $encoder->encodeBoolean($this->wantReply);
+        return $this;
     }
 
     protected static function unserializeSub(Decoder $decoder)

@@ -11,6 +11,9 @@
 
 namespace Clicky\Pssht\Handlers;
 
+/**
+ * Handler for SSH_MSG_KEXINIT messages.
+ */
 class KEXINIT implements \Clicky\Pssht\HandlerInterface
 {
     // SSH_MSG_KEXINIT = 20

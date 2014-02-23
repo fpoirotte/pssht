@@ -11,6 +11,10 @@
 
 namespace Clicky\Pssht\Encryption\CBC;
 
+/**
+ * 3DES cipher in CBC mode
+ * (REQUIRED in RFC 4253).
+ */
 class TripleDES extends \Clicky\Pssht\Encryption\Base
 {
     public static function getName()

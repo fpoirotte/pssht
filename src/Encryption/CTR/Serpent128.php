@@ -11,6 +11,10 @@
 
 namespace Clicky\Pssht\Encryption\CTR;
 
+/**
+ * Serpent cipher in CTR mode with a 128-bit key
+ * (OPTIONAL in RFC 4344).
+ */
 class Serpent128 extends \Clicky\Pssht\Encryption\CBC\Serpent128
 {
 }

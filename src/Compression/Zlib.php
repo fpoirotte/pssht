@@ -11,13 +11,20 @@
 
 namespace Clicky\Pssht\Compression;
 
-use Clicky\Pssht\CompressionInterface;
 use \HttpInflateStream;
 use \HttpDeflateStream;
 
-class Zlib implements CompressionInterface
+/**
+ * ZLIB compression.
+ */
+class Zlib implements
+    \Clicky\Pssht\CompressionInterface,
+    \Clicky\Pssht\AvailabilityInterface
 {
+    /// Compression/decompression stream.
     protected $stream;
+
+    /// Compression/decompression mode.
     protected $mode;
 
     public function __construct($mode)

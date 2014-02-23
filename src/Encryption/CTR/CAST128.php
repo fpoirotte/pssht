@@ -11,6 +11,10 @@
 
 namespace Clicky\Pssht\Encryption\CTR;
 
+/**
+ * CAST-128 cipher in CTR mode
+ * (OPTIONAL in RFC 4344).
+ */
 class CAST128 extends \Clicky\Pssht\Encryption\CBC\CAST128
 {
 }

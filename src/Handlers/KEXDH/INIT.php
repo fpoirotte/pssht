@@ -11,6 +11,9 @@
 
 namespace Clicky\Pssht\Handlers\KEXDH;
 
+/**
+ * Handler for SSH_MSG_KEXDH_INIT messages.
+ */
 class INIT implements \Clicky\Pssht\HandlerInterface
 {
     protected $serverKey;

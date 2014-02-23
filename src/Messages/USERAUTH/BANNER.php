@@ -15,6 +15,9 @@ use Clicky\Pssht\MessageInterface;
 use Clicky\Pssht\Wire\Encoder;
 use Clicky\Pssht\Wire\Decoder;
 
+/**
+ * SSH_MSG_USERAUTH_BANNER message (RFC 4252).
+ */
 class BANNER implements MessageInterface
 {
     protected $message;
@@ -42,6 +45,7 @@ class BANNER implements MessageInterface
     {
         $encoder->encodeString($this->message);
         $encoder->encodeString($this->language);
+        return $this;
     }
 
     public static function unserialize(Decoder $decoder)

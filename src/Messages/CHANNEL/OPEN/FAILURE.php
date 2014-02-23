@@ -15,6 +15,9 @@ use Clicky\Pssht\MessageInterface;
 use Clicky\Pssht\Wire\Encoder;
 use Clicky\Pssht\Wire\Decoder;
 
+/**
+ * SSH_MSG_CHANNEL_OPEN_FAILURE message (RFC 4254).
+ */
 class FAILURE implements MessageInterface
 {
     const SSH_OPEN_ADMINISTRATIVELY_PROHIBITED  = 1;
@@ -46,6 +49,7 @@ class FAILURE implements MessageInterface
         $encoder->encodeUint32($this->senderChannel);
         $encoder->encodeUint32($this->initialWindowSize);
         $encoder->encodeUint32($this->maximumPacketSize);
+        return $this;
     }
 
     public static function unserialize(Decoder $decoder)

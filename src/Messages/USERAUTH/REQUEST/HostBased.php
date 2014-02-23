@@ -14,6 +14,10 @@ namespace Clicky\Pssht\Messages\USERAUTH\REQUEST;
 use Clicky\Pssht\Wire\Encoder;
 use Clicky\Pssht\Wire\Decoder;
 
+/**
+ * SSH_MSG_USERAUTH_REQUEST message (RFC 4252)
+ * for the "hostbased" method.
+ */
 class HostBased extends \Clicky\Pssht\Messages\USERAUTH\REQUEST\Base
 {
     protected $algorithm;
@@ -68,11 +72,13 @@ class HostBased extends \Clicky\Pssht\Messages\USERAUTH\REQUEST\Base
         $encoder->encodeString($this->hostname);
         $encoder->encodeString($this->remoteUser);
 
-        // Special handling for signature.
+        // Special handling of the signature.
         $encoder2 = new Encoder();
         $encoder2->encodeString($this->algorithm);
         $encoder2->encodeString($this->signature);
         $encoder->encodeString($encoder2->getBuffer()->get(0));
+
+        return $this;
     }
 
     protected static function unserializeSub(Decoder $decoder)

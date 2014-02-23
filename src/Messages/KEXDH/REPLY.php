@@ -20,6 +20,9 @@ use Clicky\Pssht\KEXInterface;
 use Clicky\Pssht\Messages\KEXINIT;
 use Clicky\Pssht\Messages\KEXDH\INIT;
 
+/**
+ * SSH_MSG_KEXDH_REPLY message (RFC 4253).
+ */
 class REPLY implements MessageInterface
 {
     protected $H;
@@ -97,6 +100,7 @@ class REPLY implements MessageInterface
         $signature = $this->K_S->sign($H, true);
         $sub->encodeString($signature);
         $encoder->encodeString($sub->getBuffer()->get(0));
+        return $this;
     }
 
     public static function unserialize(Decoder $decoder)

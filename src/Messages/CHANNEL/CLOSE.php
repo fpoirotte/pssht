@@ -15,6 +15,9 @@ use Clicky\Pssht\MessageInterface;
 use Clicky\Pssht\Wire\Encoder;
 use Clicky\Pssht\Wire\Decoder;
 
+/**
+ * SSH_MSG_CHANNEL_CLOSE message (RFC 4254).
+ */
 class CLOSE implements MessageInterface
 {
     protected $channel;
@@ -32,6 +35,7 @@ class CLOSE implements MessageInterface
     public function serialize(Encoder $encoder)
     {
         $encoder->encodeUint32($this->channel);
+        return $this;
     }
 
     public static function unserialize(Decoder $decoder)

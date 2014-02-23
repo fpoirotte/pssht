@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "129dff08880a096c62015cf47e645889",
+    "hash": "10f73b480f3a9c256cf93bd818e8fd2f",
     "packages": [
         {
             "name": "erebot/plop",
@@ -343,19 +343,20 @@
         },
         {
             "name": "erebot/buildenv",
-            "version": "1.1.1",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Erebot/Erebot_Buildenv.git",
-                "reference": "c89cc016f8d1c80779e095e6d93d1b1c6e75b24b"
+                "reference": "d04ba382e7a65235ed238bdfd73909bfc213e92c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Erebot/Erebot_Buildenv/zipball/c89cc016f8d1c80779e095e6d93d1b1c6e75b24b",
-                "reference": "c89cc016f8d1c80779e095e6d93d1b1c6e75b24b",
+                "url": "https://api.github.com/repos/Erebot/Erebot_Buildenv/zipball/d04ba382e7a65235ed238bdfd73909bfc213e92c",
+                "reference": "d04ba382e7a65235ed238bdfd73909bfc213e92c",
                 "shasum": ""
             },
             "require": {
+                "ext-json": "*",
                 "ext-phar": "*",
                 "ext-xsl": "*",
                 "phing/phing": ">=2.4.3",
@@ -364,7 +365,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.0.x-dev"
+                    "dev-master": "1.1.x-dev"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -383,7 +384,7 @@
             "keywords": [
                 "Erebot"
             ],
-            "time": "2014-01-03 11:44:34"
+            "time": "2014-02-15 22:31:44"
         },
         {
             "name": "pdepend/pdepend",

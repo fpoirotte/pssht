@@ -15,7 +15,6 @@
     -   Elliptic Curve cryptography
     -   Channel write close extension "eow@openssh.com"
     -   disallow additional sessions extension "no-more-sessions@openssh.com"
-    -   Test delayed zlib support
 
 -   Dig through http://api.libssh.org/master/ to see if there are
     other extensions that may be of interest.
@@ -46,3 +45,4 @@
 
 -   Other useful resources:
     -   https://www.iana.org/assignments/ssh-parameters/ssh-parameters.xhtml
+

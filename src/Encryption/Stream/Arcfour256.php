@@ -11,6 +11,10 @@
 
 namespace Clicky\Pssht\Encryption\Stream;
 
+/**
+ * Arcfour cipher in stream mode with a 256-bit key
+ * and 1536 discarded bytes (defined in RFC 4345).
+ */
 class Arcfour256 extends \Clicky\Pssht\Encryption\Base
 {
     public function __construct($iv, $key)

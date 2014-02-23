@@ -11,6 +11,10 @@
 
 namespace Clicky\Pssht\Encryption\CBC;
 
+/**
+ * Twofish cipher in CBC mode with a 256-bit key
+ * (OPTIONAL in RFC 4253).
+ */
 class Twofish256 extends \Clicky\Pssht\Encryption\Base
 {
     public static function getAlgorithm()

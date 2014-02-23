@@ -15,12 +15,32 @@ use Clicky\Pssht\MessageInterface;
 use Clicky\Pssht\Wire\Encoder;
 use Clicky\Pssht\Wire\Decoder;
 
+/**
+ * Abstract SSH_MSG_USERAUTH_REQUEST message (RFC 4252).
+ */
 abstract class Base implements MessageInterface
 {
+    /// User being authenticated.
     protected $user;
+
+    /// Service to start after authentication.
     protected $service;
+
+    /// Authentication method.
     protected $method;
 
+    /**
+     * Construct a new user authentication request.
+     *
+     *  \param string $user
+     *      User to authenticate as.
+     *
+     *  \param string $service
+     *      Service to run after authentication.
+     *
+     *  \param string $method
+     *      Authentication method to use.
+     */
     public function __construct($user, $service, $method)
     {
         if (!is_string($user)) {
@@ -48,8 +68,19 @@ abstract class Base implements MessageInterface
         $encoder->encodeString($this->user);
         $encoder->encodeString($this->service);
         $encoder->encodeString($this->method);
+        return $this;
     }
 
+    /**
+     * Unserialize the sub-message.
+     *
+     *  \param Decoder $decoder
+     *      Decoder to use during unserialization.
+     *
+     *  \retval array
+     *      Array of unserialized data forming
+     *      the sub-message.
+     */
     protected static function unserializeSub(Decoder $decoder)
     {
         throw new \RuntimeException();
@@ -69,16 +100,35 @@ abstract class Base implements MessageInterface
         return $reflector->newInstanceArgs($args);
     }
 
+    /**
+     * Return the name of the user requesting authentication.
+     *
+     *  \retval string
+     *      User requesting authentication.
+     */
     public function getUserName()
     {
         return $this->user;
     }
 
+    /**
+     * Return the name of the service to start
+     * after authentication.
+     *
+     *  \retval string
+     *      Service to start after authentication.
+     */
     public function getServiceName()
     {
         return $this->service;
     }
 
+    /**
+     * Authentication method to use.
+     *
+     *  \retval string
+     *      Authentication method to use.
+     */
     public function getMethodName()
     {
         return $this->method;

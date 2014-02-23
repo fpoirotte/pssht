@@ -14,6 +14,9 @@ namespace Clicky\Pssht\Messages;
 use Clicky\Pssht\Wire\Encoder;
 use Clicky\Pssht\Wire\Decoder;
 
+/**
+ * SSH_MSG_DEBUG message (RFC 4253).
+ */
 class DEBUG implements \Clicky\Pssht\MessageInterface
 {
     protected $alwaysDisplay;
@@ -47,6 +50,7 @@ class DEBUG implements \Clicky\Pssht\MessageInterface
         $encoder->encodeBoolean($this->alwaysDisplay);
         $encoder->encodeString($this->message);
         $encoder->encodeString($this->language);
+        return $this;
     }
 
     public static function unserialize(Decoder $decoder)

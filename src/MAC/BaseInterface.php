@@ -11,7 +11,22 @@
 
 namespace Clicky\Pssht\MAC;
 
+/**
+ * Interface for the hashing algorithm
+ * to use for MAC purposes.
+ */
 interface BaseInterface
 {
+    /**
+     * Return the name of the hashing algorithm
+     * to use for MAC purposes.
+     *
+     *  \retval string
+     *      Hashing algorithm to use.
+     *
+     *  \note
+     *      The value returned by this method is the name
+     *      of one of the algorithms listed by hash_algos().
+     */
     public static function getHash();
 }

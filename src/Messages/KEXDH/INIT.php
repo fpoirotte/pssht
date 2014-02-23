@@ -15,6 +15,9 @@ use Clicky\Pssht\MessageInterface;
 use Clicky\Pssht\Wire\Encoder;
 use Clicky\Pssht\Wire\Decoder;
 
+/**
+ * SSH_MSG_KEXDH_INIT message (RFC 4253).
+ */
 class INIT implements MessageInterface
 {
     protected $e;
@@ -32,6 +35,7 @@ class INIT implements MessageInterface
     public function serialize(Encoder $encoder)
     {
         $encoder->encodeMpint($this->e);
+        return $this;
     }
 
     public static function unserialize(Decoder $decoder)

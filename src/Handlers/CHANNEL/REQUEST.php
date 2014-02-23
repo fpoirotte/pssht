@@ -11,6 +11,9 @@
 
 namespace Clicky\Pssht\Handlers\CHANNEL;
 
+/**
+ * Handler for SSH_MSG_CHANNEL_REQUEST messages.
+ */
 class REQUEST extends Base
 {
     // SSH_MSG_CHANNEL_REQUEST = 98

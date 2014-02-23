@@ -15,6 +15,9 @@ use Clicky\Pssht\MessageInterface;
 use Clicky\Pssht\Wire\Encoder;
 use Clicky\Pssht\Wire\Decoder;
 
+/**
+ * SSH_MSG_DISCONNECT message (RFC 4253).
+ */
 class DISCONNECT extends \Exception implements MessageInterface
 {
     const SSH_DISCONNECT_HOST_NOT_ALLOWED_TO_CONNECT        =    1;
@@ -66,6 +69,7 @@ class DISCONNECT extends \Exception implements MessageInterface
         $encoder->encodeUint32($this->code);
         $encoder->encodeString($this->message);
         $encoder->encodeString($this->language);
+        return $this;
     }
 
     public static function unserialize(Decoder $decoder)

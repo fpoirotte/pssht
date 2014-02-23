@@ -14,6 +14,10 @@ namespace Clicky\Pssht\Messages\USERAUTH\REQUEST;
 use Clicky\Pssht\Wire\Encoder;
 use Clicky\Pssht\Wire\Decoder;
 
+/**
+ * SSH_MSG_USERAUTH_REQUEST message (RFC 4252)
+ * for the "publickey" method.
+ */
 class PublicKey extends \Clicky\Pssht\Messages\USERAUTH\REQUEST\Base
 {
     protected $algorithm;
@@ -52,6 +56,7 @@ class PublicKey extends \Clicky\Pssht\Messages\USERAUTH\REQUEST\Base
             $encoder2->encodeString($this->signature);
             $encoder->encodeString($encoder2->getBuffer()->get(0));
         }
+        return $this;
     }
 
     protected static function unserializeSub(Decoder $decoder)

@@ -14,6 +14,10 @@ namespace Clicky\Pssht\Messages\USERAUTH\REQUEST;
 use Clicky\Pssht\Wire\Encoder;
 use Clicky\Pssht\Wire\Decoder;
 
+/**
+ * SSH_MSG_USERAUTH_REQUEST message (RFC 4252)
+ * for the "none" method.
+ */
 class None extends \Clicky\Pssht\Messages\USERAUTH\REQUEST\Base
 {
     protected static function unserializeSub(Decoder $decoder)

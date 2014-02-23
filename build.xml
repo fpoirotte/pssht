@@ -18,14 +18,14 @@
     <property name="tagfiles"                   value=""/>
     <property name="phar.stub"                  value="vendor/erebot/buildenv/stub.php"/>
     <property name="skip.update_catalog"        value="true"/>
-    <property name="subfile.phpcs"              value="tests/phing_phpcs.xml"/>
+    <property name="subfile.phpcs"              value="buildenv/phing_phpcs.xml"/>
     <property name="subfile.pdepend"            value="vendor/erebot/buildenv/phing/pdepend.xml"/>
     <property name="subfile.phpmd"              value="vendor/erebot/buildenv/phing/phpmd.xml"/>
     <property name="subfile.phpcpd"             value="vendor/erebot/buildenv/phing/phpcpd.xml"/>
     <property name="subfile.coverage.pre"       value="vendor/erebot/buildenv/phing/pre_coverage.xml"/>
-    <property name="subfile.phpunit"            value="tests/phing_phpunit.xml"/>
+    <property name="subfile.phpunit"            value="buildenv/phing_phpunit.xml"/>
     <property name="subfile.coverage"           value="vendor/erebot/buildenv/phing/coverage.xml"/>
-    <property name="subfile.behat"              value="tests/phing_behat.xml"/>
+    <property name="subfile.behat"              value="buildenv/phing_behat.xml"/>
     <property name="qa.coverage.db"             value="build/${phing.project.name}.db"/>
     <property name="qa.coverage.tmp"            value="build/${phing.project.name}.xml"/>
     <property name="qa.coverage.min.project"    value="0"/>
@@ -121,20 +121,8 @@
     <target name="doc_html" description="Generate documentation in HTML format" depends="doc_api,doc_enduser"/>
 
     <target name="doc_api" description="Generate API documentation in HTML format">
-        <!-- Get the brief description from the README. -->
-        <if>
-            <os family="windows"/>
-            <then>
-                <exec command="./buildenv/compat/win/head.bat README"
-                    outputProperty="short_description"/>
-            </then>
-            <else>
-                <exec command="head -1 README" outputProperty="short_description"/>
-            </else>
-        </if>
-        <php function="escapeshellarg" returnProperty="short_description">
-            <param value="${short_description}"/>
-        </php>
+        <exec command="php vendor/erebot/buildenv/get_composer.php description"
+            outputProperty="short_description" checkreturn="true"/>
 
         <!-- Determine path to tag files. -->
         <property name="tagfiles.reference" value="${phing.project.name}"/>
@@ -144,7 +132,7 @@
             <param value="${tagfiles}"/>
         </php>
 
-        <exec command="COMPONENT_NAME=${phing.project.name} COMPONENT_VERSION=${version} COMPONENT_BRIEF=${short_description} COMPONENT_TAGFILES=${tagfiles} doxygen"
+        <exec command="COMPONENT_NAME=${phing.project.name} COMPONENT_VERSION=${version} COMPONENT_BRIEF=&#34;${short_description}&#34; COMPONENT_TAGFILES=${tagfiles} doxygen"
             dir="." passthru="true" checkreturn="true" logoutput="true"/>
     </target>
 

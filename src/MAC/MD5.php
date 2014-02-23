@@ -11,6 +11,9 @@
 
 namespace Clicky\Pssht\MAC;
 
+/**
+ * MAC generation using the MD5 hashing algorithm.
+ */
 class MD5 extends Base
 {
     public static function getName()

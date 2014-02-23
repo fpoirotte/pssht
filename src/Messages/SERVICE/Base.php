@@ -15,6 +15,9 @@ use Clicky\Pssht\MessageInterface;
 use Clicky\Pssht\Wire\Encoder;
 use Clicky\Pssht\Wire\Decoder;
 
+/**
+ * Abstract SSH_MSG_SERVICE_* message (RFC 4253).
+ */
 abstract class Base implements MessageInterface
 {
     protected $service;
@@ -31,6 +34,7 @@ abstract class Base implements MessageInterface
     public function serialize(Encoder $encoder)
     {
         $encoder->encodeString($this->service);
+        return $this;
     }
 
     public static function unserialize(Decoder $decoder)

@@ -14,6 +14,9 @@ namespace Clicky\Pssht\Messages;
 use Clicky\Pssht\Wire\Encoder;
 use Clicky\Pssht\Wire\Decoder;
 
+/**
+ * SSH_MSG_IGNORE message (RFC 4253).
+ */
 class IGNORE implements \Clicky\Pssht\MessageInterface
 {
     protected $data;
@@ -35,6 +38,7 @@ class IGNORE implements \Clicky\Pssht\MessageInterface
     public function serialize(Encoder $encoder)
     {
         $encoder->encodeString($this->data);
+        return $this;
     }
 
     public static function unserialize(Decoder $decoder)
