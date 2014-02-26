@@ -117,10 +117,8 @@ class Encoder
      */
     public function encodeString($value)
     {
-        return $this->encodeBytes(
-            $this->encodeUint32(strlen($value)) .
-            $this->encodeBytes($value)
-        );
+        $this->encodeUint32(strlen($value));
+        return $this->encodeBytes($value);
     }
 
     /**
