@@ -65,9 +65,9 @@ class REQUEST extends Base
         $transport->writeMessage($response);
 
         if (in_array($type, array('shell', 'exec'), true)) {
-            $cls = $transport->getApplicationFactory();
-            if ($cls !== null) {
-                new $cls($transport, $this->connection, $message);
+            $callable = $transport->getApplicationFactory();
+            if ($callable !== null) {
+                call_user_func($callable, $transport, $this->connection, $message);
             }
         }
 

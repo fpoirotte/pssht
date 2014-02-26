@@ -47,7 +47,7 @@
         </parameter>
 
         <!--
-            Allows user "clicky" to log in using when of the public keys
+            Allows user "clicky" to log in using one of the public keys
             authorized to access the account the server was started under.
         -->
         <parameter key="auth.pubkeys" type="collection">
@@ -88,7 +88,12 @@
                 </service>
             </argument>
             <argument type="service" id="authMethods"/>
-            <call method="setApplicationFactory"><argument>%application%</argument></call>
+            <call method="setApplicationFactory">
+                <argument type="collection">
+                    <argument type="service" id="applicationFactory"/>
+                    <argument>newInstance</argument>
+                </argument>
+            </call>
             <call method="setBanner"><argument>%banner%</argument></call>
         </service>
         <!-- End of "client" service. -->
@@ -131,8 +136,8 @@
         <!-- End of "logging" service. -->
 
         <!--
-            The "authMethods" service is used to indicate which authentication
-            methods (and credentials) are allowed to connect.
+            The "authMethods" service is used to indicate
+            which authentication methods are allowed.
         -->
         <service id="authMethods" public="false" class="\Clicky\Pssht\Handlers\SERVICE\REQUEST">
             <argument type="service">
@@ -202,6 +207,9 @@
             <call method="loadBulk">
                 <argument>%auth.hostbased%</argument>
             </call>
+        </service>
+        <service id="applicationFactory" public="false" class="ReflectionClass">
+            <argument>%application%</argument>
         </service>
         <!-- End of factory services. -->
     </services>
