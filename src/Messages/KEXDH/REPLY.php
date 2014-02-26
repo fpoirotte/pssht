@@ -60,28 +60,17 @@ class REPLY implements MessageInterface
         $this->remoteKEX    = $remoteKEX;
         $this->localIdent   = $localIdent;
         $this->remoteIdent  = $remoteIdent;
-    }
 
-    public static function getMessageId()
-    {
-        return 31;
-    }
-
-    public function serialize(Encoder $encoder)
-    {
-        $sub = new Encoder(new \Clicky\Pssht\Buffer());
-        $this->K_S->serialize($sub);
-        $K_S = $sub->getBuffer()->get(0);
-        $encoder->encodeString($K_S);
-        $encoder->encodeMpint($this->f);
-
+        $msgId  = chr(\Clicky\Pssht\Messages\KEXINIT::getMessageId());
         // $sub is used to create the structure for the hashing function.
+        $sub    = new Encoder(new \Clicky\Pssht\Buffer());
+        $this->K_S->serialize($sub);
+        $K_S    = $sub->getBuffer()->get(0);
         $sub->encodeString($this->remoteIdent);
         $sub->encodeString($this->localIdent);
         // $sub2 is used to compute the value
         // of various fields inside the structure.
         $sub2   = new Encoder(new \Clicky\Pssht\Buffer());
-        $msgId  = chr(\Clicky\Pssht\Messages\KEXINIT::getMessageId());
         $sub2->encodeBytes($msgId); // Add message identifier.
         $this->remoteKEX->serialize($sub2);
         $sub->encodeString($sub2->getBuffer()->get(0));
@@ -93,12 +82,30 @@ class REPLY implements MessageInterface
         $sub->encodeMpint($this->f);
         $sub->encodeMpint($this->K);
 
-        $H = $this->kexAlgo->hash($sub->getBuffer()->get(0));
-        $this->H = $H;
+        $logging    = \Plop::getInstance();
+        $origData   = $sub->getBuffer()->get(0);
+        $data       = wordwrap(bin2hex($origData), 4, ' ', true);
+        $data       = wordwrap($data, 32 + 7, PHP_EOL, true);
+        $logging->debug("Signature payload:\r\n%s", array($data));
+
+        $this->H    = $this->kexAlgo->hash($origData);
+    }
+
+    public static function getMessageId()
+    {
+        return 31;
+    }
+
+    public function serialize(Encoder $encoder)
+    {
+        $sub    = new Encoder(new \Clicky\Pssht\Buffer());
+        $this->K_S->serialize($sub);
+
+        $encoder->encodeString($sub->getBuffer()->get(0));
+        $encoder->encodeMpint($this->f);
 
         $sub->encodeString($this->K_S->getName());
-        $signature = $this->K_S->sign($H, true);
-        $sub->encodeString($signature);
+        $sub->encodeString($this->K_S->sign($this->H, true));
         $encoder->encodeString($sub->getBuffer()->get(0));
         return $this;
     }

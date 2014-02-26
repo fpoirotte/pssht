@@ -99,8 +99,7 @@ class Transport
      *      to work properly.
      */
     public function __construct(
-        \Clicky\Pssht\PublicKeyInterface $serverKey,
-#        array $serverKeys,
+        array $serverKeys,
         \Clicky\Pssht\Handlers\SERVICE\REQUEST $authMethods,
         \Clicky\Pssht\Wire\Encoder $encoder = null,
         \Clicky\Pssht\Wire\Decoder $decoder = null
@@ -112,21 +111,21 @@ class Transport
             $decoder = new \Clicky\Pssht\Wire\Decoder();
         }
 
-#        $algos  = \Clicky\Pssht\Algorithms::factory();
-#        $keys   = array();
-#        foreach ($serverKeys as $keyType => $params) {
-#            $cls = $algos->getClass('PublicKey', $keyType);
-#            if ($cls === null) {
-#                throw new \InvalidArgumentException();
-#            }
+        $algos  = \Clicky\Pssht\Algorithms::factory();
+        $keys   = array();
+        foreach ($serverKeys as $keyType => $params) {
+            $cls = $algos->getClass('PublicKey', $keyType);
+            if ($cls === null) {
+                throw new \InvalidArgumentException();
+            }
 
-#            $passphrase = '';
-#            if (isset($params['passphrase'])) {
-#                $passphrase = $params['passphrase'];
-#            }
+            $passphrase = '';
+            if (isset($params['passphrase'])) {
+                $passphrase = $params['passphrase'];
+            }
 
-#            $keys[$keyType] = $cls::loadPrivate($params['file'], $passphrase);
-#        }
+            $keys[$keyType] = $cls::loadPrivate($params['file'], $passphrase);
+        }
 
         $this->address      = null;
         $this->appFactory   = null;
@@ -173,14 +172,14 @@ class Transport
                 new \Clicky\Pssht\Handlers\NEWKEYS(),
 
             \Clicky\Pssht\Messages\KEXDH\INIT::getMessageId() =>
-                new \Clicky\Pssht\Handlers\KEXDH\INIT($serverKey),
+                new \Clicky\Pssht\Handlers\KEXDH\INIT(),
 
             256 => new \Clicky\Pssht\Handlers\InitialState(),
         );
 
         $ident = "SSH-2.0-pssht_1.0.x_dev";
         $this->context['identity']['server'] = $ident;
-#        $this->context['serverKeys'] = $keys;
+        $this->context['serverKeys'] = $keys;
         $this->encoder->encodeBytes($ident . "\r\n");
     }
 

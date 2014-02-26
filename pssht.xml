@@ -33,10 +33,21 @@
         -->
         <parameter key="banner">Hello world!&#10;</parameter>
 
-        <!-- Path to the server's (PEM-encoded) private key. -->
-        <parameter key="server_key.file">file://%pssht.base_dir%/tests/data/rsa2048</parameter>
-        <!-- Passphrase for the server's private key. -->
-        <parameter key="server_key.passphrase"/>
+        <!--
+            Server's private keys (PEM-encoded).
+            You may provide several keys here, one per supported key type.
+        -->
+        <parameter key="server_keys" type="collection">
+            <parameter key="ssh-rsa" type="collection">
+                <parameter key="file">file://%pssht.base_dir%/tests/data/rsa2048</parameter>
+                <parameter key="passphrase"></parameter>
+            </parameter>
+
+            <parameter key="ssh-dss" type="collection">
+                <parameter key="file">file://%pssht.base_dir%/tests/data/dsa1024</parameter>
+                <parameter key="passphrase"/>
+            </parameter>
+        </parameter>
 
 
         <!-- AUTHENTICATION SETTINGS -->
@@ -79,14 +90,7 @@
     <services>
         <!-- The "client" service is used to handle new clients. -->
         <service id="client" scope="prototype" class="\Clicky\Pssht\Transport">
-            <argument type="service">
-                <service
-                    factory-class="\Clicky\Pssht\PublicKey\SSH\RSA"
-                    factory-method="loadPrivate">
-                    <argument>%server_key.file%</argument>
-                    <argument>%server_key.passphrase%</argument>
-                </service>
-            </argument>
+            <argument>%server_keys%</argument>
             <argument type="service" id="authMethods"/>
             <call method="setApplicationFactory">
                 <argument type="collection">

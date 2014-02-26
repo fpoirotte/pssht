@@ -37,14 +37,14 @@ class KEXINIT implements MessageInterface
 
     public function __construct(
         RandomInterface $random,
-        array $kexAlgos = null,
-        array $serverHostKeyAlgos = null,
-        array $encAlgosC2S = null,
-        array $encAlgosS2C = null,
-        array $macAlgosC2S = null,
-        array $macAlgosS2C = null,
-        array $compAlgosC2S = null,
-        array $compAlgosS2C = null,
+        array $kexAlgos,
+        array $serverHostKeyAlgos,
+        array $encAlgosC2S,
+        array $encAlgosS2C,
+        array $macAlgosC2S,
+        array $macAlgosS2C,
+        array $compAlgosC2S,
+        array $compAlgosS2C,
         array $langC2S = array(),
         array $langS2C = array(),
         $firstKexPacket = false
@@ -54,66 +54,6 @@ class KEXINIT implements MessageInterface
         }
 
         $algos = Algorithms::factory();
-
-        // KEX
-        if ($kexAlgos === null) {
-            $kexAlgos = $algos->getAlgorithms('KEX');
-        }
-        $kexAlgos = array_intersect($algos->getAlgorithms('KEX'), $kexAlgos);
-        if (!count($kexAlgos)) {
-            throw new \InvalidArgumentException();
-        }
-
-        // Server key
-        if ($serverHostKeyAlgos === null) {
-            $serverHostKeyAlgos = $algos->getAlgorithms('PublicKey');
-        }
-        $serverHostKeyAlgos = array_intersect(
-            $algos->getAlgorithms('PublicKey'),
-            $serverHostKeyAlgos
-        );
-        if (!count($serverHostKeyAlgos)) {
-            throw new \InvalidArgumentException();
-        }
-
-        // Encryption
-        $encAlgos = array_diff($algos->getAlgorithms('Encryption'), array('none'));
-        if ($encAlgosC2S === null) {
-            $encAlgosC2S = $encAlgos;
-        }
-        if ($encAlgosS2C === null) {
-            $encAlgosS2C = $encAlgos;
-        }
-        $encAlgosC2S = array_intersect($encAlgos, $encAlgosC2S);
-        $encAlgosS2C = array_intersect($encAlgos, $encAlgosS2C);
-        if (!count($encAlgosC2S) || !count($encAlgosS2C)) {
-            throw new \InvalidArgumentException();
-        }
-
-        // MAC
-        $macAlgos = array_diff($algos->getAlgorithms('MAC'), array('none'));
-        if ($macAlgosC2S === null) {
-            $macAlgosC2S = $macAlgos;
-        }
-        if ($macAlgosS2C === null) {
-            $macAlgosS2C = $macAlgos;
-        }
-        $macAlgosC2S = array_intersect($macAlgos, $macAlgosC2S);
-        $macAlgosS2C = array_intersect($macAlgos, $macAlgosS2C);
-        if (!count($macAlgosC2S) || !count($macAlgosS2C)) {
-            throw new \InvalidArgumentException();
-        }
-
-        // Compression
-        $compAlgos = $algos->getAlgorithms('Compression');
-        if ($compAlgosC2S === null) {
-            $compAlgosC2S = $compAlgos;
-        }
-        if ($compAlgosS2C === null) {
-            $compAlgosS2C = $compAlgos;
-        }
-        $compAlgosC2S = array_intersect($compAlgos, $compAlgosC2S);
-        $compAlgosS2C = array_intersect($compAlgos, $compAlgosS2C);
 
         $this->cookie               = $random->getBytes(16);
         $this->kexAlgos             = $kexAlgos;

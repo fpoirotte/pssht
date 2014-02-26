@@ -16,13 +16,6 @@ namespace Clicky\Pssht\Handlers\KEXDH;
  */
 class INIT implements \Clicky\Pssht\HandlerInterface
 {
-    protected $serverKey;
-
-    public function __construct(\Clicky\Pssht\PublicKeyInterface $serverKey)
-    {
-        $this->serverKey = $serverKey;
-    }
-
     // SSH_MSG_KEXDH_INIT = 30
     public function handle(
         $msgType,
@@ -33,9 +26,21 @@ class INIT implements \Clicky\Pssht\HandlerInterface
         $message    = \Clicky\Pssht\Messages\KEXDH\INIT::unserialize($decoder);
         $kexAlgo    = $context['kexAlgo'];
         $kexAlgo    = new $kexAlgo();
+        $hostAlgo   = null;
+        foreach ($context['kex']['client']->getServerHostKeyAlgos() as $algo) {
+            if (isset($context['serverKeys'][$algo])) {
+                $hostAlgo = $algo;
+                break;
+            }
+        }
+        if ($hostAlgo === null) {
+            throw new \RuntimeException();
+        }
+
+        $logging    = \Plop::getInstance();
         $response   = new \Clicky\Pssht\Messages\KEXDH\REPLY(
             $message,
-            $this->serverKey,
+            $context['serverKeys'][$hostAlgo],
             $transport->getEncryptor(),
             $transport->getDecryptor(),
             $kexAlgo,
@@ -44,12 +49,27 @@ class INIT implements \Clicky\Pssht\HandlerInterface
             $context['identity']['server'],
             $context['identity']['client']
         );
-        $transport->writeMessage($response);
+
+        $secret = gmp_strval($response->getSharedSecret(), 16);
+        $logging->debug(
+            "Shared secret:\r\n%s",
+            array(
+                wordwrap($secret, 16, ' ', true)
+            )
+        );
+
+        $logging->debug(
+            'Hash: %s',
+            array(
+                wordwrap(bin2hex($response->getExchangeHash()), 16, ' ', true)
+            )
+        );
 
         if (!isset($context['sessionIdentifier'])) {
             $context['sessionIdentifier'] = $response->getExchangeHash();
         }
         $context['DH'] = $response;
+        $transport->writeMessage($response);
         return true;
     }
 }
