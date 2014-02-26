@@ -31,10 +31,10 @@ class REPLY implements MessageInterface
     protected $K_S;
     protected $kexDHInit;
     protected $kexAlgo;
-    protected $localKEX;
-    protected $remoteKEX;
-    protected $localIdent;
-    protected $remoteIdent;
+    protected $serverKEX;
+    protected $clientKEX;
+    protected $serverIdent;
+    protected $clientIdent;
 
     public function __construct(
         INIT $kexDHInit,
@@ -42,10 +42,10 @@ class REPLY implements MessageInterface
         EncryptionInterface $encryptionAlgo,
         EncryptionInterface $decryptionAlgo,
         KEXInterface $kexAlgo,
-        KEXINIT $localKEX,
-        KEXINIT $remoteKEX,
-        $localIdent,
-        $remoteIdent
+        KEXINIT $serverKEX,
+        KEXINIT $clientKEX,
+        $serverIdent,
+        $clientIdent
     ) {
         $keyLength          = min(20, max($encryptionAlgo->getKeySize(), 16));
         $randBytes          = openssl_random_pseudo_bytes(2 * $keyLength);
@@ -56,26 +56,26 @@ class REPLY implements MessageInterface
         $this->K_S          = $key;
         $this->kexDHInit    = $kexDHInit;
         $this->kexAlgo      = $kexAlgo;
-        $this->localKEX     = $localKEX;
-        $this->remoteKEX    = $remoteKEX;
-        $this->localIdent   = $localIdent;
-        $this->remoteIdent  = $remoteIdent;
+        $this->serverKEX    = $serverKEX;
+        $this->clientKEX    = $clientKEX;
+        $this->serverIdent  = $serverIdent;
+        $this->clientIdent  = $clientIdent;
 
         $msgId  = chr(\Clicky\Pssht\Messages\KEXINIT::getMessageId());
         // $sub is used to create the structure for the hashing function.
         $sub    = new Encoder(new \Clicky\Pssht\Buffer());
         $this->K_S->serialize($sub);
         $K_S    = $sub->getBuffer()->get(0);
-        $sub->encodeString($this->remoteIdent);
-        $sub->encodeString($this->localIdent);
+        $sub->encodeString($this->clientIdent);
+        $sub->encodeString($this->serverIdent);
         // $sub2 is used to compute the value
         // of various fields inside the structure.
         $sub2   = new Encoder(new \Clicky\Pssht\Buffer());
         $sub2->encodeBytes($msgId); // Add message identifier.
-        $this->remoteKEX->serialize($sub2);
+        $this->clientKEX->serialize($sub2);
         $sub->encodeString($sub2->getBuffer()->get(0));
         $sub2->encodeBytes($msgId); // Add message identifier.
-        $this->localKEX->serialize($sub2);
+        $this->serverKEX->serialize($sub2);
         $sub->encodeString($sub2->getBuffer()->get(0));
         $sub->encodeString($K_S);
         $sub->encodeMpint($this->kexDHInit->getE());
