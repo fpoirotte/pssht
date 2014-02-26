@@ -8,7 +8,7 @@
         <!--
             String or collection of strings specifying the addresses/ports
             the server should listen on, in the form "address:port".
-            Use brackets to indicate an IPv6 address (eg. "[::1]").
+            Use brackets for IPv6 addresses (eg. "[::1]:0").
             If 0 is used as the port, a random port will be selected.
         -->
         <parameter key="listen">[::]:22222</parameter>
@@ -23,6 +23,9 @@
                 a new instance of the application to be created; usually
                 an instance of \Clicky\Pssht\Messages\CHANNEL\REQUEST\Exec
                 or \Clicky\Pssht\Messages\CHANNEL\REQUEST\Shell)
+
+            Alternatively, you may modify the "client" or "applicationFactory"
+            services to set another application factory.
         -->
         <parameter key="application">\Clicky\Pssht\XRL</parameter>
 
@@ -143,7 +146,8 @@
             The "authMethods" service is used to indicate
             which authentication methods are allowed.
         -->
-        <service id="authMethods" public="false" class="\Clicky\Pssht\Handlers\SERVICE\REQUEST">
+        <service id="authMethods" public="false"
+            class="\Clicky\Pssht\Handlers\SERVICE\REQUEST">
             <argument type="service">
                 <service class="\Clicky\Pssht\Handlers\USERAUTH\REQUEST">
                     <argument type="collection">
