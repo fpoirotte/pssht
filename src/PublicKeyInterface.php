@@ -30,7 +30,6 @@ interface PublicKeyInterface extends AlgorithmInterface
      *  \retval PublicKeyInterface
      *      Private key as loaded from the data/file.
      */
-     */
     public static function loadPrivate($pem, $passphrase = '');
 
     /**
@@ -54,7 +53,7 @@ interface PublicKeyInterface extends AlgorithmInterface
      *  \retval string
      *      Serialized representation of the key.
      */
-    public function serialize(Encoder $encoder);
+    public function serialize(\Clicky\Pssht\Wire\Encoder $encoder);
 
     /**
      * Sign a message using the key.

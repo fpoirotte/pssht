@@ -11,13 +11,10 @@
 
 namespace Clicky\Pssht\PublicKey\SSH;
 
-use Clicky\Pssht\PublicKeyInterface;
-use Clicky\Pssht\Wire\Encoder;
-
 /**
  * Public key using the RSA algorithm.
  */
-class RSA implements PublicKeyInterface
+class RSA implements \Clicky\Pssht\PublicKeyInterface
 {
     /// DER header for RSA.
     const DER_HEADER = "\x30\x21\x30\x09\x06\x05\x2b\x0e\x03\x02\x1a\x05\x00\x04\x14";
@@ -112,7 +109,7 @@ class RSA implements PublicKeyInterface
         return 'ssh-rsa';
     }
 
-    public function serialize(Encoder $encoder)
+    public function serialize(\Clicky\Pssht\Wire\Encoder $encoder)
     {
         $encoder->encodeString(self::getName());
         $encoder->encodeMpint($this->e);

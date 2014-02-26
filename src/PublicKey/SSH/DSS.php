@@ -11,14 +11,11 @@
 
 namespace Clicky\Pssht\PublicKey\SSH;
 
-use Clicky\Pssht\PublicKeyInterface;
-use Clicky\Pssht\Wire\Encoder;
-
 /**
  * Public key using the Digital Signature Algorithm (DSA),
  * as used in the Digital Signature Standard (DSS).
  */
-class DSS implements PublicKeyInterface
+class DSS implements \Clicky\Pssht\PublicKeyInterface
 {
     /// DER header for DSA.
     const DER_HEADER = "\x30\x20\x30\x0c\x06\x08\x2a\x86\x48\x86\xf7\x0d\x02\x05\x05\x00\x04\x10";
@@ -117,7 +114,7 @@ class DSS implements PublicKeyInterface
         return 'ssh-dss';
     }
 
-    public function serialize(Encoder $encoder)
+    public function serialize(\Clicky\Pssht\Wire\Encoder $encoder)
     {
         $encoder->encodeString(self::getName());
         $encoder->encodeMpint($this->p);
