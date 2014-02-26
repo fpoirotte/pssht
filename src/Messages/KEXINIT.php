@@ -55,14 +55,28 @@ class KEXINIT implements MessageInterface
 
         $algos = Algorithms::factory();
 
+        // KEX
         if ($kexAlgos === null) {
             $kexAlgos = $algos->getAlgorithms('KEX');
         }
+        $kexAlgos = array_intersect($algos->getAlgorithms('KEX'), $kexAlgos);
+        if (!count($kexAlgos)) {
+            throw new \InvalidArgumentException();
+        }
 
+        // Server key
         if ($serverHostKeyAlgos === null) {
             $serverHostKeyAlgos = $algos->getAlgorithms('PublicKey');
         }
+        $serverHostKeyAlgos = array_intersect(
+            $algos->getAlgorithms('PublicKey'),
+            $serverHostKeyAlgos
+        );
+        if (!count($serverHostKeyAlgos)) {
+            throw new \InvalidArgumentException();
+        }
 
+        // Encryption
         $encAlgos = array_diff($algos->getAlgorithms('Encryption'), array('none'));
         if ($encAlgosC2S === null) {
             $encAlgosC2S = $encAlgos;
@@ -70,7 +84,13 @@ class KEXINIT implements MessageInterface
         if ($encAlgosS2C === null) {
             $encAlgosS2C = $encAlgos;
         }
+        $encAlgosC2S = array_intersect($encAlgos, $encAlgosC2S);
+        $encAlgosS2C = array_intersect($encAlgos, $encAlgosS2C);
+        if (!count($encAlgosC2S) || !count($encAlgosS2C)) {
+            throw new \InvalidArgumentException();
+        }
 
+        // MAC
         $macAlgos = array_diff($algos->getAlgorithms('MAC'), array('none'));
         if ($macAlgosC2S === null) {
             $macAlgosC2S = $macAlgos;
@@ -78,7 +98,13 @@ class KEXINIT implements MessageInterface
         if ($macAlgosS2C === null) {
             $macAlgosS2C = $macAlgos;
         }
+        $macAlgosC2S = array_intersect($macAlgos, $macAlgosC2S);
+        $macAlgosS2C = array_intersect($macAlgos, $macAlgosS2C);
+        if (!count($macAlgosC2S) || !count($macAlgosS2C)) {
+            throw new \InvalidArgumentException();
+        }
 
+        // Compression
         $compAlgos = $algos->getAlgorithms('Compression');
         if ($compAlgosC2S === null) {
             $compAlgosC2S = $compAlgos;
@@ -86,6 +112,8 @@ class KEXINIT implements MessageInterface
         if ($compAlgosS2C === null) {
             $compAlgosS2C = $compAlgos;
         }
+        $compAlgosC2S = array_intersect($compAlgos, $compAlgosC2S);
+        $compAlgosS2C = array_intersect($compAlgos, $compAlgosS2C);
 
         $this->cookie               = $random->getBytes(16);
         $this->kexAlgos             = $kexAlgos;
@@ -127,21 +155,22 @@ class KEXINIT implements MessageInterface
     public static function unserialize(Decoder $decoder)
     {
         $res = new static(
-            // cookie
-            new \Clicky\Pssht\Random\Fixed($decoder->decodeBytes(16)),
-            $decoder->decodeNameList(),   // keyAlgos
-            $decoder->decodeNameList(),   // serverHostKeyAlgos
-            $decoder->decodeNameList(),   // encAlgosC2S
-            $decoder->decodeNameList(),   // encAlgosS2C
-            $decoder->decodeNameList(),   // macAlgosC2S
-            $decoder->decodeNameList(),   // macAlgosS2C
-            $decoder->decodeNameList(),   // compAlgosC2S
-            $decoder->decodeNameList(),   // compAlgosS2C
-            $decoder->decodeNameList(),   // langC2S
-            $decoder->decodeNameList(),   // langS2C
-            $decoder->decodeBoolean()      // firstKexPacket
+            new \Clicky\Pssht\Random\Fixed(
+                $decoder->decodeBytes(16)   // cookie
+            ),
+            $decoder->decodeNameList(),     // keyAlgos
+            $decoder->decodeNameList(),     // serverHostKeyAlgos
+            $decoder->decodeNameList(),     // encAlgosC2S
+            $decoder->decodeNameList(),     // encAlgosS2C
+            $decoder->decodeNameList(),     // macAlgosC2S
+            $decoder->decodeNameList(),     // macAlgosS2C
+            $decoder->decodeNameList(),     // compAlgosC2S
+            $decoder->decodeNameList(),     // compAlgosS2C
+            $decoder->decodeNameList(),     // langC2S
+            $decoder->decodeNameList(),     // langS2C
+            $decoder->decodeBoolean()       // firstKexPacket
         );
-        $decoder->decodeUint32(); // Reserved for future extension.
+        $decoder->decodeUint32();           // Reserved
         return $res;
     }
 
