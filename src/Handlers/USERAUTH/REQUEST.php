@@ -19,9 +19,18 @@ use Clicky\Pssht\AuthenticationInterface;
  */
 class REQUEST implements \Clicky\Pssht\HandlerInterface
 {
+    /// Allowed authentication methods.
     protected $methods;
+
+    /// Connection layer.
     protected $connection;
 
+    /**
+     * Construct a new handler for SSH_MSG_USERAUTH_REQUEST messages.
+     *
+     *  \param array $methods
+     *      Allowed authentication methods.
+     */
     public function __construct(array $methods)
     {
         $method         = new \Clicky\Pssht\Authentication\None();
@@ -135,6 +144,24 @@ class REQUEST implements \Clicky\Pssht\HandlerInterface
         return true;
     }
 
+    /**
+     * Report an authentication failure.
+     *
+     *  \param Transport $transport
+     *      Transport layer used to report the failure.
+     *
+     *  \param array &$context
+     *      SSH session context (containing authentication methods
+     *      that may continue).
+     *
+     *  \param bool $partial
+     *      (optional) Indicates whether the request ended with
+     *      a partial success (\b true) or not (\b false).
+     *      If omitted, \b false is implied.
+     *
+     *  \retval true
+     *      This method always returns true.
+     */
     protected function failure(
         \Clicky\Pssht\Transport $transport,
         array &$context,

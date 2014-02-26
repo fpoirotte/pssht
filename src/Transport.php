@@ -69,8 +69,38 @@ class Transport
     protected $banner;
 
 
+    /**
+     * Construct a new SSH transport layer.
+     *
+     *  \param array $serverKeys
+     *      Keys presented by the server as an associated array where:
+     *      -   keys indicate the key's algorithm (eg. "ssh-dss")
+     *      -   values are an associative array with the following keys:
+     *          -   "file": a PEM-encoded private key or path to a PEM-encoded
+     *                      private key, in "file:///path/to/key.pem" format
+     *          -   "passphrase": (optional) passphrase for the key
+     *
+     *  \param REQUEST $authMethods
+     *      Allowed authentication methods.
+     *
+     *  \param Encoder $encoder
+     *      (optional) Encoder to use when sending SSH messages.
+     *      If omitted, a new encoder is automatically created.
+     *
+     *  \param Decoder $decoder
+     *      (optional) Decoder to use when sending SSH messages.
+     *      If omitted, a new decoder is automatically created.
+     *
+     *  \note
+     *      Once this class' constructor has been called,
+     *      you are advised to call the setAddress() method
+     *      to register the client's IP address.
+     *      This is required for some authentication methods
+     *      to work properly.
+     */
     public function __construct(
         \Clicky\Pssht\PublicKeyInterface $serverKey,
+#        array $serverKeys,
         \Clicky\Pssht\Handlers\SERVICE\REQUEST $authMethods,
         \Clicky\Pssht\Wire\Encoder $encoder = null,
         \Clicky\Pssht\Wire\Decoder $decoder = null
@@ -82,20 +112,47 @@ class Transport
             $decoder = new \Clicky\Pssht\Wire\Decoder();
         }
 
+#        $algos  = \Clicky\Pssht\Algorithms::factory();
+#        $keys   = array();
+#        foreach ($serverKeys as $keyType => $params) {
+#            $cls = $algos->getClass('PublicKey', $keyType);
+#            if ($cls === null) {
+#                throw new \InvalidArgumentException();
+#            }
+
+#            $passphrase = '';
+#            if (isset($params['passphrase'])) {
+#                $passphrase = $params['passphrase'];
+#            }
+
+#            $keys[$keyType] = $cls::loadPrivate($params['file'], $passphrase);
+#        }
+
         $this->address      = null;
-        $this->inSeqNo      = 0;
-        $this->outSeqNo     = 0;
-        $this->encoder      = $encoder;
-        $this->decoder      = $decoder;
-        $this->compressor   = new \Clicky\Pssht\Compression\None(CompressionInterface::MODE_COMPRESS);
-        $this->uncompressor = new \Clicky\Pssht\Compression\None(CompressionInterface::MODE_UNCOMPRESS);
-        $this->encryptor    = new \Clicky\Pssht\Encryption\None(null, null);
-        $this->decryptor    = new \Clicky\Pssht\Encryption\None(null, null);
-        $this->inMAC        = new \Clicky\Pssht\MAC\None(null);
-        $this->outMAC       = new \Clicky\Pssht\MAC\None(null);
-        $this->context      = array();
         $this->appFactory   = null;
         $this->banner       = null;
+        $this->context      = array();
+
+        $this->inSeqNo      = 0;
+        $this->outSeqNo     = 0;
+
+        $this->encoder      = $encoder;
+        $this->decoder      = $decoder;
+
+        $this->compressor   = new \Clicky\Pssht\Compression\None(
+            CompressionInterface::MODE_COMPRESS
+        );
+
+        $this->uncompressor = new \Clicky\Pssht\Compression\None(
+            CompressionInterface::MODE_UNCOMPRESS
+        );
+
+        $this->encryptor    = new \Clicky\Pssht\Encryption\None(null, null);
+        $this->decryptor    = new \Clicky\Pssht\Encryption\None(null, null);
+
+        $this->inMAC        = new \Clicky\Pssht\MAC\None(null);
+        $this->outMAC       = new \Clicky\Pssht\MAC\None(null);
+
         $this->handlers     = array(
             \Clicky\Pssht\Messages\DISCONNECT::getMessageId() =>
                 new \Clicky\Pssht\Handlers\DISCONNECT(),
@@ -123,9 +180,27 @@ class Transport
 
         $ident = "SSH-2.0-pssht_1.0.x_dev";
         $this->context['identity']['server'] = $ident;
+#        $this->context['serverKeys'] = $keys;
         $this->encoder->encodeBytes($ident . "\r\n");
     }
 
+    /**
+     * Set the IP address of the client associated
+     * with this transport layer.
+     *
+     *  \param string $address
+     *      IP address of the client.
+     *
+     *  \retval Transport
+     *      Returns this transport layer.
+     *
+     *  \note
+     *      This method is intended for use with
+     *      hostbased authentication methods.
+     *      Moreover, this method may only be called
+     *      once. Subsequent calls will result in a
+     *      RuntimeException being raised.
+     */
     public function setAddress($address)
     {
         if (!is_string($address)) {
@@ -140,26 +215,62 @@ class Transport
         return $this;
     }
 
+    /**
+     * Get the client's IP address.
+     *
+     *  \retval string
+     *      The client's IP address, as set.
+     *
+     *  \retval null
+     *      The client's IP has not been set yet.
+     */
     public function getAddress()
     {
         return $this->address;
     }
 
+    /**
+     * Get the object used to encode outgoing packets.
+     *
+     *  \retval Encoder
+     *      Encoder used for sending SSH messages.
+     */
     public function getEncoder()
     {
         return $this->encoder;
     }
 
+    /**
+     * Get the object used to decode incoming packets.
+     *
+     *  \retval Decoder
+     *      Decoder used for receiving SSH messages.
+     */
     public function getDecoder()
     {
         return $this->decoder;
     }
 
+    /**
+     * Get the object used to compress outgoing packets.
+     *
+     *  \retval CompressionInterface
+     *      Outgoing packets' compressor.
+     */
     public function getCompressor()
     {
         return $this->compressor;
     }
 
+    /**
+     * Set the object used to compress outgoing packets.
+     *
+     *  \param CompressionInterface $compressor
+     *      Outgoing packets' compressor.
+     *
+     *  \retval Transport
+     *      Return this transport layer.
+     */
     public function setCompressor(CompressionInterface $compressor)
     {
         if ($compressor->getMode() !== CompressionInterface::MODE_COMPRESS) {
@@ -170,11 +281,26 @@ class Transport
         return $this;
     }
 
+    /**
+     * Get the object used to uncompress incoming packets.
+     *
+     *  \retval CompressionInterface
+     *      Incoming packets' uncompressor.
+     */
     public function getUncompressor()
     {
         return $this->uncompressor;
     }
 
+    /**
+     * Set the object used to uncompress incoming packets.
+     *
+     *  \param CompressionInterface $uncompressor
+     *      Incoming packets' uncompressor.
+     *
+     *  \retval Transport
+     *      Return this transport layer.
+     */
     public function setUncompressor(CompressionInterface $uncompressor)
     {
         if ($uncompressor->getMode() !== CompressionInterface::MODE_UNCOMPRESS) {
@@ -185,72 +311,210 @@ class Transport
         return $this;
     }
 
+    /**
+     * Get the object used to encrypt outgoing packets.
+     *
+     *  \retval EncryptionInterface
+     *      Outgoing packets' encryptor.
+     */
     public function getEncryptor()
     {
         return $this->encryptor;
     }
 
+    /**
+     * Set the object used to encrypt outgoing packets.
+     *
+     *  \param EncryptionInterface $encryptor
+     *      Outgoing packets' encryptor.
+     *
+     *  \retval Transport
+     *      Return this transport layer.
+     */
     public function setEncryptor(EncryptionInterface $encryptor)
     {
         $this->encryptor = $encryptor;
         return $this;
     }
 
+    /**
+     * Get the object used to decrypt incoming packets.
+     *
+     *  \retval EncryptionInterface
+     *      Incoming packets' decryptor.
+     */
     public function getDecryptor()
     {
         return $this->decryptor;
     }
 
+    /**
+     * Set the object used to decrypt incoming packets.
+     *
+     *  \param EncryptionInterface $decryptor
+     *      Incoming packets' decryptor.
+     *
+     *  \retval Transport
+     *      Return this transport layer.
+     */
     public function setDecryptor(EncryptionInterface $decryptor)
     {
         $this->decryptor = $decryptor;
         return $this;
     }
 
+    /**
+     * Get the object used to check integrity of incoming packets.
+     *
+     *  \retval MACInterface
+     *      Incoming packets' MAC checker.
+     */
     public function getInputMAC()
     {
         return $this->inMAC;
     }
 
+    /**
+     * Set the object used to check integrity of incoming packets.
+     *
+     *  \param MACInterface $inputMAC
+     *      Incoming packets' MAC checker.
+     *
+     *  \retval Transport
+     *      Return this transport layer.
+     */
     public function setInputMAC(MACInterface $inputMAC)
     {
         $this->inMAC = $inputMAC;
         return $this;
     }
 
+    /**
+     * Get the object used to check integrity of outgoing packets.
+     *
+     *  \retval MACInterface
+     *      Outgoing packets' MAC generator.
+     */
     public function getOutputMAC()
     {
         return $this->outMAC;
     }
 
+    /**
+     * Set the object used to generate MACs for outgoing packets.
+     *
+     *  \param MACInterface $outputMAC
+     *      Outgoing packets' MAC generator.
+     *
+     *  \retval Transport
+     *      Return this transport layer.
+     */
     public function setOutputMAC(MACInterface $outputMAC)
     {
         $this->outMAC = $outputMAC;
         return $this;
     }
 
+    /**
+     * Get the factory used to create instances of the application layer.
+     *
+     *  \retval callable
+     *      Factory for the application layer.
+     */
     public function getApplicationFactory()
     {
         return $this->applicationFactory;
     }
 
+    /**
+     * Set the factory to use to create instances of the application layer.
+     *
+     *  \param $factory
+     *      Factory for the application layer.
+     *
+     *  \retval Transport
+     *      Returns this transport layer.
+     */
     public function setApplicationFactory($factory)
     {
         $this->applicationFactory = $factory;
         return $this;
     }
 
+    /**
+     * Get the SSH banner displayed to clients.
+     *
+     *  \retval string
+     *      SSH banner.
+     *
+     *  \retval null
+     *      No SSH banner has been set.
+     */
     public function getBanner()
     {
         return $this->banner;
     }
 
+    /**
+     * Set the SSH banner presented by the server.
+     *
+     *  \param string $message
+     *      SSH banner to display during connection.
+     *
+     *  \retval Transport
+     *      Returns this transport layer.
+     */
     public function setBanner($message)
     {
+        if (!is_string($message)) {
+            throw new \InvalidArgumentException();
+        }
+
         $this->banner = $message;
         return $this;
     }
 
+    /**
+     * Retrieve the current handler for a given message type.
+     *
+     *  \param int $type
+     *      Message type.
+     *
+     *  \retval HandlerInterface
+     *      Handler associated with the given message type.
+     *
+     *  \retval null
+     *      There is no handler currently registered
+     *      for the given message type.
+     */
+    public function getHandler($type)
+    {
+        if (!is_int($type) || $type < 0 || $type > 255) {
+            throw new \InvalidArgumentException();
+        }
+
+        if (isset($this->handlers[$type])) {
+            return $this->handlers[$type];
+        }
+        return null;
+    }
+
+    /**
+     * Register a handler for a specific SSH message type.
+     *
+     *  \param int $type
+     *      Message type.
+     *
+     *  \param HandlerInterface $handler
+     *      Handler to register for that message type.
+     *
+     *  \retval Transport
+     *      Returns this transport layer.
+     *
+     *  \note
+     *      The given handler will overwrite any previously
+     *      registered handler for that message type.
+     */
     public function setHandler($type, \Clicky\Pssht\HandlerInterface $handler)
     {
         if (!is_int($type) || $type < 0 || $type > 255) {
@@ -261,6 +525,18 @@ class Transport
         return $this;
     }
 
+    /**
+     * Unregister a handler for a specific SSH message type.
+     *
+     *  \param int $type
+     *      Message type.
+     *
+     *  \param HandlerInterface $handler
+     *      Handler to unregister for that message type.
+     *
+     *  \retval Transport
+     *      Returns this transport layer.
+     */
     public function unsetHandler($type, \Clicky\Pssht\HandlerInterface $handler)
     {
         if (!is_int($type) || $type < 0 || $type > 255) {
@@ -273,6 +549,15 @@ class Transport
         return $this;
     }
 
+    /**
+     * Write an SSH message into the output buffer.
+     *
+     *  \param MessageInterface $message
+     *      Message to write into the output buffer.
+     *
+     *  \retval Transport
+     *      Returns this transport layer.
+     */
     public function writeMessage(\Clicky\Pssht\MessageInterface $message)
     {
         $logging = \Plop::getInstance();
@@ -341,8 +626,23 @@ class Transport
                 'padding' => $padSize,
             )
         );
+        return $this;
     }
 
+    /**
+     * Try to read and handle a single SSH message.
+     *
+     *  \retval bool
+     *      \b true if a message was successfully read and handled,
+     *      \b false otherwise.
+     *
+     *  \note
+     *      Depending on the circumstances, messages may be successfully
+     *      read but left unhandled (eg. because the message was incomplete).
+     *      In such cases, the message will be reinjected and \b false
+     *      returned, making it possible for a future call to this method
+     *      to handle the (full) message again.
+     */
     public function readMessage()
     {
         $logging = \Plop::getInstance();

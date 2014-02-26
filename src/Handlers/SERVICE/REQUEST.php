@@ -18,8 +18,15 @@ use Clicky\Pssht\Messages\DISCONNECT;
  */
 class REQUEST implements \Clicky\Pssht\HandlerInterface
 {
+    /// User authentication request handler.
     protected $userAuthRequestHandler;
 
+    /**
+     * Construct a new handler for SSH_MSG_SERVICE_REQUEST messages.
+     *
+     *  \param REQUEST $methods
+     *      User authentication request handler.
+     */
     public function __construct(\Clicky\Pssht\Handlers\USERAUTH\REQUEST $methods)
     {
         $this->userAuthRequestHandler = $methods;
