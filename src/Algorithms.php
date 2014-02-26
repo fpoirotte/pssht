@@ -14,7 +14,7 @@ namespace Clicky\Pssht;
 /**
  * A singleton that gives access to supported algorithms.
  */
-class Algorithm
+class Algorithms
 {
     /// Array with currently available algorithms.
     protected $algos;
