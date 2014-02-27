@@ -11,28 +11,54 @@
 
 namespace Clicky\Pssht\Messages\CHANNEL\OPEN;
 
-use Clicky\Pssht\MessageInterface;
-use Clicky\Pssht\Wire\Encoder;
-use Clicky\Pssht\Wire\Decoder;
-
 /**
  * SSH_MSG_CHANNEL_OPEN_FAILURE message (RFC 4254).
  */
-class FAILURE implements MessageInterface
+class FAILURE extends \Clicky\Pssht\Messages\CHANNEL\Base
 {
+    /// The requested action was administratively prohibited.
     const SSH_OPEN_ADMINISTRATIVELY_PROHIBITED  = 1;
+
+    /// The connection failed.
     const SSH_OPEN_CONNECT_FAILED               = 2;
+
+    /// The requested channel type is unsupported.
     const SSH_OPEN_UNKNOWN_CHANNEL_TYPE         = 3;
+
+    /// The requested action was aborted due to a resource shortage.
     const SSH_OPEN_RESOURCE_SHORTAGE            = 4;
 
-    protected $recipientChannel;
+
+    /// Reason for the failure (as a code).
     protected $reasonCode;
+
+    /// Reason for the failure (as a human-readable description).
     protected $reasonMessage;
+
+    /// Language the message is written into, in RFC 3066 format.
     protected $language;
 
-    public function __construct($recipientChannel, $reasonCode, $reasonMessage, $language = '')
+
+    /**
+     * Construct a new SSH_MSG_CHANNEL_OPEN_FAILURE message.
+     *
+     *  \copydetails Base::__construct
+     *
+     *  \param int $reasonCode
+     *      Reason for the failure, as a code.
+     *
+     *  \param string $reasonMessage
+     *      Reason for the failure, as a human-readable description
+     *      in RFC 3066 format.
+     *
+     *  \param string $language
+     *      (optional) Language the message in written into,
+     *      in RFC 3066 format. If omitted, the description
+     *      is assumed to be language-neutral.
+     */
+    public function __construct($channel, $reasonCode, $reasonMessage, $language = '')
     {
-        $this->recipientChannel = $recipientChannel;
+        parent::__construct($channel);
         $this->reasonCode       = $reasonCode;
         $this->reasonMessage    = $reasonMessage;
         $this->language         = $language;
@@ -43,22 +69,22 @@ class FAILURE implements MessageInterface
         return 92;
     }
 
-    public function serialize(Encoder $encoder)
+    public function serialize(\Clicky\Pssht\Wire\Encoder $encoder)
     {
-        $encoder->encodeUint32($this->recipientChannel);
-        $encoder->encodeUint32($this->senderChannel);
-        $encoder->encodeUint32($this->initialWindowSize);
-        $encoder->encodeUint32($this->maximumPacketSize);
+        parent::serialize($encoder);
+        $encoder->encodeUint32($this->reasonCode);
+        $encoder->encodeString($this->reasonMessage);
+        $encoder->encodeString($this->language);
         return $this;
     }
 
-    public static function unserialize(Decoder $decoder)
+    public static function unserialize(\Clicky\Pssht\Wire\Decoder $decoder)
     {
         return new static(
+            $decoder->decodeUint32(),   // channel
             $decoder->decodeUint32(),
-            $decoder->decodeUint32(),
-            $decoder->decodeUint32(),
-            $decoder->decodeUint32()
+            $decoder->decodeString(),
+            $decoder->decodeString()
         );
     }
 }

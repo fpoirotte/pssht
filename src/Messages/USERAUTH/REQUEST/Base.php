@@ -12,8 +12,6 @@
 namespace Clicky\Pssht\Messages\USERAUTH\REQUEST;
 
 use Clicky\Pssht\MessageInterface;
-use Clicky\Pssht\Wire\Encoder;
-use Clicky\Pssht\Wire\Decoder;
 
 /**
  * Abstract SSH_MSG_USERAUTH_REQUEST message (RFC 4252).
@@ -63,7 +61,7 @@ abstract class Base implements MessageInterface
         return 50;
     }
 
-    public function serialize(Encoder $encoder)
+    public function serialize(\Clicky\Pssht\Wire\Encoder $encoder)
     {
         $encoder->encodeString($this->user);
         $encoder->encodeString($this->service);
@@ -80,13 +78,17 @@ abstract class Base implements MessageInterface
      *  \retval array
      *      Array of unserialized data forming
      *      the sub-message.
+     *
+     *  \note
+     *      This method MUST be redefined by subclasses.
+     *      The default implementation simply throws an exception.
      */
-    protected static function unserializeSub(Decoder $decoder)
+    protected static function unserializeSub(\Clicky\Pssht\Wire\Decoder $decoder)
     {
         throw new \RuntimeException();
     }
 
-    final public static function unserialize(Decoder $decoder)
+    final public static function unserialize(\Clicky\Pssht\Wire\Decoder $decoder)
     {
         $reflector  = new \ReflectionClass(get_called_class());
         $args       = array_merge(

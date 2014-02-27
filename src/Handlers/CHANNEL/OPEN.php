@@ -24,7 +24,7 @@ class OPEN extends Base
         array &$context
     ) {
         $message            = \Clicky\Pssht\Messages\CHANNEL\OPEN::unserialize($decoder);
-        $recipientChannel   = $message->getSenderChannel();
+        $recipientChannel   = $message->getChannel();
 
         if ($message->getType() === 'session') {
             $response = new \Clicky\Pssht\Messages\CHANNEL\OPEN\CONFIRMATION(

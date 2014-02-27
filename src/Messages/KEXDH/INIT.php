@@ -11,17 +11,21 @@
 
 namespace Clicky\Pssht\Messages\KEXDH;
 
-use Clicky\Pssht\MessageInterface;
-use Clicky\Pssht\Wire\Encoder;
-use Clicky\Pssht\Wire\Decoder;
-
 /**
  * SSH_MSG_KEXDH_INIT message (RFC 4253).
  */
-class INIT implements MessageInterface
+class INIT implements \Clicky\Pssht\MessageInterface
 {
+    /// Client's public exponent as a GMP resource.
     protected $e;
 
+
+    /**
+     * Construct a new SSH_MSG_KEXDH_INIT message.
+     *
+     *  \param resource $e
+     *      GMP resource representing the client's public exponent.
+     */
     public function __construct($e)
     {
         $this->e = $e;
@@ -32,17 +36,24 @@ class INIT implements MessageInterface
         return 30;
     }
 
-    public function serialize(Encoder $encoder)
+    public function serialize(\Clicky\Pssht\Wire\Encoder $encoder)
     {
         $encoder->encodeMpint($this->e);
         return $this;
     }
 
-    public static function unserialize(Decoder $decoder)
+    public static function unserialize(\Clicky\Pssht\Wire\Decoder $decoder)
     {
         return new static($decoder->decodeMpint());
     }
 
+    /**
+     * Get the client's public exponent.
+     *
+     *  \retval resource
+     *      GMP resource representing the client's
+     *      public exponent.
+     */
     public function getE()
     {
         return $this->e;

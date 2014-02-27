@@ -11,40 +11,13 @@
 
 namespace Clicky\Pssht\Messages\CHANNEL;
 
-use Clicky\Pssht\MessageInterface;
-use Clicky\Pssht\Wire\Encoder;
-use Clicky\Pssht\Wire\Decoder;
-
 /**
  * SSH_MSG_CHANNEL_CLOSE message (RFC 4254).
  */
-class CLOSE implements MessageInterface
+class CLOSE extends Base
 {
-    protected $channel;
-
-    public function __construct($channel)
-    {
-        $this->channel = $channel;
-    }
-
     public static function getMessageId()
     {
         return 97;
-    }
-
-    public function serialize(Encoder $encoder)
-    {
-        $encoder->encodeUint32($this->channel);
-        return $this;
-    }
-
-    public static function unserialize(Decoder $decoder)
-    {
-        return new static($decoder->decodeUint32());
-    }
-
-    public function getChannel()
-    {
-        return $this->channel;
     }
 }

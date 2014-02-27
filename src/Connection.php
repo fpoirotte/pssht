@@ -95,7 +95,7 @@ class Connection implements \Clicky\Pssht\HandlerInterface
         for ($i = 0; isset($this->channels[$i]); ++$i) {
             // Do nothing.
         }
-        $this->channels[$i] = $message->getSenderChannel();
+        $this->channels[$i] = $message->getChannel();
         $this->handlers[$i] = array();
         return $i;
     }

@@ -79,35 +79,35 @@ class NEWKEYS implements \Clicky\Pssht\HandlerInterface
         $transport->setDecryptor(
             new $cls($context['keys']['A'], $context['keys']['C'])
         );
-        $logging->info('C2S Encryption: %s', array($cls));
+        $logging->debug('C2S Encryption: %s', array($cls));
 
         $cls = $context['S2C']['Encryption'];
         $transport->setEncryptor(
             new $cls($context['keys']['B'], $context['keys']['D'])
         );
-        $logging->info('S2C Encryption: %s', array($cls));
+        $logging->debug('S2C Encryption: %s', array($cls));
 
         // MAC
         $cls            = $context['C2S']['MAC'];
         $transport->setInputMAC(new $cls($context['keys']['E']));
-        $logging->info('C2S MAC: %s', array($cls));
+        $logging->debug('C2S MAC: %s', array($cls));
 
         $cls            = $context['S2C']['MAC'];
         $transport->setOutputMAC(new $cls($context['keys']['F']));
-        $logging->info('S2C MAC: %s', array($cls));
+        $logging->debug('S2C MAC: %s', array($cls));
 
         // Compression
         $cls                = $context['C2S']['Compression'];
         $transport->setUncompressor(
             new $cls(CompressionInterface::MODE_UNCOMPRESS)
         );
-        $logging->info('C2S Compression: %s', array($cls));
+        $logging->debug('C2S Compression: %s', array($cls));
 
         $cls                = $context['S2C']['Compression'];
         $transport->setCompressor(
             new $cls(CompressionInterface::MODE_COMPRESS)
         );
-        $logging->info('S2C Compression: %s', array($cls));
+        $logging->debug('S2C Compression: %s', array($cls));
 
         return true;
     }

@@ -11,36 +11,49 @@
 
 namespace Clicky\Pssht\Messages\CHANNEL\REQUEST;
 
-use Clicky\Pssht\Messages\CHANNEL\REQUEST\Base;
-use Clicky\Pssht\Wire\Encoder;
-use Clicky\Pssht\Wire\Decoder;
-
 /**
  * SSH_MSG_CHANNEL_REQUEST message (RFC 4254)
  * for the "exec" request type.
  */
-class Exec extends Base
+class Exec extends \Clicky\Pssht\Messages\CHANNEL\REQUEST\Base
 {
+    /// Command to execute.
     protected $command;
 
+
+    /**
+     * Construct a new SSH_MSG_CHANNEL_REQUEST message
+     * for the "exec" type.
+     *
+     *  \copydetails Base::__construct
+     *
+     *  \param string $command
+     *      Command to execute.
+     */
     public function __construct($channel, $type, $wantReply, $command)
     {
         parent::__construct($channel, $type, $wantReply);
         $this->command = $command;
     }
 
-    public function serialize(Encoder $encoder)
+    public function serialize(\Clicky\Pssht\Wire\Encoder $encoder)
     {
         parent::serialize($encoder);
         $encoder->encodeString($this->command);
         return $this;
     }
 
-    protected static function unserializeSub(Decoder $decoder)
+    protected static function unserializeSub(\Clicky\Pssht\Wire\Decoder $decoder)
     {
         return array($decoder->decodeString());
     }
 
+    /**
+     * Get the command to execute.
+     *
+     *  \retval string
+     *      Command to execute.
+     */
     public function getCommand()
     {
         return $this->command;

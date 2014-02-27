@@ -11,24 +11,36 @@
 
 namespace Clicky\Pssht\Messages\CHANNEL\EXTENDED;
 
-use Clicky\Pssht\MessageInterface;
-use Clicky\Pssht\Wire\Encoder;
-use Clicky\Pssht\Wire\Decoder;
-
 /**
  * SSH_MSG_CHANNEL_EXTENDED_DATA message (RFC 4254).
  */
-class DATA implements MessageInterface
+class DATA extends \Clicky\Pssht\Messages\CHANNEL\Base
 {
+    /// Assume the extended data stream is \c stderr.
     const SSH_EXTENDED_DATA_STDERR = 1;
 
-    protected $channel;
+    /// Code designating the extended data stream.
     protected $code;
+
+    /// Payload.
     protected $data;
 
+
+    /**
+     * Construct a new SSH_MSG_CHANNEL_EXTENDED_DATA message.
+     *
+     *  \copydetails Base::__construct
+     *
+     *  \param int $code
+     *      Code designating the extended data stream
+     *      the payload is taken from.
+     *
+     *  \param string $data
+     *      Message's payload.
+     */
     public function __construct($channel, $code, $data)
     {
-        $this->channel  = $channel;
+        parent::__construct($channel);
         $this->code     = $code;
         $this->data     = $data;
     }
@@ -38,33 +50,40 @@ class DATA implements MessageInterface
         return 95;
     }
 
-    public function serialize(Encoder $encoder)
+    public function serialize(\Clicky\Pssht\Wire\Encoder $encoder)
     {
-        $encoder->encodeUint32($this->channel);
+        parent::serialize($encoder);
         $encoder->encodeUint32($this->code);
         $encoder->encodeString($this->data);
         return $this;
     }
 
-    public static function unserialize(Decoder $decoder)
+    public static function unserialize(\Clicky\Pssht\Wire\Decoder $decoder)
     {
         return new static(
-            $decoder->decodeUint32(),
+            $decoder->decodeUint32(),   // channel
             $decoder->decodeUint32(),
             $decoder->decodeString()
         );
     }
 
-    public function getChannel()
-    {
-        return $this->channel;
-    }
-
+    /**
+     * Get the extended stream's identifier.
+     *
+     *  \retval int
+     *      Extended stream's code.
+     */
     public function getCode()
     {
         return $this->code;
     }
 
+    /**
+     * Get the payload associated with this message.
+     *
+     *  \retval string
+     *      Message's payload.
+     */
     public function getData()
     {
         return $this->data;

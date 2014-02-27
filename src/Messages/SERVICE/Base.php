@@ -11,17 +11,21 @@
 
 namespace Clicky\Pssht\Messages\SERVICE;
 
-use Clicky\Pssht\MessageInterface;
-use Clicky\Pssht\Wire\Encoder;
-use Clicky\Pssht\Wire\Decoder;
-
 /**
  * Abstract SSH_MSG_SERVICE_* message (RFC 4253).
  */
-abstract class Base implements MessageInterface
+abstract class Base implements \Clicky\Pssht\MessageInterface
 {
+    /// Name of the service to start after authentication.
     protected $service;
 
+    /**
+     * Construct a new SSH service request or acceptance message.
+     *
+     *  \param string $service
+     *      Name of the service concerned by this request/acceptance
+     *      message.
+     */
     public function __construct($service)
     {
         if (!is_string($service)) {
@@ -31,17 +35,23 @@ abstract class Base implements MessageInterface
         $this->service = $service;
     }
 
-    public function serialize(Encoder $encoder)
+    public function serialize(\Clicky\Pssht\Wire\Encoder $encoder)
     {
         $encoder->encodeString($this->service);
         return $this;
     }
 
-    public static function unserialize(Decoder $decoder)
+    public static function unserialize(\Clicky\Pssht\Wire\Decoder $decoder)
     {
         return new static($decoder->decodeString());
     }
 
+    /**
+     * Get the name of the service this message deals with.
+     *
+     *  \retval string
+     *      Service name.
+     */
     public function getServiceName()
     {
         return $this->service;

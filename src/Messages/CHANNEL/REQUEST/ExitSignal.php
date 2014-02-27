@@ -11,21 +11,45 @@
 
 namespace Clicky\Pssht\Messages\CHANNEL\REQUEST;
 
-use Clicky\Pssht\Messages\CHANNEL\REQUEST\Base;
-use Clicky\Pssht\Wire\Encoder;
-use Clicky\Pssht\Wire\Decoder;
-
 /**
  * SSH_MSG_CHANNEL_REQUEST message (RFC 4254)
  * for the "exit-signal" request type.
  */
-class ExitSignal extends Base
+class ExitSignal extends \Clicky\Pssht\Messages\CHANNEL\REQUEST\Base
 {
+    /// Name of the signal that caused the process to exit.
     protected $signal;
+
+    /// Whether a core file was dumped or not.
     protected $coreDumped;
+
+    /// Textual explanation of the error.
     protected $error;
+
+    /// Language the error message in written into, in RFC 3066 format.
     protected $language;
 
+
+    /**
+     * Construct a new SSH_MSG_CHANNEL_REQUEST message
+     * for the "exit-signal" type.
+     *
+     *  \copydetails Base::__construct
+     *
+     *  \param string $signal
+     *      Signal name, without the "SIG" prefix.
+     *
+     *  \param bool $coreDumped
+     *      Whether a core file was dumped (\b true)
+     *      or not (\b false).
+     *
+     *  \param string $error
+     *      Text explaining the error in more details.
+     *
+     *  \param string $language
+     *      Language the error message is written into,
+     *      in RFC 3066 format.
+     */
     public function __construct($channel, $type, $wantReply, $signal, $coreDumped, $error, $language)
     {
         parent::__construct($channel, $type, $wantReply);
@@ -35,7 +59,7 @@ class ExitSignal extends Base
         $this->language     = $language;
     }
 
-    public function serialize(Encoder $encoder)
+    public function serialize(\Clicky\Pssht\Wire\Encoder $encoder)
     {
         parent::serialize($encoder);
         $encoder->encodeString($this->signal);
@@ -45,7 +69,7 @@ class ExitSignal extends Base
         return $this;
     }
 
-    protected static function unserializeSub(Decoder $decoder)
+    protected static function unserializeSub(\Clicky\Pssht\Wire\Decoder $decoder)
     {
         return array(
             $decoder->decodeString(),

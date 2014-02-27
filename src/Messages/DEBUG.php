@@ -11,18 +11,35 @@
 
 namespace Clicky\Pssht\Messages;
 
-use Clicky\Pssht\Wire\Encoder;
-use Clicky\Pssht\Wire\Decoder;
-
 /**
  * SSH_MSG_DEBUG message (RFC 4253).
  */
 class DEBUG implements \Clicky\Pssht\MessageInterface
 {
+    /// Whether to always display the message or not.
     protected $alwaysDisplay;
+
+    /// Actual debug message.
     protected $message;
+
+    /// Language the debug message is written into (from RFC 3066).
     protected $language;
 
+
+    /**
+     * Construct a new debug message.
+     *
+     *  \param bool $alwaysDisplay
+     *      Indicates whether the debug message should always be shown
+     *      to users (\b true) or if it may be hidden (\b false).
+     *
+     *  \param string $message
+     *      The actual debug message, in ISO-10646 UTF-8 encoding.
+     *
+     *  \param string $language
+     *      Language tag the debug message is written into,
+     *      in RFC 3066 format.
+     */
     public function __construct($alwaysDisplay, $message, $language)
     {
         if (!is_bool($alwaysDisplay)) {
@@ -45,7 +62,7 @@ class DEBUG implements \Clicky\Pssht\MessageInterface
         return 4;
     }
 
-    public function serialize(Encoder $encoder)
+    public function serialize(\Clicky\Pssht\Wire\Encoder $encoder)
     {
         $encoder->encodeBoolean($this->alwaysDisplay);
         $encoder->encodeString($this->message);
@@ -53,7 +70,7 @@ class DEBUG implements \Clicky\Pssht\MessageInterface
         return $this;
     }
 
-    public static function unserialize(Decoder $decoder)
+    public static function unserialize(\Clicky\Pssht\Wire\Decoder $decoder)
     {
         return new static(
             $decoder->decodeBoolean(),
@@ -62,16 +79,37 @@ class DEBUG implements \Clicky\Pssht\MessageInterface
         );
     }
 
+    /**
+     * Retrieve the flag indicating whether this debug message
+     * should always be displayed to users or not.
+     *
+     *  \retval bool
+     *      \b true if the message should always be displayed,
+     *      \b false otherwise.
+     */
     public function mustAlwaysDisplay()
     {
         return $this->alwaysDisplay;
     }
 
+    /**
+     * Get the actual debug message.
+     *
+     *  \retval string
+     *      Debug message.
+     */
     public function getMessage()
     {
         return $this->message;
     }
 
+    /**
+     * Get the language for the debug message.
+     *
+     *  \retval string
+     *      Language tag the debug message is written into,
+     *      in RFC 3066 format.
+     */
     public function getLanguage()
     {
         return $this->language;

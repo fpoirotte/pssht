@@ -11,17 +11,28 @@
 
 namespace Clicky\Pssht\Messages\USERAUTH\PK;
 
-use Clicky\Pssht\Wire\Encoder;
-use Clicky\Pssht\Wire\Decoder;
-
 /**
  * SSH_MSG_USERAUTH_PK_OK message (RFC 4252).
  */
 class OK implements \Clicky\Pssht\MessageInterface
 {
+    /// Public key algorithm in use (eg. "ssh-rsa" or "ssh-dss").
     protected $algorithm;
+
+    /// Key blob.
     protected $key;
 
+
+    /**
+     * Construct a new SSH_MSG_USERAUTH_PK_OK message,
+     * indicating partial success of a public key authentication.
+     *
+     *  \param string $algorithm
+     *      Algorithm to use.
+     *
+     *  \param string $key
+     *      Key blob.
+     */
     public function __construct($algorithm, $key)
     {
         if (!is_string($algorithm)) {
@@ -40,14 +51,14 @@ class OK implements \Clicky\Pssht\MessageInterface
         return 60;
     }
 
-    public function serialize(Encoder $encoder)
+    public function serialize(\Clicky\Pssht\Wire\Encoder $encoder)
     {
         $encoder->encodeString($this->algorithm);
         $encoder->encodeString($this->key);
         return $this;
     }
 
-    public static function unserialize(Decoder $decoder)
+    public static function unserialize(\Clicky\Pssht\Wire\Decoder $decoder)
     {
         return new static(
             $decoder->decodeString(),
@@ -55,11 +66,23 @@ class OK implements \Clicky\Pssht\MessageInterface
         );
     }
 
+    /**
+     * Get public key algorithm in use.
+     *
+     *  \retval string
+     *      Public key algorithm in use.
+     */
     public function getAlgorithm()
     {
         return $this->algorithm;
     }
 
+    /**
+     * Get the key blob.
+     *
+     *  \retval string
+     *      Key blob.
+     */
     public function getKey()
     {
         return $this->key;

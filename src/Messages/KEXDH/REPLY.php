@@ -12,8 +12,6 @@
 namespace Clicky\Pssht\Messages\KEXDH;
 
 use Clicky\Pssht\MessageInterface;
-use Clicky\Pssht\Wire\Encoder;
-use Clicky\Pssht\Wire\Decoder;
 use Clicky\Pssht\PublicKeyInterface;
 use Clicky\Pssht\EncryptionInterface;
 use Clicky\Pssht\KEXInterface;
@@ -25,28 +23,82 @@ use Clicky\Pssht\Messages\KEXDH\INIT;
  */
 class REPLY implements MessageInterface
 {
+    /// Exchange hash.
     protected $H;
+
+    /// Server's public exponent as a GMP resource.
     protected $f;
+
+    /// Shared secret.
     protected $K;
+
+    /// Server's public host key.
     protected $K_S;
+
+    /// Client's contribution to the Diffie-Hellman Key Exchange.
     protected $kexDHInit;
+
+    /// Key exchange algorithm to use.
     protected $kexAlgo;
+
+    /// Algorithms supported by the server.
     protected $serverKEX;
+
+    /// Algorithms supported by the client.
     protected $clientKEX;
+
+    /// Server's identification string.
     protected $serverIdent;
+
+    /// Client's identification string.
     protected $clientIdent;
 
+
+    /**
+     * Construct a new SSH_MSG_KEXDH_REPLY message.
+     *
+     *  \param INIT $kexDHInit
+     *      Client's contribution to the Diffie-Hellman Key Exchange.
+     *
+     *  \param PublicKeyInterface $key
+     *      Server's public key.
+     *
+     *  \param EncryptionInterface $encryptionAlgo
+     *      Encryption algorithm in use.
+     *
+     *  \param KEXInterface $kexAlgo
+     *      Key exchange algorithm to use.
+     *
+     *  \param KEXINIT $serverKEX
+     *      Algorithms supported by the server.
+     *
+     *  \param KEXINIT $clientKEX
+     *      Algorithms supported by the client.
+     *
+     *  \param string $serverIdent
+     *      Server's identification string
+     *
+     *  \param string $clientIdent
+     *      Client's identification string
+     */
     public function __construct(
         INIT $kexDHInit,
-        PublicKeyInterface  $key,
+        PublicKeyInterface $key,
         EncryptionInterface $encryptionAlgo,
-        EncryptionInterface $decryptionAlgo,
         KEXInterface $kexAlgo,
         KEXINIT $serverKEX,
         KEXINIT $clientKEX,
         $serverIdent,
         $clientIdent
     ) {
+        if (!is_string($serverIdent)) {
+            throw new \InvalidArgumentException();
+        }
+
+        if (!is_string($clientIdent)) {
+            throw new \InvalidArgumentException();
+        }
+
         $keyLength          = min(20, max($encryptionAlgo->getKeySize(), 16));
         $randBytes          = openssl_random_pseudo_bytes(2 * $keyLength);
         $y                  = gmp_init(bin2hex($randBytes), 16);
@@ -63,14 +115,14 @@ class REPLY implements MessageInterface
 
         $msgId  = chr(\Clicky\Pssht\Messages\KEXINIT::getMessageId());
         // $sub is used to create the structure for the hashing function.
-        $sub    = new Encoder(new \Clicky\Pssht\Buffer());
+        $sub    = new \Clicky\Pssht\Wire\Encoder(new \Clicky\Pssht\Buffer());
         $this->K_S->serialize($sub);
         $K_S    = $sub->getBuffer()->get(0);
         $sub->encodeString($this->clientIdent);
         $sub->encodeString($this->serverIdent);
         // $sub2 is used to compute the value
         // of various fields inside the structure.
-        $sub2   = new Encoder(new \Clicky\Pssht\Buffer());
+        $sub2   = new \Clicky\Pssht\Wire\Encoder(new \Clicky\Pssht\Buffer());
         $sub2->encodeBytes($msgId); // Add message identifier.
         $this->clientKEX->serialize($sub2);
         $sub->encodeString($sub2->getBuffer()->get(0));
@@ -96,9 +148,9 @@ class REPLY implements MessageInterface
         return 31;
     }
 
-    public function serialize(Encoder $encoder)
+    public function serialize(\Clicky\Pssht\Wire\Encoder $encoder)
     {
-        $sub    = new Encoder(new \Clicky\Pssht\Buffer());
+        $sub    = new \Clicky\Pssht\Wire\Encoder(new \Clicky\Pssht\Buffer());
         $this->K_S->serialize($sub);
 
         $encoder->encodeString($sub->getBuffer()->get(0));
@@ -110,17 +162,30 @@ class REPLY implements MessageInterface
         return $this;
     }
 
-    public static function unserialize(Decoder $decoder)
+    public static function unserialize(\Clicky\Pssht\Wire\Decoder $decoder)
     {
         /// @FIXME: we should at least try a little...
         throw new \RuntimeException();
     }
 
+    /**
+     * Get the shared secret.
+     *
+     *  \retval string
+     *      Shared secret generated from this Diffie Hellman
+     *      key exchange.
+     */
     public function getSharedSecret()
     {
         return $this->K;
     }
 
+    /**
+     * Get the exchange hash.
+     *
+     *  \retval string
+     *      Exchange hash.
+     */
     public function getExchangeHash()
     {
         return $this->H;

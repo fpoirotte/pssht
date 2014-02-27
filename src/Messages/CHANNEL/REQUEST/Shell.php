@@ -11,16 +11,13 @@
 
 namespace Clicky\Pssht\Messages\CHANNEL\REQUEST;
 
-use Clicky\Pssht\Wire\Decoder;
-use Clicky\Pssht\Messages\CHANNEL\REQUEST\Base;
-
 /**
  * SSH_MSG_CHANNEL_REQUEST message (RFC 4254)
  * for the "shell" request type.
  */
-class Shell extends Base
+class Shell extends \Clicky\Pssht\Messages\CHANNEL\REQUEST\Base
 {
-    protected static function unserializeSub(Decoder $decoder)
+    protected static function unserializeSub(\Clicky\Pssht\Wire\Decoder $decoder)
     {
         return array();
     }

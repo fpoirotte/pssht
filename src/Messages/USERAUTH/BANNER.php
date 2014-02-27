@@ -11,18 +11,28 @@
 
 namespace Clicky\Pssht\Messages\USERAUTH;
 
-use Clicky\Pssht\MessageInterface;
-use Clicky\Pssht\Wire\Encoder;
-use Clicky\Pssht\Wire\Decoder;
-
 /**
  * SSH_MSG_USERAUTH_BANNER message (RFC 4252).
  */
-class BANNER implements MessageInterface
+class BANNER implements \Clicky\Pssht\MessageInterface
 {
+    /// Banner to display.
     protected $message;
+
+    /// Language the banner is written into, in RFC 3066 format.
     protected $language;
 
+
+    /**
+     * Construct a new SSH_MSG_USERAUTH_BANNER message.
+     *
+     *  \param string $message
+     *      Banner to display.
+     *
+     *  \param string $language
+     *      (optional) Language for the banner, in RFC 3066 format.
+     *      If omitted, the banner is assumed to be language-neutral.
+     */
     public function __construct($message, $language = '')
     {
         if (!is_string($message)) {
@@ -41,14 +51,14 @@ class BANNER implements MessageInterface
         return 53;
     }
 
-    public function serialize(Encoder $encoder)
+    public function serialize(\Clicky\Pssht\Wire\Encoder $encoder)
     {
         $encoder->encodeString($this->message);
         $encoder->encodeString($this->language);
         return $this;
     }
 
-    public static function unserialize(Decoder $decoder)
+    public static function unserialize(\Clicky\Pssht\Wire\Decoder $decoder)
     {
         return new static(
             $decoder->decodeString(),
@@ -56,11 +66,28 @@ class BANNER implements MessageInterface
         );
     }
 
+    /**
+     * Get the banner.
+     *
+     *  \retval string
+     *      Banner to dislay.
+     */
     public function getMessage()
     {
         return $this->message;
     }
 
+    /**
+     * Get the language for the banner.
+     *
+     *  \retval string
+     *      Language for the banner, in RFC 3066 format.
+     *
+     *  \note
+     *      An empty string is returned if the language
+     *      is unknown or irrelevant (language-neutral
+     *      banner).
+     */
     public function getLanguage()
     {
         return $this->language;

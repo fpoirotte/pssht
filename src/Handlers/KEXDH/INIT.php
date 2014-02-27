@@ -42,7 +42,6 @@ class INIT implements \Clicky\Pssht\HandlerInterface
             $message,
             $context['serverKeys'][$hostAlgo],
             $transport->getEncryptor(),
-            $transport->getDecryptor(),
             $kexAlgo,
             $context['kex']['server'],
             $context['kex']['client'],

@@ -11,23 +11,54 @@
 
 namespace Clicky\Pssht\Messages\CHANNEL\REQUEST;
 
-use Clicky\Pssht\Messages\CHANNEL\REQUEST\Base;
-use Clicky\Pssht\Wire\Encoder;
-use Clicky\Pssht\Wire\Decoder;
-
 /**
  * SSH_MSG_CHANNEL_REQUEST message (RFC 4254)
  * for the "pty-req" request type.
  */
-class PtyReq extends Base
+class PtyReq extends \Clicky\Pssht\Messages\CHANNEL\REQUEST\Base
 {
+    /// Terminal to emulate.
     protected $term;
+
+    /// Terminal width in characters.
     protected $widthInCols;
+
+    /// Terminal height in rows.
     protected $heightInRows;
+
+    /// Terminal width in pixels.
     protected $widthInPixels;
+
+    /// Terminal height in pixels.
     protected $heightInPixels;
+
+    /// Encoded terminal modes.
     protected $modes;
 
+
+    /**
+     * Construct a new "pty-req" SSH_MSG_CHANNEL_REQUEST message.
+     *
+     *  \copydetails Base::__construct
+     *
+     *  \param string $term
+     *      Terminal to emulate.
+     *
+     *  \param int $widthInCols
+     *      Terminal width in characters.
+     *
+     *  \param int $heightInRows
+     *      Terminal height in rows.
+     *
+     *  \param int $widthInPixels
+     *      Terminal width in pixels.
+     *
+     *  \param int $heightInPixels
+     *      Terminal height in pixels.
+     *
+     *  \param string $modes
+     *      Encoded terminal modes.
+     */
     public function __construct(
         $channel,
         $type,
@@ -48,7 +79,7 @@ class PtyReq extends Base
         $this->modes            = $modes;
     }
 
-    public function serialize(Encoder $encoder)
+    public function serialize(\Clicky\Pssht\Wire\Encoder $encoder)
     {
         parent::serialize($encoder);
         $encoder->encodeString($this->term);
@@ -60,7 +91,7 @@ class PtyReq extends Base
         return $this;
     }
 
-    protected static function unserializeSub(Decoder $decoder)
+    protected static function unserializeSub(\Clicky\Pssht\Wire\Decoder $decoder)
     {
         return array(
             $decoder->decodeString(),

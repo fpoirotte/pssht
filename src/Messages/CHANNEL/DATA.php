@@ -11,21 +11,26 @@
 
 namespace Clicky\Pssht\Messages\CHANNEL;
 
-use Clicky\Pssht\MessageInterface;
-use Clicky\Pssht\Wire\Encoder;
-use Clicky\Pssht\Wire\Decoder;
-
 /**
  * SSH_MSG_CHANNEL_DATA message (RFC 4254).
  */
-class DATA implements MessageInterface
+class DATA extends Base
 {
-    protected $channel;
+    /// Payload for this message.
     protected $data;
 
+
+    /**
+     * Construct a new SSH_MSG_CHANNEL_DATA message.
+     *
+     *  \copydetails Base::__construct
+     *
+     *  \param string $data
+     *      Actual payload.
+     */
     public function __construct($channel, $data)
     {
-        $this->channel  = $channel;
+        parent::__construct($channel);
         $this->data     = $data;
     }
 
@@ -34,26 +39,27 @@ class DATA implements MessageInterface
         return 94;
     }
 
-    public function serialize(Encoder $encoder)
+    public function serialize(\Clicky\Pssht\Wire\Encoder $encoder)
     {
-        $encoder->encodeUint32($this->channel);
+        parent::serialize($encoder);
         $encoder->encodeString($this->data);
         return $this;
     }
 
-    public static function unserialize(Decoder $decoder)
+    public static function unserialize(\Clicky\Pssht\Wire\Decoder $decoder)
     {
         return new static(
-            $decoder->decodeUint32(),
+            $decoder->decodeUint32(),   // channel
             $decoder->decodeString()
         );
     }
 
-    public function getChannel()
-    {
-        return $this->channel;
-    }
-
+    /**
+     * Get the message's payload.
+     *
+     *  \retval string
+     *      Payload for the message.
+     */
     public function getData()
     {
         return $this->data;

@@ -11,24 +11,39 @@
 
 namespace Clicky\Pssht\Messages\CHANNEL;
 
-use Clicky\Pssht\MessageInterface;
-use Clicky\Pssht\Wire\Encoder;
-use Clicky\Pssht\Wire\Decoder;
-
 /**
  * SSH_MSG_CHANNEL_OPEN message (RFC 4254).
  */
-class OPEN implements MessageInterface
+class OPEN extends Base
 {
+    /// Channel type.
     protected $type;
-    protected $senderChannel;
+
+    /// Initial window size for the channel.
     protected $initialWindowSize;
+
+    /// Maximum packet size.
     protected $maximumPacketSize;
 
-    public function __construct($type, $senderChannel, $initialWindowSize, $maximumPacketSize)
+
+    /**
+     * Construct a new SSH_MSG_CHANNEL_OPEN message.
+     *
+     *  \param string $type
+     *      Channel type to open.
+     *
+     *  \copydetails Base::__construct
+     *
+     *  \param int $initialWindowSize
+     *      Initial window size for the channel.
+     *
+     *  \param int $maximumPacketSize
+     *      Maximum packet size.
+     */
+    public function __construct($type, $channel, $initialWindowSize, $maximumPacketSize)
     {
         $this->type                 = $type;
-        $this->senderChannel        = $senderChannel;
+        parent::__construct($channel);
         $this->initialWindowSize    = $initialWindowSize;
         $this->maximumPacketSize    = $maximumPacketSize;
     }
@@ -38,32 +53,33 @@ class OPEN implements MessageInterface
         return 90;
     }
 
-    public function serialize(Encoder $encoder)
+    public function serialize(\Clicky\Pssht\Wire\Encoder $encoder)
     {
         $encoder->encodeString($this->type);
-        $encoder->encodeUint32($this->senderChannel);
+        parent::serialize($encoder);
         $encoder->encodeUint32($this->initialWindowSize);
         $encoder->encodeUint32($this->maximumPacketSize);
         return $this;
     }
 
-    public static function unserialize(Decoder $decoder)
+    public static function unserialize(\Clicky\Pssht\Wire\Decoder $decoder)
     {
         return new static(
             $decoder->decodeString(),
-            $decoder->decodeUint32(),
+            $decoder->decodeUint32(),   // channel
             $decoder->decodeUint32(),
             $decoder->decodeUint32()
         );
     }
 
+    /**
+     * Get the channel type to open.
+     *
+     *  \retval string
+     *      Channel type to open.
+     */
     public function getType()
     {
         return $this->type;
-    }
-
-    public function getSenderChannel()
-    {
-        return $this->senderChannel;
     }
 }

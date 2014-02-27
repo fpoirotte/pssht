@@ -16,10 +16,22 @@ namespace Clicky\Pssht\Messages;
  */
 class UNIMPLEMENTED implements \Clicky\Pssht\MessageInterface
 {
+    /// Sequence number for the unimplemented message.
     protected $sequenceNo;
 
+    /**
+     * Construct a SSH_MSG_UNIMPLEMENTED, indicating that some
+     * received message is not (yet) implemented.
+     *
+     *  \param int $sequenceNo
+     *      Sequence number of the received unimplemented message.
+     */
     public function __construct($sequenceNo)
     {
+        if (!is_int($sequenceNo)) {
+            throw new \InvalidArgumentException();
+        }
+
         $this->sequenceNo = $sequenceNo;
     }
 
@@ -39,6 +51,12 @@ class UNIMPLEMENTED implements \Clicky\Pssht\MessageInterface
         return new static($decoder->decodeUint32());
     }
 
+    /**
+     * Get the unimplemented message's sequence number.
+     *
+     *  \retval int
+     *      The unimplemented message's sequence number.
+     */
     public function getSequenceNo()
     {
         return $this->sequenceNo;

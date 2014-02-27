@@ -39,7 +39,7 @@ class Buffer implements \Countable
      * Return the size (in bytes) of the data
      * currently stored in the buffer.
      *
-     *  \param int
+     *  \retval int
      *      The size of the buffer's current data.
      */
     public function count()
