@@ -82,6 +82,8 @@ abstract class Base implements MessageInterface
      *  \note
      *      This method MUST be redefined by subclasses.
      *      The default implementation simply throws an exception.
+     *
+     *  @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     protected static function unserializeSub(\Clicky\Pssht\Wire\Decoder $decoder)
     {
