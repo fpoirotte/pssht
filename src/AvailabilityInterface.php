@@ -20,7 +20,7 @@ interface AvailabilityInterface
     /**
      * Determine whether the algorithm is available.
      *
-     *  \retval boolean
+     *  \retval bool
      *      \b true if the algorithm is available,
      *      \b false otherwise.
      */

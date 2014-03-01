@@ -26,7 +26,7 @@ class Connection implements \Clicky\Pssht\HandlerInterface
     /**
      * Construct a new SSH connection layer.
      *
-     *  \param Transport $transport
+     *  \param Clicky::Pssht::Transport $transport
      *      SSH transport layer.
      */
     public function __construct(
@@ -84,7 +84,7 @@ class Connection implements \Clicky\Pssht\HandlerInterface
     /**
      * Allocate a new communication channel.
      *
-     *  \param \Clicky\Pssht\Messages\CHANNEL\OPEN $message
+     *  \param Clicky::Pssht::Messages::CHANNEL::OPEN $message
      *      Original message requesting channel allocation.
      *
      *  \return int
@@ -123,7 +123,7 @@ class Connection implements \Clicky\Pssht\HandlerInterface
     /**
      * Retrieve the channel associated with a message.
      *
-     *  \param int|Clicky\Pssht\Messages\CHANNEL\REQUEST\Base $message
+     *  \param int|Clicky::Pssht::Messages::CHANNEL::REQUEST::Base $message
      *      Either a message or the message's channel identifier.
      *
      *  \retval int
@@ -140,13 +140,13 @@ class Connection implements \Clicky\Pssht\HandlerInterface
     /**
      * Register a handler.
      *
-     *  \param int|Clicky\Pssht\Messages\CHANNEL\REQUEST\Base $message
+     *  \param int|Clicky::Pssht::Messages::CHANNEL::REQUEST::Base $message
      *      Either a message or the message's channel identifier.
      *
      *  \param int $type
      *      Message type.
      *
-     *  \param HandlerInterface $handler
+     *  \param Clicky::Pssht::HandlerInterface $handler
      *      Handler to associate with the message.
      */
     public function setHandler(
@@ -172,13 +172,13 @@ class Connection implements \Clicky\Pssht\HandlerInterface
     /**
      * Unregister a handler.
      *
-     *  \param int|Clicky\Pssht\Messages\CHANNEL\REQUEST\Base $message
+     *  \param int|Clicky::Pssht::Messages::CHANNEL::REQUEST::Base $message
      *      Either a message or the message's channel identifier.
      *
      *  \param int $type
      *      Message type.
      *
-     *  \param HandlerInterface $handler
+     *  \param Clicky::Pssht::HandlerInterface $handler
      *      Handler to unregister.
      */
     public function unsetHandler(

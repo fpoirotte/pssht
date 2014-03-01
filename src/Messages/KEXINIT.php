@@ -56,7 +56,7 @@ class KEXINIT implements \Clicky\Pssht\MessageInterface
     /**
      * Construction a new SSH_MSG_KEXINIT message.
      *
-     *  \param RandomInterface $random
+     *  \param Clicky::Pssht::RandomInterface $random
      *      RNG from which the KEX cookie will be generated.
      *
      *  \param array $kexAlgos

@@ -72,7 +72,7 @@ abstract class Base implements MessageInterface
     /**
      * Unserialize the sub-message.
      *
-     *  \param Decoder $decoder
+     *  \param Clicky::Pssht::Wire::Decoder $decoder
      *      Decoder to use during unserialization.
      *
      *  \retval array

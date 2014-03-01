@@ -22,7 +22,7 @@ class Decoder
     /**
      * Construct a new decoder.
      *
-     *  \param Buffer $buffer
+     *  \param Clicky::Pssht::Buffer $buffer
      *      (optional) Buffer to read from.
      *      If omitted, a new empty buffer is used.
      */
@@ -38,7 +38,7 @@ class Decoder
     /**
      * Get the buffer associated with this decoder.
      *
-     *  \retval Buffer $buffer
+     *  \retval Clicky::Pssht::Buffer
      *      The buffer associated with this decoder.
      */
     public function getBuffer()

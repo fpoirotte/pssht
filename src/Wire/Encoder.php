@@ -22,7 +22,7 @@ class Encoder
     /**
      * Construct a new encoder.
      *
-     *  \param Buffer $buffer
+     *  \param Clicky::Pssht::Buffer $buffer
      *      (optional) Buffer to write to.
      *      If omitted, a new empty buffer is used.
      */
@@ -38,7 +38,7 @@ class Encoder
     /**
      * Get the buffer associated with this encoder.
      *
-     *  \retval Buffer $buffer
+     *  \retval Clicky::Pssht::Buffer
      *      The buffer associated with this encoder.
      */
     public function getBuffer()

@@ -132,6 +132,7 @@
             <param value="${tagfiles}"/>
         </php>
 
+        <exec command="php buildenv/doxygen_exceptions.php"/>
         <exec command="COMPONENT_NAME=${phing.project.name} COMPONENT_VERSION=${version} COMPONENT_BRIEF=&#34;${short_description}&#34; COMPONENT_TAGFILES=${tagfiles} doxygen"
             dir="." passthru="true" checkreturn="true" logoutput="true"/>
     </target>

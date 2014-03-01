@@ -39,10 +39,10 @@ interface AuthenticationInterface extends AlgorithmInterface
     /**
      * Check the contents of an authentication request.
      *
-     *  \param Base $message
+     *  \param Clicky::Pssht::Messages::USERAUTH::REQUEST::Base $message
      *      Message to check.
      *
-     *  \param Transport $transport
+     *  \param Clicky::Pssht::Transport $transport
      *      Transport layer the message originated from.
      *
      *  \param array $context
@@ -62,10 +62,10 @@ interface AuthenticationInterface extends AlgorithmInterface
     /**
      * Handle an authentication request.
      *
-     *  \param Base $message
+     *  \param Clicky::Pssht::Messages::USERAUTH::REQUEST::Base $message
      *      Authenticate request to handle.
      *
-     *  \param Transport $transport
+     *  \param Clicky::Pssht::Transport $transport
      *      Transport layer the message originated from.
      *
      *  \param array $context

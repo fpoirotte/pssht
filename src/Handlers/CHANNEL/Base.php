@@ -22,7 +22,7 @@ abstract class Base implements \Clicky\Pssht\HandlerInterface
     /**
      * Construct the handler.
      *
-     *  \param Connection $connection
+     *  \param Clicky::Pssht::Connection $connection
      *      SSH connection layer.
      */
     public function __construct(\Clicky\Pssht\Connection $connection)

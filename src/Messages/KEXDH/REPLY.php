@@ -11,17 +11,10 @@
 
 namespace Clicky\Pssht\Messages\KEXDH;
 
-use Clicky\Pssht\MessageInterface;
-use Clicky\Pssht\PublicKeyInterface;
-use Clicky\Pssht\EncryptionInterface;
-use Clicky\Pssht\KEXInterface;
-use Clicky\Pssht\Messages\KEXINIT;
-use Clicky\Pssht\Messages\KEXDH\INIT;
-
 /**
  * SSH_MSG_KEXDH_REPLY message (RFC 4253).
  */
-class REPLY implements MessageInterface
+class REPLY implements \Clicky\Pssht\MessageInterface
 {
     /// Exchange hash.
     protected $H;
@@ -57,22 +50,22 @@ class REPLY implements MessageInterface
     /**
      * Construct a new SSH_MSG_KEXDH_REPLY message.
      *
-     *  \param INIT $kexDHInit
+     *  \param Clicky::Pssht::Messages::KEXDH::INIT $kexDHInit
      *      Client's contribution to the Diffie-Hellman Key Exchange.
      *
-     *  \param PublicKeyInterface $key
+     *  \param Clicky::Pssht::PublicKeyInterface $key
      *      Server's public key.
      *
-     *  \param EncryptionInterface $encryptionAlgo
+     *  \param Clicky::Pssht::EncryptionInterface $encryptionAlgo
      *      Encryption algorithm in use.
      *
-     *  \param KEXInterface $kexAlgo
+     *  \param Clicky::Pssht::KEXInterface $kexAlgo
      *      Key exchange algorithm to use.
      *
-     *  \param KEXINIT $serverKEX
+     *  \param Clicky::Pssht::Messages::KEXINIT $serverKEX
      *      Algorithms supported by the server.
      *
-     *  \param KEXINIT $clientKEX
+     *  \param Clicky::Pssht::Messages::KEXINIT $clientKEX
      *      Algorithms supported by the client.
      *
      *  \param string $serverIdent
@@ -82,12 +75,12 @@ class REPLY implements MessageInterface
      *      Client's identification string
      */
     public function __construct(
-        INIT $kexDHInit,
-        PublicKeyInterface $key,
-        EncryptionInterface $encryptionAlgo,
-        KEXInterface $kexAlgo,
-        KEXINIT $serverKEX,
-        KEXINIT $clientKEX,
+        \Clicky\Pssht\Messages\KEXDH\INIT $kexDHInit,
+        \Clicky\Pssht\PublicKeyInterface $key,
+        \Clicky\Pssht\EncryptionInterface $encryptionAlgo,
+        \Clicky\Pssht\KEXInterface $kexAlgo,
+        \Clicky\Pssht\Messages\KEXINIT $serverKEX,
+        \Clicky\Pssht\Messages\KEXINIT $clientKEX,
         $serverIdent,
         $clientIdent
     ) {

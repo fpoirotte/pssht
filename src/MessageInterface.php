@@ -27,7 +27,7 @@ interface MessageInterface
     /**
      * Serialize the message.
      *
-     *  \param Encoder $encoder
+     *  \param Clicky::Pssht::Wire::Encoder $encoder
      *      Encoder to use to perform serialization.
      *
      *  \retval MessageInterface
@@ -38,7 +38,7 @@ interface MessageInterface
     /**
      * Unserialize some data into a message.
      *
-     *  \param Decoder $decoder
+     *  \param Clicky::Pssht::Wire::Decoder $decoder
      *      Decoder to use to perform unserialization.
      *
      *  \retval MessageInterface

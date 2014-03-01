@@ -1,1 +1,4 @@
-@INCLUDE = vendor/erebot/buildenv/Doxyfile
+@INCLUDE            = vendor/erebot/buildenv/Doxyfile
+INPUT              += docs/exceptions.php
+EXCLUDE_SYMBOLS    += exc_*
+JAVADOC_AUTOBRIEF   = YES

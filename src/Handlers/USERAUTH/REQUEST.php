@@ -147,7 +147,7 @@ class REQUEST implements \Clicky\Pssht\HandlerInterface
     /**
      * Report an authentication failure.
      *
-     *  \param Transport $transport
+     *  \param Clicky::Pssht::Transport $transport
      *      Transport layer used to report the failure.
      *
      *  \param array &$context

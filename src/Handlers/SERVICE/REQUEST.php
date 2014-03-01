@@ -24,7 +24,7 @@ class REQUEST implements \Clicky\Pssht\HandlerInterface
     /**
      * Construct a new handler for SSH_MSG_SERVICE_REQUEST messages.
      *
-     *  \param REQUEST $methods
+     *  \param Clicky::Pssht::Handlers::USERAUTH::REQUEST $methods
      *      User authentication request handler.
      */
     public function __construct(\Clicky\Pssht\Handlers\USERAUTH\REQUEST $methods)

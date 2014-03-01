@@ -30,13 +30,13 @@ class KeyStore
     /**
      * Return the identifier for a key.
      *
-     *  \param PublicKeyInterface $key
+     *  \param Clicky::Pssht::PublicKeyInterface $key
      *      Public or private key.
      *
      *  \retval string
      *      SSH identifier for the key.
      */
-    protected function getIdentifier(PublicKeyInterface $key)
+    protected function getIdentifier(\Clicky\Pssht\PublicKeyInterface $key)
     {
         $encoder = new \Clicky\Pssht\Wire\Encoder();
         $key->serialize($encoder);
@@ -49,10 +49,10 @@ class KeyStore
      *  \param string $user
      *      User the key belongs to.
      *
-     *  \param PublicKeyInterface $key
+     *  \param Clicky::Pssht::PublicKeyInterface $key
      *      Public/private key to add.
      */
-    public function add($user, PublicKeyInterface $key)
+    public function add($user, \Clicky\Pssht\PublicKeyInterface $key)
     {
         if (!is_string($user)) {
             throw new \InvalidArgumentException();
@@ -67,10 +67,10 @@ class KeyStore
      *  \param string $user
      *      User the key belongs to.
      *
-     *  \param PublicKeyInterface $key
+     *  \param Clicky::Pssht::PublicKeyInterface $key
      *      Public/private key to remove.
      */
-    public function remove($user, PublicKeyInterface $key)
+    public function remove($user, \Clicky\Pssht\PublicKeyInterface $key)
     {
         if (!is_string($user)) {
             throw new \InvalidArgumentException();
@@ -109,7 +109,7 @@ class KeyStore
      *  \param string $user
      *      User for which the key is tested.
      *
-     *  \param string|PublicKeyInterface $key
+     *  \param string|Clicky::Pssht::PublicKeyInterface $key
      *      Key to test.
      *
      *  \retval bool
@@ -122,7 +122,7 @@ class KeyStore
             throw new \InvalidArgumentException();
         }
 
-        if ($key instanceof PublicKeyInterface) {
+        if ($key instanceof \Clicky\Pssht\PublicKeyInterface) {
             $key = $this->getIdentifier($key);
         }
         if (!is_string($key)) {

@@ -64,7 +64,7 @@ abstract class Base extends \Clicky\Pssht\Messages\CHANNEL\Base
     /**
      * Unserialize the sub-message.
      *
-     *  \param Decoder $decoder
+     *  \param Clicky::Pssht::Wire::Decoder $decoder
      *      Decoder to use during unserialization.
      *
      *  \retval array

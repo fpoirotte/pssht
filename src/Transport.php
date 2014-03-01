@@ -11,13 +11,6 @@
 
 namespace Clicky\Pssht;
 
-use Clicky\Pssht\Buffer;
-use Clicky\Pssht\Wire\Encoder;
-use Clicky\Pssht\Wire\Decoder;
-use Clicky\Pssht\CompressionInterface;
-use Clicky\Pssht\EncryptionInterface;
-use Clicky\Pssht\MACInterface;
-
 /**
  * Transport layer for the SSH protocol (RFC 4253).
  */
@@ -80,14 +73,14 @@ class Transport
      *                      private key, in "file:///path/to/key.pem" format
      *          -   "passphrase": (optional) passphrase for the key
      *
-     *  \param REQUEST $authMethods
+     *  \param Clicky::Pssht::Handlers::SERVICE::REQUEST $authMethods
      *      Allowed authentication methods.
      *
-     *  \param Encoder $encoder
+     *  \param Clicky::Pssht::Wire::Encoder $encoder
      *      (optional) Encoder to use when sending SSH messages.
      *      If omitted, a new encoder is automatically created.
      *
-     *  \param Decoder $decoder
+     *  \param Clicky::Pssht::Wire::Decoder $decoder
      *      (optional) Decoder to use when sending SSH messages.
      *      If omitted, a new decoder is automatically created.
      *
@@ -139,11 +132,11 @@ class Transport
         $this->decoder      = $decoder;
 
         $this->compressor   = new \Clicky\Pssht\Compression\None(
-            CompressionInterface::MODE_COMPRESS
+            \Clicky\Pssht\CompressionInterface::MODE_COMPRESS
         );
 
         $this->uncompressor = new \Clicky\Pssht\Compression\None(
-            CompressionInterface::MODE_UNCOMPRESS
+            \Clicky\Pssht\CompressionInterface::MODE_UNCOMPRESS
         );
 
         $this->encryptor    = new \Clicky\Pssht\Encryption\None(null, null);
@@ -231,7 +224,7 @@ class Transport
     /**
      * Get the object used to encode outgoing packets.
      *
-     *  \retval Encoder
+     *  \retval Clicky::Pssht::Wire::Encoder
      *      Encoder used for sending SSH messages.
      */
     public function getEncoder()
@@ -242,7 +235,7 @@ class Transport
     /**
      * Get the object used to decode incoming packets.
      *
-     *  \retval Decoder
+     *  \retval Clicky::Pssht::Wire::Decoder
      *      Decoder used for receiving SSH messages.
      */
     public function getDecoder()
@@ -253,7 +246,7 @@ class Transport
     /**
      * Get the object used to compress outgoing packets.
      *
-     *  \retval CompressionInterface
+     *  \retval Clicky::Pssht::CompressionInterface
      *      Outgoing packets' compressor.
      */
     public function getCompressor()
@@ -264,15 +257,15 @@ class Transport
     /**
      * Set the object used to compress outgoing packets.
      *
-     *  \param CompressionInterface $compressor
+     *  \param Clicky::Pssht::CompressionInterface $compressor
      *      Outgoing packets' compressor.
      *
      *  \retval Transport
      *      Return this transport layer.
      */
-    public function setCompressor(CompressionInterface $compressor)
+    public function setCompressor(\Clicky\Pssht\CompressionInterface $compressor)
     {
-        if ($compressor->getMode() !== CompressionInterface::MODE_COMPRESS) {
+        if ($compressor->getMode() !== \Clicky\Pssht\CompressionInterface::MODE_COMPRESS) {
             throw new \InvalidArgumentException();
         }
 
@@ -283,7 +276,7 @@ class Transport
     /**
      * Get the object used to uncompress incoming packets.
      *
-     *  \retval CompressionInterface
+     *  \retval Clicky::Pssht::CompressionInterface
      *      Incoming packets' uncompressor.
      */
     public function getUncompressor()
@@ -294,15 +287,15 @@ class Transport
     /**
      * Set the object used to uncompress incoming packets.
      *
-     *  \param CompressionInterface $uncompressor
+     *  \param Clicky::Pssht::CompressionInterface $uncompressor
      *      Incoming packets' uncompressor.
      *
      *  \retval Transport
      *      Return this transport layer.
      */
-    public function setUncompressor(CompressionInterface $uncompressor)
+    public function setUncompressor(\Clicky\Pssht\CompressionInterface $uncompressor)
     {
-        if ($uncompressor->getMode() !== CompressionInterface::MODE_UNCOMPRESS) {
+        if ($uncompressor->getMode() !== \Clicky\Pssht\CompressionInterface::MODE_UNCOMPRESS) {
             throw new \InvalidArgumentException();
         }
 
@@ -313,7 +306,7 @@ class Transport
     /**
      * Get the object used to encrypt outgoing packets.
      *
-     *  \retval EncryptionInterface
+     *  \retval Clicky::Pssht::EncryptionInterface
      *      Outgoing packets' encryptor.
      */
     public function getEncryptor()
@@ -324,13 +317,13 @@ class Transport
     /**
      * Set the object used to encrypt outgoing packets.
      *
-     *  \param EncryptionInterface $encryptor
+     *  \param Clicky::Pssht::EncryptionInterface $encryptor
      *      Outgoing packets' encryptor.
      *
      *  \retval Transport
      *      Return this transport layer.
      */
-    public function setEncryptor(EncryptionInterface $encryptor)
+    public function setEncryptor(\Clicky\Pssht\EncryptionInterface $encryptor)
     {
         $this->encryptor = $encryptor;
         return $this;
@@ -339,7 +332,7 @@ class Transport
     /**
      * Get the object used to decrypt incoming packets.
      *
-     *  \retval EncryptionInterface
+     *  \retval Clicky::Pssht::EncryptionInterface
      *      Incoming packets' decryptor.
      */
     public function getDecryptor()
@@ -350,13 +343,13 @@ class Transport
     /**
      * Set the object used to decrypt incoming packets.
      *
-     *  \param EncryptionInterface $decryptor
+     *  \param Clicky::Pssht::EncryptionInterface $decryptor
      *      Incoming packets' decryptor.
      *
      *  \retval Transport
      *      Return this transport layer.
      */
-    public function setDecryptor(EncryptionInterface $decryptor)
+    public function setDecryptor(\Clicky\Pssht\EncryptionInterface $decryptor)
     {
         $this->decryptor = $decryptor;
         return $this;
@@ -365,7 +358,7 @@ class Transport
     /**
      * Get the object used to check integrity of incoming packets.
      *
-     *  \retval MACInterface
+     *  \retval Clicky::Pssht::MACInterface
      *      Incoming packets' MAC checker.
      */
     public function getInputMAC()
@@ -376,13 +369,13 @@ class Transport
     /**
      * Set the object used to check integrity of incoming packets.
      *
-     *  \param MACInterface $inputMAC
+     *  \param Clicky::Pssht::MACInterface $inputMAC
      *      Incoming packets' MAC checker.
      *
      *  \retval Transport
      *      Return this transport layer.
      */
-    public function setInputMAC(MACInterface $inputMAC)
+    public function setInputMAC(\Clicky\Pssht\MACInterface $inputMAC)
     {
         $this->inMAC = $inputMAC;
         return $this;
@@ -391,7 +384,7 @@ class Transport
     /**
      * Get the object used to check integrity of outgoing packets.
      *
-     *  \retval MACInterface
+     *  \retval Clicky::Pssht::MACInterface
      *      Outgoing packets' MAC generator.
      */
     public function getOutputMAC()
@@ -402,13 +395,13 @@ class Transport
     /**
      * Set the object used to generate MACs for outgoing packets.
      *
-     *  \param MACInterface $outputMAC
+     *  \param Clicky::Pssht::MACInterface $outputMAC
      *      Outgoing packets' MAC generator.
      *
      *  \retval Transport
      *      Return this transport layer.
      */
-    public function setOutputMAC(MACInterface $outputMAC)
+    public function setOutputMAC(\Clicky\Pssht\MACInterface $outputMAC)
     {
         $this->outMAC = $outputMAC;
         return $this;
@@ -428,7 +421,7 @@ class Transport
     /**
      * Set the factory to use to create instances of the application layer.
      *
-     *  \param $factory
+     *  \param callable $factory
      *      Factory for the application layer.
      *
      *  \retval Transport
@@ -479,7 +472,7 @@ class Transport
      *  \param int $type
      *      Message type.
      *
-     *  \retval HandlerInterface
+     *  \retval Clicky::Pssht::HandlerInterface
      *      Handler associated with the given message type.
      *
      *  \retval null
@@ -504,7 +497,7 @@ class Transport
      *  \param int $type
      *      Message type.
      *
-     *  \param HandlerInterface $handler
+     *  \param Clicky::Pssht::HandlerInterface $handler
      *      Handler to register for that message type.
      *
      *  \retval Transport
@@ -530,7 +523,7 @@ class Transport
      *  \param int $type
      *      Message type.
      *
-     *  \param HandlerInterface $handler
+     *  \param Clicky::Pssht::HandlerInterface $handler
      *      Handler to unregister for that message type.
      *
      *  \retval Transport
@@ -551,7 +544,7 @@ class Transport
     /**
      * Write an SSH message into the output buffer.
      *
-     *  \param MessageInterface $message
+     *  \param Clicky::Pssht::MessageInterface $message
      *      Message to write into the output buffer.
      *
      *  \retval Transport
@@ -562,7 +555,7 @@ class Transport
         $logging = \Plop::getInstance();
 
         // Serialize the message.
-        $encoder    = new Encoder();
+        $encoder    = new \Clicky\Pssht\Wire\Encoder();
         $encoder->encodeBytes(chr($message::getMessageId()));
         $message->serialize($encoder);
         $payload    = $encoder->getBuffer()->get(0);
@@ -675,8 +668,8 @@ class Transport
             }
             $unencrypted = $this->decryptor->decrypt($encPayload);
         }
-        $buffer         = new Buffer($unencrypted);
-        $decoder        = new Decoder($buffer);
+        $buffer         = new \Clicky\Pssht\Buffer($unencrypted);
+        $decoder        = new \Clicky\Pssht\Wire\Decoder($buffer);
         $packetLength   = $decoder->decodeUint32();
 
         // Read the rest of the message.
@@ -746,7 +739,7 @@ class Transport
         }
 
         $payload    = $this->uncompressor->update($payload);
-        $decoder    = new Decoder(new Buffer($payload));
+        $decoder    = new \Clicky\Pssht\Wire\Decoder(new \Clicky\Pssht\Buffer($payload));
         $msgType    = ord($decoder->decodeBytes(1));
         $logging->debug('Received payload: %s', array(\escape($payload)));
 

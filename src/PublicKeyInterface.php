@@ -47,7 +47,7 @@ interface PublicKeyInterface extends AlgorithmInterface
     /**
      * Serialize a key.
      *
-     *  \param Encoder $encoder
+     *  \param Clicky::Pssht::Wire::Encoder $encoder
      *      Encoder to use to serialize the key.
      *
      *  \retval string
@@ -63,8 +63,8 @@ interface PublicKeyInterface extends AlgorithmInterface
      *
      *  \param bool $raw_output
      *      (optional) Whether to return the signature
-     *      in raw form (\c true) or in hexadecimal
-     *      form (\c false).
+     *      in raw form (\b true) or in hexadecimal
+     *      form (\b false).
      *
      *  \retval string
      *      Message signature in raw or hexadecimal form
@@ -82,8 +82,8 @@ interface PublicKeyInterface extends AlgorithmInterface
      *      Signature to check.
      *
      *  \retval bool
-     *      \c true if the signature is valid for
-     *      the given message, \c false otherwise.
+     *      \b true if the signature is valid for
+     *      the given message, \b false otherwise.
      */
     public function check($message, $signature);
 }
