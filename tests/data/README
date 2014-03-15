@@ -1,0 +1,11 @@
+This directory contains several keys intended for tests.
+There are various types of keys (DSA, RSA, etc.) with different key sizes.
+The ones in the "encrypted" subfolder are protected using the passphrase "tests".
+Other keys do not include a passphrase.
+
+These keys where generated using the following command:
+ssh-keygen -t type -b size -f output_filename -N passphrase
+
+Note: some algorithms only support some fixed key lengths (eg. ECDSA only
+supports keys of 256, 384 or 521 bits).
+Note: omit the "-N" option and its parameter for passphrase-less keys.
