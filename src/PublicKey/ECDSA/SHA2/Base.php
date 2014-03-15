@@ -174,11 +174,6 @@ abstract class Base implements
             $sig2   = gmp_mod(gmp_mul($k_inv, gmp_add($M, gmp_mul($this->d, $sig1))), $mod);
         } while (gmp_cmp($sig2, 0) === 0);
 
-#        $r = gmp_strval($sig1, 16);
-#        $r = pack('H*', str_pad($r, ((strlen($r) + 1) >> 1) << 1, '0', STR_PAD_LEFT));
-#        $s = gmp_strval($sig2, 16);
-#        $s = pack('H*', str_pad($s, ((strlen($s) + 1) >> 1) << 1, '0', STR_PAD_LEFT));
-
         $encoder = new \Clicky\Pssht\Wire\Encoder();
         $encoder->encodeMpint($sig1);
         $encoder->encodeMpint($sig2);
