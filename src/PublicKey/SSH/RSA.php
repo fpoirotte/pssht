@@ -116,7 +116,7 @@ class RSA implements \Clicky\Pssht\PublicKeyInterface
         $encoder->encodeMpint($this->n);
     }
 
-    public function sign($message, $raw_output = false)
+    public function sign($message)
     {
         if ($this->d === null) {
             throw new \RuntimeException();
@@ -140,7 +140,7 @@ class RSA implements \Clicky\Pssht\PublicKeyInterface
             '0',
             STR_PAD_LEFT
         );
-        return $raw_output ? pack('H*', $s) : $s;
+        return pack('H*', $s);
     }
 
     public function check($message, $signature)

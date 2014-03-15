@@ -150,7 +150,7 @@ class REPLY implements \Clicky\Pssht\MessageInterface
         $encoder->encodeMpint($this->f);
 
         $sub->encodeString($this->K_S->getName());
-        $sub->encodeString($this->K_S->sign($this->H, true));
+        $sub->encodeString($this->K_S->sign($this->H));
         $encoder->encodeString($sub->getBuffer()->get(0));
         return $this;
     }

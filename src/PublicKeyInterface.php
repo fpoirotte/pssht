@@ -61,16 +61,10 @@ interface PublicKeyInterface extends AlgorithmInterface
      *  \param string $message
      *      Message to sign.
      *
-     *  \param bool $raw_output
-     *      (optional) Whether to return the signature
-     *      in raw form (\b true) or in hexadecimal
-     *      form (\b false).
-     *
      *  \retval string
-     *      Message signature in raw or hexadecimal form
-     *      depending on the value of $raw_output.
+     *      Message signature.
      */
-    public function sign($message, $raw_output = false);
+    public function sign($message);
 
     /**
      * Check the signature for a message.

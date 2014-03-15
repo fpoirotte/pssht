@@ -20,6 +20,7 @@ function escape($data)
 
 function main()
 {
+    // DIC
     $container  = new ContainerBuilder();
     $container->setParameter('CWD', getcwd());
     $container->setParameter('HOME', getenv('HOME'));
@@ -30,6 +31,10 @@ function main()
     $container->get('logging', ContainerInterface::NULL_ON_INVALID_REFERENCE);
     $logging    = \Plop::getInstance();
 
+    // Elliptic curves
+    \Clicky\Pssht\ECC\Curve::initialize();
+
+    // Sockets
     $sockets    = array('servers' => array(), 'clients' => array());
     $clients    = array();
 

@@ -57,7 +57,7 @@ class DSS implements \Clicky\Pssht\PublicKeyInterface
      *      loaded, meaning that signature generation will be
      *      unavailable.
      */
-    public function __construct($p, $q, $g, $y, $x = null)
+    protected function __construct($p, $q, $g, $y, $x = null)
     {
         $this->p = $p;
         $this->q = $q;
@@ -123,7 +123,7 @@ class DSS implements \Clicky\Pssht\PublicKeyInterface
         $encoder->encodeMpint($this->y);
     }
 
-    public function sign($message, $raw_output = false)
+    public function sign($message)
     {
         if ($this->x === null) {
             throw new \RuntimeException();
@@ -159,7 +159,7 @@ class DSS implements \Clicky\Pssht\PublicKeyInterface
             $s = str_pad(gmp_strval($s, 16), 20, '0', STR_PAD_LEFT);
         } while ($this->check($message, pack('H*H*', $r, $s)) === false);
 
-        return $raw_output ? pack('H*H*', $r, $s) : ($r . $s);
+        return pack('H*H*', $r, $s);
     }
 
     public function check($message, $signature)
