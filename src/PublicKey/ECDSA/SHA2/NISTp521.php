@@ -19,7 +19,7 @@ class NISTp521 extends \Clicky\Pssht\PublicKey\ECDSA\SHA2\Base
 {
     public static function getHash()
     {
-        return 'sha521';
+        return 'sha512';
     }
 
     public static function getIdentifier()
