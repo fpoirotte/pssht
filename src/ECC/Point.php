@@ -134,24 +134,24 @@ class Point implements \ArrayAccess
         \Clicky\Pssht\ECC\Point $P,
         \Clicky\Pssht\ECC\Point $Q
     ) {
-        $xP     = gmp_strval($P->x);
-        $yP     = gmp_strval($P->y);
-        $xQ     = gmp_strval($Q->x);
-        $yQ     = gmp_strval($Q->y);
         $mod = $curve->getModulus();
+        $xP = $P->coordinates['x'];
+        $yP = $P->coordinates['y'];
+        $xQ = $Q->coordinates['x'];
+        $yQ = $Q->coordinates['y'];
 
         if ($P == $Q) {
-            $alphanum = gmp_add(gmp_mul(3, gmp_mul($P->x, $P->x)), $curve->getA());
-            $alphaden = gmp_mul(2, $P->y);
+            $alphanum = gmp_add(gmp_mul('3', gmp_pow($xP, '2')), $curve->getA());
+            $alphaden = gmp_mul('2', $yP);
         } else {
-            $alphanum = gmp_sub($Q->y, $P->y);
-            $alphaden = gmp_sub($Q->x, $P->x);
+            $alphanum = gmp_sub($yQ, $yP);
+            $alphaden = gmp_sub($xQ, $xP);
         }
 
         $bezout = gmp_gcdext($alphaden, $mod);
         $alpha  = gmp_mod(gmp_mul($alphanum, $bezout['s']), $mod);
-        $xR     = gmp_sub(gmp_sub(gmp_mul($alpha, $alpha), $P->x), $Q->x);
-        $yR     = gmp_sub(gmp_mul($alpha, gmp_sub($P->x, $xR)), $P->y);
+        $xR     = gmp_sub(gmp_sub(gmp_pow($alpha, '2'), $xP), $xQ);
+        $yR     = gmp_sub(gmp_mul($alpha, gmp_sub($xP, $xR)), $yP);
 
         return new static(
             gmp_mod(gmp_add($xR, $mod), $mod),
@@ -178,12 +178,8 @@ class Point implements \ArrayAccess
         $res = $this;
         for ($i = 1; $i < $len; $i++) {
             $res = static::add($curve, $res, $res);
-            if ($s[$i] === '1' && $i > 0) {
-                $res = static::add(
-                    $curve,
-                    $res,
-                    $this
-                );
+            if ($s[$i] === '1') {
+                $res = static::add($curve, $res, $this);
             }
         }
         return $res;

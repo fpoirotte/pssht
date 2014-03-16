@@ -12,7 +12,7 @@
 namespace Clicky\Pssht\ECC;
 
 /**
- * Representation of a point on an elliptic curve.
+ * Representation of an elliptic curve.
  */
 class Curve
 {
