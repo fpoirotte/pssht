@@ -3,8 +3,8 @@
 namespace Clicky\Pssht\Tests\PublicKey\ECDSA\SHA2;
 
 /**
- * Tests point addition for various NIST curves
- * using the test vectors at http://point-at-infinity.org/ecc/nisttv
+ * Test ECDSA implementation using the test vectors
+ * in http://tools.ietf.org/html/rfc4754#section-8
  */
 class NISTpTest extends \PHPUnit_Framework_TestCase
 {
