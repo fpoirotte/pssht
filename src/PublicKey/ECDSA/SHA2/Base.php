@@ -25,6 +25,9 @@ abstract class Base implements
     /// Private key.
     protected $d;
 
+    /// RNG.
+    protected $rng;
+
     /**
      * Construct a new public/private ECDSA key
      * with the NIST P-256 elliptic curve.
@@ -38,10 +41,11 @@ abstract class Base implements
      *      loaded, meaning that signature generation will be
      *      unavailable.
      */
-    protected function __construct(\Clicky\Pssht\ECC\Point $Q, $d = null)
+    public function __construct(\Clicky\Pssht\ECC\Point $Q, $d = null)
     {
-        $this->Q        = $Q;
-        $this->d        = $d;
+        $this->Q    = $Q;
+        $this->d    = $d;
+        $this->rng  = new \Clicky\Pssht\Random\OpenSSL();
     }
 
     public static function loadPrivate($pem, $passphrase = '')
@@ -155,18 +159,19 @@ abstract class Base implements
             throw new \RuntimeException();
         }
 
-        $curve  = \Clicky\Pssht\ECC\Curve::getCurve(static::getIdentifier());
-        $mod    = $curve->getOrder();
-        $mlen   = gmp_init(strlen(gmp_strval($mod, 2)));
-        $mlen   = gmp_intval(gmp_div_q($mlen, 8, GMP_ROUND_PLUSINF));
-        $M      = gmp_init(hash($this->getHash(), $message, false), 16);
+        $curve      = \Clicky\Pssht\ECC\Curve::getCurve(static::getIdentifier());
+        $mod        = $curve->getOrder();
+        $mlen       = gmp_init(strlen(gmp_strval($mod, 2)));
+        $mlen       = gmp_intval(gmp_div_q($mlen, 8, GMP_ROUND_PLUSINF));
+        $M          = gmp_init(hash($this->getHash(), $message, false), 16);
+        $generator  = $curve->getGenerator();
 
         do {
             do {
                 do {
-                    $k = gmp_init(bin2hex(openssl_random_pseudo_bytes($mlen)), 16);
+                    $k = gmp_init(bin2hex($this->rng->getBytes($mlen)), 16);
                 } while (gmp_cmp($k, gmp_sub($mod, 1)) >= 0);
-                $sig1 = $curve->getGenerator()->multiply($curve, $k)->x;
+                $sig1 = $generator->multiply($curve, $k)->x;
             } while (gmp_cmp($sig1, 0) === 0);
 
             $bezout = gmp_gcdext($k, $mod);
@@ -201,5 +206,29 @@ abstract class Base implements
             $this->Q->multiply($curve, $u2)
         );
         return (gmp_cmp($R->x, $sig1) === 0);
+    }
+
+    /**
+     * Get the Random Number Generator associated with this key.
+     *
+     *  \retval Clicky::Pssht::RandomInterface
+     *      RNG associated with this key.
+     */
+    public function getRNG()
+    {
+        return $this->rng;
+    }
+
+    /**
+     * Set the Random Number Generator to use when
+     * signing messages with this key.
+     *
+     *  \param Clicky::Pssht::RandomInterface $rng
+     *      New RNG to use.
+     */
+    public function setRNG(\Clicky\Pssht\RandomInterface $rng)
+    {
+        $this->rng = $rng;
+        return $this;
     }
 }
