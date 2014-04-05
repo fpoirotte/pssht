@@ -46,6 +46,8 @@
     <!-- Detect composer name -->
     <exec command="php get_version.php -C" checkreturn="true" outputProperty="composerName"/>
 
+    <mkdir dir="build"/>
+
     <!-- Include Composer autoloader. -->
     <php expression="require_once('vendor/autoload.php');" level="debug"/>
 
@@ -81,7 +83,6 @@
         </condition>
         <property name="compression" value="none"/>
 
-        <mkdir dir="build"/>
         <pharpackage
             destfile="build/${phing.project.name}-${version}.phar"
             basedir="./"

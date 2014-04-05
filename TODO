@@ -12,12 +12,8 @@
         -   "ecdsa-sha2-nistp256-cert-v01@openssh.com",
         -   "ecdsa-sha2-nistp384-cert-v01@openssh.com" and
         -   "ecdsa-sha2-nistp521-cert-v01@openssh.com"
-    -   Elliptic Curve cryptography
     -   Channel write close extension "eow@openssh.com"
     -   disallow additional sessions extension "no-more-sessions@openssh.com"
-
--   Dig through http://api.libssh.org/master/ to see if there are
-    other extensions that may be of interest.
 
 -   Take a closer look at
     http://books.google.fr/books?id=9FSaScltd-kC&printsec=frontcover&

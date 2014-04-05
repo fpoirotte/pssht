@@ -32,7 +32,7 @@
         "behat/behat": "*",
         "phpmd/phpmd": "*",
         "sebastian/phpcpd": "*",
-        "phpunit/phpunit": "*",
+        "phpunit/phpunit": "<4",
         "squizlabs/php_codesniffer": "*",
         "erebot/buildenv": "master-dev"
     },
