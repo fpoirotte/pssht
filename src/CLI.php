@@ -34,6 +34,9 @@ function main()
     // Elliptic curves
     \Clicky\Pssht\ECC\Curve::initialize();
 
+    // Patches
+    \Clicky\Pssht\Patches::apply();
+
     // Sockets
     $sockets    = array('servers' => array(), 'clients' => array());
     $clients    = array();

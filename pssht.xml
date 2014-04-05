@@ -56,15 +56,15 @@
                 <parameter key="passphrase"/>
             </parameter>
 
-            <parameter key="ecdsa-sha2-nistp384" type="collection">
-                <parameter key="file">file://%pssht.base_dir%/tests/data/plaintext/ecdsa/384</parameter>
-                <parameter key="passphrase"/>
-            </parameter>
+<!--            <parameter key="ecdsa-sha2-nistp384" type="collection">-->
+<!--                <parameter key="file">file://%pssht.base_dir%/tests/data/plaintext/ecdsa/384</parameter>-->
+<!--                <parameter key="passphrase"/>-->
+<!--            </parameter>-->
 
-            <parameter key="ecdsa-sha2-nistp521" type="collection">
-                <parameter key="file">file://%pssht.base_dir%/tests/data/plaintext/ecdsa/521</parameter>
-                <parameter key="passphrase"/>
-            </parameter>
+<!--            <parameter key="ecdsa-sha2-nistp521" type="collection">-->
+<!--                <parameter key="file">file://%pssht.base_dir%/tests/data/plaintext/ecdsa/521</parameter>-->
+<!--                <parameter key="passphrase"/>-->
+<!--            </parameter>-->
         </parameter>
 
 
