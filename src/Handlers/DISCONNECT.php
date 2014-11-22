@@ -9,21 +9,21 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\Handlers;
+namespace fpoirotte\Pssht\Handlers;
 
 /**
  * Handler for SSH_MSG_DISCONNECT messages.
  */
-class DISCONNECT implements \Clicky\Pssht\HandlerInterface
+class DISCONNECT implements \fpoirotte\Pssht\HandlerInterface
 {
     // SSH_MSG_DISCONNECT = 1
     public function handle(
         $msgType,
-        \Clicky\Pssht\Wire\Decoder $decoder,
-        \Clicky\Pssht\Transport $transport,
+        \fpoirotte\Pssht\Wire\Decoder $decoder,
+        \fpoirotte\Pssht\Transport $transport,
         array &$context
     ) {
-        $message = \Clicky\Pssht\Messages\DISCONNECT::unserialize($decoder);
+        $message = \fpoirotte\Pssht\Messages\DISCONNECT::unserialize($decoder);
         throw new $message;
     }
 }

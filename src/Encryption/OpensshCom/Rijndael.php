@@ -9,13 +9,13 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\Encryption\OpensshCom;
+namespace fpoirotte\Pssht\Encryption\OpensshCom;
 
 /**
  * AES cipher in CBC mode with a 256-bit key
  * (alias for "aes256-cbc").
  */
-class Rijndael extends \Clicky\Pssht\Encryption\CBC\AES256
+class Rijndael extends \fpoirotte\Pssht\Encryption\CBC\AES256
 {
     public static function getName()
     {

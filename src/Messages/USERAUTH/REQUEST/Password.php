@@ -9,13 +9,13 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\Messages\USERAUTH\REQUEST;
+namespace fpoirotte\Pssht\Messages\USERAUTH\REQUEST;
 
 /**
  * SSH_MSG_USERAUTH_REQUEST message (RFC 4252)
  * for the "password" method.
  */
-class Password extends \Clicky\Pssht\Messages\USERAUTH\REQUEST\Base
+class Password extends \fpoirotte\Pssht\Messages\USERAUTH\REQUEST\Base
 {
     /// Password for the given login.
     protected $password;
@@ -54,7 +54,7 @@ class Password extends \Clicky\Pssht\Messages\USERAUTH\REQUEST\Base
         $this->newPassword  = $newPassword;
     }
 
-    public function serialize(\Clicky\Pssht\Wire\Encoder $encoder)
+    public function serialize(\fpoirotte\Pssht\Wire\Encoder $encoder)
     {
         parent::serialize($encoder);
         $encoder->encodeBoolean($this->newPassword !== null);
@@ -65,7 +65,7 @@ class Password extends \Clicky\Pssht\Messages\USERAUTH\REQUEST\Base
         return $this;
     }
 
-    protected static function unserializeSub(\Clicky\Pssht\Wire\Decoder $decoder)
+    protected static function unserializeSub(\fpoirotte\Pssht\Wire\Decoder $decoder)
     {
         $passChange = $decoder->decodeBoolean();
         $res        = array($decoder->decodeString());

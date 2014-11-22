@@ -9,21 +9,21 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\Handlers\KEXDH;
+namespace fpoirotte\Pssht\Handlers\KEXDH;
 
 /**
  * Handler for SSH_MSG_KEXDH_INIT messages.
  */
-class INIT implements \Clicky\Pssht\HandlerInterface
+class INIT implements \fpoirotte\Pssht\HandlerInterface
 {
     // SSH_MSG_KEXDH_INIT = 30
     public function handle(
         $msgType,
-        \Clicky\Pssht\Wire\Decoder $decoder,
-        \Clicky\Pssht\Transport $transport,
+        \fpoirotte\Pssht\Wire\Decoder $decoder,
+        \fpoirotte\Pssht\Transport $transport,
         array &$context
     ) {
-        $message    = \Clicky\Pssht\Messages\KEXDH\INIT::unserialize($decoder);
+        $message    = \fpoirotte\Pssht\Messages\KEXDH\INIT::unserialize($decoder);
         $kexAlgo    = $context['kexAlgo'];
         $kexAlgo    = new $kexAlgo();
         $hostAlgo   = null;
@@ -38,7 +38,7 @@ class INIT implements \Clicky\Pssht\HandlerInterface
         }
 
         $logging    = \Plop::getInstance();
-        $response   = new \Clicky\Pssht\Messages\KEXDH\REPLY(
+        $response   = new \fpoirotte\Pssht\Messages\KEXDH\REPLY(
             $message,
             $context['serverKeys'][$hostAlgo],
             $transport->getEncryptor(),

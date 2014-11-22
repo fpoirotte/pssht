@@ -9,12 +9,12 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\PublicKey\SSH;
+namespace fpoirotte\Pssht\PublicKey\SSH;
 
 /**
  * Public key using the RSA algorithm.
  */
-class RSA implements \Clicky\Pssht\PublicKeyInterface
+class RSA implements \fpoirotte\Pssht\PublicKeyInterface
 {
     /// DER header for RSA.
     const DER_HEADER = "\x30\x21\x30\x09\x06\x05\x2b\x0e\x03\x02\x1a\x05\x00\x04\x14";
@@ -83,7 +83,7 @@ class RSA implements \Clicky\Pssht\PublicKeyInterface
 
     public static function loadPublic($b64)
     {
-        $decoder = new \Clicky\Pssht\Wire\Decoder();
+        $decoder = new \fpoirotte\Pssht\Wire\Decoder();
         $decoder->getBuffer()->push(base64_decode($b64));
         $type       = $decoder->decodeString();
         if ($type !== static::getName()) {
@@ -91,7 +91,7 @@ class RSA implements \Clicky\Pssht\PublicKeyInterface
         }
 
         $e          = $decoder->decodeMpint();
-        $decoder2   = new \Clicky\Pssht\Wire\Decoder(clone $decoder->getBuffer());
+        $decoder2   = new \fpoirotte\Pssht\Wire\Decoder(clone $decoder->getBuffer());
         $n          = $decoder->decodeMpint();
         $raw        = $decoder2->decodeString();
         if ($raw[0] === "\x00") {
@@ -109,7 +109,7 @@ class RSA implements \Clicky\Pssht\PublicKeyInterface
         return 'ssh-rsa';
     }
 
-    public function serialize(\Clicky\Pssht\Wire\Encoder $encoder)
+    public function serialize(\fpoirotte\Pssht\Wire\Encoder $encoder)
     {
         $encoder->encodeString(self::getName());
         $encoder->encodeMpint($this->e);

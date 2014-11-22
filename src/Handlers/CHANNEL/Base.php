@@ -9,12 +9,12 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\Handlers\CHANNEL;
+namespace fpoirotte\Pssht\Handlers\CHANNEL;
 
 /**
  * Abstract handler for SSH_MSG_CHANNEL_* messages.
  */
-abstract class Base implements \Clicky\Pssht\HandlerInterface
+abstract class Base implements \fpoirotte\Pssht\HandlerInterface
 {
     /// SSH connection layer.
     protected $connection;
@@ -22,10 +22,10 @@ abstract class Base implements \Clicky\Pssht\HandlerInterface
     /**
      * Construct the handler.
      *
-     *  \param Clicky::Pssht::Connection $connection
+     *  \param fpoirotte::Pssht::Connection $connection
      *      SSH connection layer.
      */
-    public function __construct(\Clicky\Pssht\Connection $connection)
+    public function __construct(\fpoirotte\Pssht\Connection $connection)
     {
         $this->connection = $connection;
     }

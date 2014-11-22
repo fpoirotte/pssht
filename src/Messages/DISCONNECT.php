@@ -9,9 +9,9 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\Messages;
+namespace fpoirotte\Pssht\Messages;
 
-use Clicky\Pssht\MessageInterface;
+use fpoirotte\Pssht\MessageInterface;
 
 /**
  * SSH_MSG_DISCONNECT message (RFC 4253).
@@ -112,7 +112,7 @@ class DISCONNECT extends \Exception implements MessageInterface
         return 1;
     }
 
-    public function serialize(\Clicky\Pssht\Wire\Encoder $encoder)
+    public function serialize(\fpoirotte\Pssht\Wire\Encoder $encoder)
     {
         $encoder->encodeUint32($this->code);
         $encoder->encodeString($this->message);
@@ -120,7 +120,7 @@ class DISCONNECT extends \Exception implements MessageInterface
         return $this;
     }
 
-    public static function unserialize(\Clicky\Pssht\Wire\Decoder $decoder)
+    public static function unserialize(\fpoirotte\Pssht\Wire\Decoder $decoder)
     {
         return new static(
             $decoder->decodeUint32(),

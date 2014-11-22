@@ -9,7 +9,7 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\Encryption\CBC;
+namespace fpoirotte\Pssht\Encryption\CBC;
 
 /**
  * AES cipher in CBC mode with a 128-bit key

@@ -9,12 +9,12 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\Encryption\CTR;
+namespace fpoirotte\Pssht\Encryption\CTR;
 
 /**
  * Blowfish cipher in CTR mode
  * (OPTIONAL in RFC 4344).
  */
-class Blowfish extends \Clicky\Pssht\Encryption\CBC\Blowfish
+class Blowfish extends \fpoirotte\Pssht\Encryption\CBC\Blowfish
 {
 }

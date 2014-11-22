@@ -9,15 +9,15 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\MAC\MD5;
+namespace fpoirotte\Pssht\MAC\MD5;
 
 /**
  * MAC generation using a truncated MD5 hash.
  */
-class Len96 extends \Clicky\Pssht\MAC\Base96
+class Len96 extends \fpoirotte\Pssht\MAC\Base96
 {
     public static function getBaseClass()
     {
-        return '\\Clicky\\Pssht\\MAC\\MD5';
+        return '\\fpoirotte\\Pssht\\MAC\\MD5';
     }
 }

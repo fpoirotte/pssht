@@ -9,7 +9,7 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht;
+namespace fpoirotte\Pssht;
 
 /**
  * Provides storage for public/private keys.
@@ -30,15 +30,15 @@ class KeyStore
     /**
      * Return the identifier for a key.
      *
-     *  \param Clicky::Pssht::PublicKeyInterface $key
+     *  \param fpoirotte::Pssht::PublicKeyInterface $key
      *      Public or private key.
      *
      *  \retval string
      *      SSH identifier for the key.
      */
-    protected function getIdentifier(\Clicky\Pssht\PublicKeyInterface $key)
+    protected function getIdentifier(\fpoirotte\Pssht\PublicKeyInterface $key)
     {
-        $encoder = new \Clicky\Pssht\Wire\Encoder();
+        $encoder = new \fpoirotte\Pssht\Wire\Encoder();
         $key->serialize($encoder);
         return $encoder->getBuffer()->get(0);
     }
@@ -49,10 +49,10 @@ class KeyStore
      *  \param string $user
      *      User the key belongs to.
      *
-     *  \param Clicky::Pssht::PublicKeyInterface $key
+     *  \param fpoirotte::Pssht::PublicKeyInterface $key
      *      Public/private key to add.
      */
-    public function add($user, \Clicky\Pssht\PublicKeyInterface $key)
+    public function add($user, \fpoirotte\Pssht\PublicKeyInterface $key)
     {
         if (!is_string($user)) {
             throw new \InvalidArgumentException();
@@ -67,10 +67,10 @@ class KeyStore
      *  \param string $user
      *      User the key belongs to.
      *
-     *  \param Clicky::Pssht::PublicKeyInterface $key
+     *  \param fpoirotte::Pssht::PublicKeyInterface $key
      *      Public/private key to remove.
      */
-    public function remove($user, \Clicky\Pssht\PublicKeyInterface $key)
+    public function remove($user, \fpoirotte\Pssht\PublicKeyInterface $key)
     {
         if (!is_string($user)) {
             throw new \InvalidArgumentException();
@@ -109,7 +109,7 @@ class KeyStore
      *  \param string $user
      *      User for which the key is tested.
      *
-     *  \param string|Clicky::Pssht::PublicKeyInterface $key
+     *  \param string|fpoirotte::Pssht::PublicKeyInterface $key
      *      Key to test.
      *
      *  \retval bool
@@ -122,7 +122,7 @@ class KeyStore
             throw new \InvalidArgumentException();
         }
 
-        if ($key instanceof \Clicky\Pssht\PublicKeyInterface) {
+        if ($key instanceof \fpoirotte\Pssht\PublicKeyInterface) {
             $key = $this->getIdentifier($key);
         }
         if (!is_string($key)) {

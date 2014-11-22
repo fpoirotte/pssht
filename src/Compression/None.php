@@ -9,9 +9,9 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\Compression;
+namespace fpoirotte\Pssht\Compression;
 
-use Clicky\Pssht\CompressionInterface;
+use fpoirotte\Pssht\CompressionInterface;
 
 /**
  * Null compression (= no compression).

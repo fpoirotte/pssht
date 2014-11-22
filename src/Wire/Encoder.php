@@ -9,7 +9,7 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\Wire;
+namespace fpoirotte\Pssht\Wire;
 
 /**
  * SSH-encode values (RFC 4251).
@@ -22,14 +22,14 @@ class Encoder
     /**
      * Construct a new encoder.
      *
-     *  \param Clicky::Pssht::Buffer $buffer
+     *  \param fpoirotte::Pssht::Buffer $buffer
      *      (optional) Buffer to write to.
      *      If omitted, a new empty buffer is used.
      */
-    public function __construct(\Clicky\Pssht\Buffer $buffer = null)
+    public function __construct(\fpoirotte\Pssht\Buffer $buffer = null)
     {
         if ($buffer === null) {
-            $buffer = new \Clicky\Pssht\Buffer();
+            $buffer = new \fpoirotte\Pssht\Buffer();
         }
 
         $this->buffer = $buffer;
@@ -38,7 +38,7 @@ class Encoder
     /**
      * Get the buffer associated with this encoder.
      *
-     *  \retval Clicky::Pssht::Buffer
+     *  \retval fpoirotte::Pssht::Buffer
      *      The buffer associated with this encoder.
      */
     public function getBuffer()

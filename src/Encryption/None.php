@@ -9,9 +9,9 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\Encryption;
+namespace fpoirotte\Pssht\Encryption;
 
-use Clicky\Pssht\EncryptionInterface;
+use fpoirotte\Pssht\EncryptionInterface;
 
 /**
  * Null cipher (OPTIONAL and NOT RECOMMENDED in RFC 4253).

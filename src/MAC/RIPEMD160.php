@@ -9,7 +9,7 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\MAC;
+namespace fpoirotte\Pssht\MAC;
 
 /**
  * MAC generation using the RIPEMD160 hashing algorithm.

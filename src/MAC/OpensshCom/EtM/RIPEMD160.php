@@ -9,12 +9,12 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\MAC\OpensshCom\EtM;
+namespace fpoirotte\Pssht\MAC\OpensshCom\EtM;
 
 /**
  * MAC generation using the RIPEMD160 hash in Encrypt-then-MAC mode.
  */
-class RIPEMD160 extends \Clicky\Pssht\MAC\RIPEMD160 implements EtMInterface
+class RIPEMD160 extends \fpoirotte\Pssht\MAC\RIPEMD160 implements EtMInterface
 {
     public static function getName()
     {

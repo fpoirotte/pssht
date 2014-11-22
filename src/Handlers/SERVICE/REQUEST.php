@@ -9,14 +9,14 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\Handlers\SERVICE;
+namespace fpoirotte\Pssht\Handlers\SERVICE;
 
-use Clicky\Pssht\Messages\DISCONNECT;
+use fpoirotte\Pssht\Messages\DISCONNECT;
 
 /**
  * Handler for SSH_MSG_SERVICE_REQUEST messages.
  */
-class REQUEST implements \Clicky\Pssht\HandlerInterface
+class REQUEST implements \fpoirotte\Pssht\HandlerInterface
 {
     /// User authentication request handler.
     protected $userAuthRequestHandler;
@@ -24,10 +24,10 @@ class REQUEST implements \Clicky\Pssht\HandlerInterface
     /**
      * Construct a new handler for SSH_MSG_SERVICE_REQUEST messages.
      *
-     *  \param Clicky::Pssht::Handlers::USERAUTH::REQUEST $methods
+     *  \param fpoirotte::Pssht::Handlers::USERAUTH::REQUEST $methods
      *      User authentication request handler.
      */
-    public function __construct(\Clicky\Pssht\Handlers\USERAUTH\REQUEST $methods)
+    public function __construct(\fpoirotte\Pssht\Handlers\USERAUTH\REQUEST $methods)
     {
         $this->userAuthRequestHandler = $methods;
     }
@@ -35,17 +35,17 @@ class REQUEST implements \Clicky\Pssht\HandlerInterface
     // SSH_MSG_SERVICE_REQUEST = 5
     public function handle(
         $msgType,
-        \Clicky\Pssht\Wire\Decoder $decoder,
-        \Clicky\Pssht\Transport $transport,
+        \fpoirotte\Pssht\Wire\Decoder $decoder,
+        \fpoirotte\Pssht\Transport $transport,
         array &$context
     ) {
-        $message    = \Clicky\Pssht\Messages\SERVICE\REQUEST::unserialize($decoder);
+        $message    = \fpoirotte\Pssht\Messages\SERVICE\REQUEST::unserialize($decoder);
         $service    = $message->getServiceName();
 
         if ($service === 'ssh-userauth') {
-            $response = new \Clicky\Pssht\Messages\SERVICE\ACCEPT($service);
+            $response = new \fpoirotte\Pssht\Messages\SERVICE\ACCEPT($service);
             $transport->setHandler(
-                \Clicky\Pssht\Messages\USERAUTH\REQUEST\Base::getMessageId(),
+                \fpoirotte\Pssht\Messages\USERAUTH\REQUEST\Base::getMessageId(),
                 $this->userAuthRequestHandler
             );
         } else {

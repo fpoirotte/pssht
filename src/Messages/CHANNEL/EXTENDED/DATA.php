@@ -9,12 +9,12 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\Messages\CHANNEL\EXTENDED;
+namespace fpoirotte\Pssht\Messages\CHANNEL\EXTENDED;
 
 /**
  * SSH_MSG_CHANNEL_EXTENDED_DATA message (RFC 4254).
  */
-class DATA extends \Clicky\Pssht\Messages\CHANNEL\Base
+class DATA extends \fpoirotte\Pssht\Messages\CHANNEL\Base
 {
     /// Assume the extended data stream is \c stderr.
     const SSH_EXTENDED_DATA_STDERR = 1;
@@ -50,7 +50,7 @@ class DATA extends \Clicky\Pssht\Messages\CHANNEL\Base
         return 95;
     }
 
-    public function serialize(\Clicky\Pssht\Wire\Encoder $encoder)
+    public function serialize(\fpoirotte\Pssht\Wire\Encoder $encoder)
     {
         parent::serialize($encoder);
         $encoder->encodeUint32($this->code);
@@ -58,7 +58,7 @@ class DATA extends \Clicky\Pssht\Messages\CHANNEL\Base
         return $this;
     }
 
-    public static function unserialize(\Clicky\Pssht\Wire\Decoder $decoder)
+    public static function unserialize(\fpoirotte\Pssht\Wire\Decoder $decoder)
     {
         return new static(
             $decoder->decodeUint32(),   // channel

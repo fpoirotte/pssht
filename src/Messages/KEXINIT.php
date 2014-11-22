@@ -9,12 +9,12 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\Messages;
+namespace fpoirotte\Pssht\Messages;
 
 /**
  * SSH_MSG_KEXINIT message (RFC 4253).
  */
-class KEXINIT implements \Clicky\Pssht\MessageInterface
+class KEXINIT implements \fpoirotte\Pssht\MessageInterface
 {
     /// Random cookie for the Key Exchange.
     protected $cookie;
@@ -56,7 +56,7 @@ class KEXINIT implements \Clicky\Pssht\MessageInterface
     /**
      * Construction a new SSH_MSG_KEXINIT message.
      *
-     *  \param Clicky::Pssht::RandomInterface $random
+     *  \param fpoirotte::Pssht::RandomInterface $random
      *      RNG from which the KEX cookie will be generated.
      *
      *  \param array $kexAlgos
@@ -104,7 +104,7 @@ class KEXINIT implements \Clicky\Pssht\MessageInterface
      *      sent after this packet (\b true) or not (\b false).
      */
     public function __construct(
-        \Clicky\Pssht\RandomInterface $random,
+        \fpoirotte\Pssht\RandomInterface $random,
         array $kexAlgos,
         array $serverHostKeyAlgos,
         array $encAlgosC2S,
@@ -140,7 +140,7 @@ class KEXINIT implements \Clicky\Pssht\MessageInterface
         return 20;
     }
 
-    public function serialize(\Clicky\Pssht\Wire\Encoder $encoder)
+    public function serialize(\fpoirotte\Pssht\Wire\Encoder $encoder)
     {
         $encoder->encodeBytes($this->cookie);
         $encoder->encodeNameList($this->kexAlgos);
@@ -158,10 +158,10 @@ class KEXINIT implements \Clicky\Pssht\MessageInterface
         return $this;
     }
 
-    public static function unserialize(\Clicky\Pssht\Wire\Decoder $decoder)
+    public static function unserialize(\fpoirotte\Pssht\Wire\Decoder $decoder)
     {
         $res = new static(
-            new \Clicky\Pssht\Random\Fixed(
+            new \fpoirotte\Pssht\Random\Fixed(
                 $decoder->decodeBytes(16)   // cookie
             ),
             $decoder->decodeNameList(),     // keyAlgos

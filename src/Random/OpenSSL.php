@@ -9,12 +9,12 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\Random;
+namespace fpoirotte\Pssht\Random;
 
 /**
  * OpenSSL-based pseudo-random number generator.
  */
-class OpenSSL implements \Clicky\Pssht\RandomInterface
+class OpenSSL implements \fpoirotte\Pssht\RandomInterface
 {
     /// Construct a new PRNG.
     public function __construct()

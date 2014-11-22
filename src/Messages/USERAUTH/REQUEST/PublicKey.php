@@ -9,13 +9,13 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\Messages\USERAUTH\REQUEST;
+namespace fpoirotte\Pssht\Messages\USERAUTH\REQUEST;
 
 /**
  * SSH_MSG_USERAUTH_REQUEST message (RFC 4252)
  * for the "publickey" method.
  */
-class PublicKey extends \Clicky\Pssht\Messages\USERAUTH\REQUEST\Base
+class PublicKey extends \fpoirotte\Pssht\Messages\USERAUTH\REQUEST\Base
 {
     /// Public key algorithm in use (eg. "ssh-rsa" or "ssh-dss").
     protected $algorithm;
@@ -62,14 +62,14 @@ class PublicKey extends \Clicky\Pssht\Messages\USERAUTH\REQUEST\Base
         $this->signature    = $signature;
     }
 
-    public function serialize(\Clicky\Pssht\Wire\Encoder $encoder)
+    public function serialize(\fpoirotte\Pssht\Wire\Encoder $encoder)
     {
         parent::serialize($encoder);
         $encoder->encodeBoolean($this->signature !== null);
         $encoder->encodeString($this->algorithm);
         $encoder->encodeString($this->key);
         if ($this->signature !== null) {
-            $encoder2 = new \Clicky\Pssht\Wire\Encoder();
+            $encoder2 = new \fpoirotte\Pssht\Wire\Encoder();
             $encoder2->encodeString($this->algorithm);
             $encoder2->encodeString($this->signature);
             $encoder->encodeString($encoder2->getBuffer()->get(0));
@@ -77,7 +77,7 @@ class PublicKey extends \Clicky\Pssht\Messages\USERAUTH\REQUEST\Base
         return $this;
     }
 
-    protected static function unserializeSub(\Clicky\Pssht\Wire\Decoder $decoder)
+    protected static function unserializeSub(\fpoirotte\Pssht\Wire\Decoder $decoder)
     {
         $signature  = $decoder->decodeBoolean();
         $algorithm  = $decoder->decodeString();
@@ -87,8 +87,8 @@ class PublicKey extends \Clicky\Pssht\Messages\USERAUTH\REQUEST\Base
         );
 
         if ($signature === true) {
-            $decoder2 = new \Clicky\Pssht\Wire\Decoder(
-                new \Clicky\Pssht\Buffer($decoder->decodeString())
+            $decoder2 = new \fpoirotte\Pssht\Wire\Decoder(
+                new \fpoirotte\Pssht\Buffer($decoder->decodeString())
             );
             if ($decoder2->decodeString() !== $algorithm) {
                 throw new \InvalidArgumentException();

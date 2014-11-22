@@ -9,12 +9,12 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\Messages\USERAUTH\PK;
+namespace fpoirotte\Pssht\Messages\USERAUTH\PK;
 
 /**
  * SSH_MSG_USERAUTH_PK_OK message (RFC 4252).
  */
-class OK implements \Clicky\Pssht\MessageInterface
+class OK implements \fpoirotte\Pssht\MessageInterface
 {
     /// Public key algorithm in use (eg. "ssh-rsa" or "ssh-dss").
     protected $algorithm;
@@ -51,14 +51,14 @@ class OK implements \Clicky\Pssht\MessageInterface
         return 60;
     }
 
-    public function serialize(\Clicky\Pssht\Wire\Encoder $encoder)
+    public function serialize(\fpoirotte\Pssht\Wire\Encoder $encoder)
     {
         $encoder->encodeString($this->algorithm);
         $encoder->encodeString($this->key);
         return $this;
     }
 
-    public static function unserialize(\Clicky\Pssht\Wire\Decoder $decoder)
+    public static function unserialize(\fpoirotte\Pssht\Wire\Decoder $decoder)
     {
         return new static(
             $decoder->decodeString(),

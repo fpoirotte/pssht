@@ -9,12 +9,12 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\Messages\KEXDH;
+namespace fpoirotte\Pssht\Messages\KEXDH;
 
 /**
  * SSH_MSG_KEXDH_REPLY message (RFC 4253).
  */
-class REPLY implements \Clicky\Pssht\MessageInterface
+class REPLY implements \fpoirotte\Pssht\MessageInterface
 {
     /// Exchange hash.
     protected $H;
@@ -50,22 +50,22 @@ class REPLY implements \Clicky\Pssht\MessageInterface
     /**
      * Construct a new SSH_MSG_KEXDH_REPLY message.
      *
-     *  \param Clicky::Pssht::Messages::KEXDH::INIT $kexDHInit
+     *  \param fpoirotte::Pssht::Messages::KEXDH::INIT $kexDHInit
      *      Client's contribution to the Diffie-Hellman Key Exchange.
      *
-     *  \param Clicky::Pssht::PublicKeyInterface $key
+     *  \param fpoirotte::Pssht::PublicKeyInterface $key
      *      Server's public key.
      *
-     *  \param Clicky::Pssht::EncryptionInterface $encryptionAlgo
+     *  \param fpoirotte::Pssht::EncryptionInterface $encryptionAlgo
      *      Encryption algorithm in use.
      *
-     *  \param Clicky::Pssht::KEXInterface $kexAlgo
+     *  \param fpoirotte::Pssht::KEXInterface $kexAlgo
      *      Key exchange algorithm to use.
      *
-     *  \param Clicky::Pssht::Messages::KEXINIT $serverKEX
+     *  \param fpoirotte::Pssht::Messages::KEXINIT $serverKEX
      *      Algorithms supported by the server.
      *
-     *  \param Clicky::Pssht::Messages::KEXINIT $clientKEX
+     *  \param fpoirotte::Pssht::Messages::KEXINIT $clientKEX
      *      Algorithms supported by the client.
      *
      *  \param string $serverIdent
@@ -75,12 +75,12 @@ class REPLY implements \Clicky\Pssht\MessageInterface
      *      Client's identification string
      */
     public function __construct(
-        \Clicky\Pssht\Messages\KEXDH\INIT $kexDHInit,
-        \Clicky\Pssht\PublicKeyInterface $key,
-        \Clicky\Pssht\EncryptionInterface $encryptionAlgo,
-        \Clicky\Pssht\KEXInterface $kexAlgo,
-        \Clicky\Pssht\Messages\KEXINIT $serverKEX,
-        \Clicky\Pssht\Messages\KEXINIT $clientKEX,
+        \fpoirotte\Pssht\Messages\KEXDH\INIT $kexDHInit,
+        \fpoirotte\Pssht\PublicKeyInterface $key,
+        \fpoirotte\Pssht\EncryptionInterface $encryptionAlgo,
+        \fpoirotte\Pssht\KEXInterface $kexAlgo,
+        \fpoirotte\Pssht\Messages\KEXINIT $serverKEX,
+        \fpoirotte\Pssht\Messages\KEXINIT $clientKEX,
         $serverIdent,
         $clientIdent
     ) {
@@ -106,16 +106,16 @@ class REPLY implements \Clicky\Pssht\MessageInterface
         $this->serverIdent  = $serverIdent;
         $this->clientIdent  = $clientIdent;
 
-        $msgId  = chr(\Clicky\Pssht\Messages\KEXINIT::getMessageId());
+        $msgId  = chr(\fpoirotte\Pssht\Messages\KEXINIT::getMessageId());
         // $sub is used to create the structure for the hashing function.
-        $sub    = new \Clicky\Pssht\Wire\Encoder(new \Clicky\Pssht\Buffer());
+        $sub    = new \fpoirotte\Pssht\Wire\Encoder(new \fpoirotte\Pssht\Buffer());
         $this->K_S->serialize($sub);
         $K_S    = $sub->getBuffer()->get(0);
         $sub->encodeString($this->clientIdent);
         $sub->encodeString($this->serverIdent);
         // $sub2 is used to compute the value
         // of various fields inside the structure.
-        $sub2   = new \Clicky\Pssht\Wire\Encoder(new \Clicky\Pssht\Buffer());
+        $sub2   = new \fpoirotte\Pssht\Wire\Encoder(new \fpoirotte\Pssht\Buffer());
         $sub2->encodeBytes($msgId); // Add message identifier.
         $this->clientKEX->serialize($sub2);
         $sub->encodeString($sub2->getBuffer()->get(0));
@@ -141,9 +141,9 @@ class REPLY implements \Clicky\Pssht\MessageInterface
         return 31;
     }
 
-    public function serialize(\Clicky\Pssht\Wire\Encoder $encoder)
+    public function serialize(\fpoirotte\Pssht\Wire\Encoder $encoder)
     {
-        $sub    = new \Clicky\Pssht\Wire\Encoder(new \Clicky\Pssht\Buffer());
+        $sub    = new \fpoirotte\Pssht\Wire\Encoder(new \fpoirotte\Pssht\Buffer());
         $this->K_S->serialize($sub);
 
         $encoder->encodeString($sub->getBuffer()->get(0));
@@ -155,7 +155,7 @@ class REPLY implements \Clicky\Pssht\MessageInterface
         return $this;
     }
 
-    public static function unserialize(\Clicky\Pssht\Wire\Decoder $decoder)
+    public static function unserialize(\fpoirotte\Pssht\Wire\Decoder $decoder)
     {
         /// @FIXME: we should at least try a little...
         throw new \RuntimeException();

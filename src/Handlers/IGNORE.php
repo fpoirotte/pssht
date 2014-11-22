@@ -9,18 +9,18 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\Handlers;
+namespace fpoirotte\Pssht\Handlers;
 
 /**
  * Handler for SSH_MSG_IGNORE messages.
  */
-class IGNORE implements \Clicky\Pssht\HandlerInterface
+class IGNORE implements \fpoirotte\Pssht\HandlerInterface
 {
     // SSH_MSG_IGNORE = 2
     public function handle(
         $msgType,
-        \Clicky\Pssht\Wire\Decoder $decoder,
-        \Clicky\Pssht\Transport $transport,
+        \fpoirotte\Pssht\Wire\Decoder $decoder,
+        \fpoirotte\Pssht\Transport $transport,
         array &$context
     ) {
         return true;

@@ -9,14 +9,14 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\KEX;
+namespace fpoirotte\Pssht\KEX;
 
 /**
  * Diffie-Hellman key exchange with SHA-1 as HASH
  * and Oakley Group 14 [RFC3526] (2048-bit MODP Group);
  * REQUIRED in RFC 4253.
  */
-class DHGroup14SHA1 implements \Clicky\Pssht\KEXInterface
+class DHGroup14SHA1 implements \fpoirotte\Pssht\KEXInterface
 {
     public static function getName()
     {

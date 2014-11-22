@@ -9,12 +9,12 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\Messages;
+namespace fpoirotte\Pssht\Messages;
 
 /**
  * SSH_MSG_NEWKEYS message (RFC 4253).
  */
-class NEWKEYS extends \Clicky\Pssht\Messages\Base
+class NEWKEYS extends \fpoirotte\Pssht\Messages\Base
 {
     public static function getMessageId()
     {

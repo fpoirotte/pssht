@@ -9,13 +9,13 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\Compression\OpensshCom;
+namespace fpoirotte\Pssht\Compression\OpensshCom;
 
 /**
  * Delayed ZLIB compression.
  */
-class Zlib extends \Clicky\Pssht\Compression\Zlib implements
-    \Clicky\Pssht\DelayedCompressionInterface
+class Zlib extends \fpoirotte\Pssht\Compression\Zlib implements
+    \fpoirotte\Pssht\DelayedCompressionInterface
 {
     /// Flag indicating whether user authentication succeeded or not.
     protected $authenticated;

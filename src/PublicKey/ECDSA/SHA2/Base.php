@@ -9,15 +9,15 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\PublicKey\ECDSA\SHA2;
+namespace fpoirotte\Pssht\PublicKey\ECDSA\SHA2;
 
 /**
  * Abstract class for a Public key using the Elliptic Curve
  * Digital Signature Algorithm (ECDSA).
  */
 abstract class Base implements
-    \Clicky\Pssht\PublicKeyInterface,
-    \Clicky\Pssht\PublicKey\ECDSA\SHA2\BaseInterface
+    \fpoirotte\Pssht\PublicKeyInterface,
+    \fpoirotte\Pssht\PublicKey\ECDSA\SHA2\BaseInterface
 {
     /// Public key.
     protected $Q;
@@ -41,11 +41,11 @@ abstract class Base implements
      *      loaded, meaning that signature generation will be
      *      unavailable.
      */
-    public function __construct(\Clicky\Pssht\ECC\Point $Q, $d = null)
+    public function __construct(\fpoirotte\Pssht\ECC\Point $Q, $d = null)
     {
         $this->Q    = $Q;
         $this->d    = $d;
-        $this->rng  = new \Clicky\Pssht\Random\OpenSSL();
+        $this->rng  = new \fpoirotte\Pssht\Random\OpenSSL();
     }
 
     public static function loadPrivate($pem, $passphrase = '')
@@ -69,7 +69,7 @@ abstract class Base implements
             $key = $pem;
         }
 
-        $curve  = \Clicky\Pssht\ECC\Curve::getCurve(static::getIdentifier());
+        $curve  = \fpoirotte\Pssht\ECC\Curve::getCurve(static::getIdentifier());
         $key    = str_replace(array("\r", "\n"), '', $key);
         $header = '-----BEGIN EC PRIVATE KEY-----';
         $footer = '-----END EC PRIVATE KEY-----';
@@ -106,7 +106,7 @@ abstract class Base implements
         if ($len + 2 !== ord($key[1]) || strlen($key) !== $len + 4) {
             throw new \InvalidArgumentException();
         }
-        $pubkey     = \Clicky\Pssht\ECC\Point::unserialize(
+        $pubkey     = \fpoirotte\Pssht\ECC\Point::unserialize(
             $curve,
             ltrim(substr($key, 4), "\x00")
         );
@@ -122,7 +122,7 @@ abstract class Base implements
 
     public static function loadPublic($b64)
     {
-        $decoder = new \Clicky\Pssht\Wire\Decoder();
+        $decoder = new \fpoirotte\Pssht\Wire\Decoder();
         $decoder->getBuffer()->push(base64_decode($b64));
         if ($decoder->decodeString() !== static::getName()) {
             throw new \InvalidArgumentException();
@@ -130,8 +130,8 @@ abstract class Base implements
         if ($decoder->decodeString() !== static::getIdentifier()) {
             throw new \InvalidArgumentException();
         }
-        $Q = \Clicky\Pssht\ECC\Point::unserialize(
-            \Clicky\Pssht\ECC\Curve::getCurve(static::getIdentifier()),
+        $Q = \fpoirotte\Pssht\ECC\Point::unserialize(
+            \fpoirotte\Pssht\ECC\Curve::getCurve(static::getIdentifier()),
             $decoder->decodeString()
         );
         return new static($Q);
@@ -142,13 +142,13 @@ abstract class Base implements
         return 'ecdsa-sha2-' . static::getIdentifier();
     }
 
-    public function serialize(\Clicky\Pssht\Wire\Encoder $encoder)
+    public function serialize(\fpoirotte\Pssht\Wire\Encoder $encoder)
     {
         $encoder->encodeString(static::getName());
         $encoder->encodeString(static::getIdentifier());
         $encoder->encodeString(
             $this->Q->serialize(
-                \Clicky\Pssht\ECC\Curve::getCurve(static::getIdentifier())
+                \fpoirotte\Pssht\ECC\Curve::getCurve(static::getIdentifier())
             )
         );
     }
@@ -159,7 +159,7 @@ abstract class Base implements
             throw new \RuntimeException();
         }
 
-        $curve      = \Clicky\Pssht\ECC\Curve::getCurve(static::getIdentifier());
+        $curve      = \fpoirotte\Pssht\ECC\Curve::getCurve(static::getIdentifier());
         $mod        = $curve->getOrder();
         $mlen       = gmp_init(strlen(gmp_strval($mod, 2)));
         $mlen       = gmp_intval(gmp_div_q($mlen, 8, GMP_ROUND_PLUSINF));
@@ -179,7 +179,7 @@ abstract class Base implements
             $sig2   = gmp_mod(gmp_mul($k_inv, gmp_add($M, gmp_mul($this->d, $sig1))), $mod);
         } while (gmp_cmp($sig2, 0) === 0);
 
-        $encoder = new \Clicky\Pssht\Wire\Encoder();
+        $encoder = new \fpoirotte\Pssht\Wire\Encoder();
         $encoder->encodeMpint($sig1);
         $encoder->encodeMpint($sig2);
         return $encoder->getBuffer()->get(0);
@@ -187,11 +187,11 @@ abstract class Base implements
 
     public function check($message, $signature)
     {
-        $decoder = new \Clicky\Pssht\Wire\Decoder(
-            new \Clicky\Pssht\Buffer($signature)
+        $decoder = new \fpoirotte\Pssht\Wire\Decoder(
+            new \fpoirotte\Pssht\Buffer($signature)
         );
 
-        $curve  = \Clicky\Pssht\ECC\Curve::getCurve(static::getIdentifier());
+        $curve  = \fpoirotte\Pssht\ECC\Curve::getCurve(static::getIdentifier());
         $sig1   = $decoder->decodeMpint();
         $sig2   = $decoder->decodeMpint();
         $mod    = $curve->getOrder();
@@ -200,7 +200,7 @@ abstract class Base implements
         $w      = gmp_mod(gmp_add($bezout['s'], $mod), $mod);
         $u1     = gmp_mod(gmp_mul($M, $w), $mod);
         $u2     = gmp_mod(gmp_mul($sig1, $w), $mod);
-        $R      = \Clicky\Pssht\ECC\Point::add(
+        $R      = \fpoirotte\Pssht\ECC\Point::add(
             $curve,
             $curve->getGenerator()->multiply($curve, $u1),
             $this->Q->multiply($curve, $u2)
@@ -211,7 +211,7 @@ abstract class Base implements
     /**
      * Get the Random Number Generator associated with this key.
      *
-     *  \retval Clicky::Pssht::RandomInterface
+     *  \retval fpoirotte::Pssht::RandomInterface
      *      RNG associated with this key.
      */
     public function getRNG()
@@ -223,10 +223,10 @@ abstract class Base implements
      * Set the Random Number Generator to use when
      * signing messages with this key.
      *
-     *  \param Clicky::Pssht::RandomInterface $rng
+     *  \param fpoirotte::Pssht::RandomInterface $rng
      *      New RNG to use.
      */
-    public function setRNG(\Clicky\Pssht\RandomInterface $rng)
+    public function setRNG(\fpoirotte\Pssht\RandomInterface $rng)
     {
         $this->rng = $rng;
         return $this;

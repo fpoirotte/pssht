@@ -9,12 +9,12 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\Messages\USERAUTH;
+namespace fpoirotte\Pssht\Messages\USERAUTH;
 
 /**
  * SSH_MSG_USERAUTH_FAILURE message (RFC 4252).
  */
-class FAILURE implements \Clicky\Pssht\MessageInterface
+class FAILURE implements \fpoirotte\Pssht\MessageInterface
 {
     /// List of authentication methods that may continue.
     protected $methods;
@@ -53,14 +53,14 @@ class FAILURE implements \Clicky\Pssht\MessageInterface
         return 51;
     }
 
-    public function serialize(\Clicky\Pssht\Wire\Encoder $encoder)
+    public function serialize(\fpoirotte\Pssht\Wire\Encoder $encoder)
     {
         $encoder->encodeNameList($this->methods);
         $encoder->encodeBoolean($this->partial);
         return $this;
     }
 
-    public static function unserialize(\Clicky\Pssht\Wire\Decoder $decoder)
+    public static function unserialize(\fpoirotte\Pssht\Wire\Decoder $decoder)
     {
         return new static(
             $decoder->decodeNameList(),

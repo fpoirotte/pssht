@@ -9,24 +9,24 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\Messages;
+namespace fpoirotte\Pssht\Messages;
 
 /**
  * Abstract SSH message.
  */
-abstract class Base implements \Clicky\Pssht\MessageInterface
+abstract class Base implements \fpoirotte\Pssht\MessageInterface
 {
     /// Construct the message.
     final public function __construct()
     {
     }
 
-    final public function serialize(\Clicky\Pssht\Wire\Encoder $encoder)
+    final public function serialize(\fpoirotte\Pssht\Wire\Encoder $encoder)
     {
         return $this;
     }
 
-    final public static function unserialize(\Clicky\Pssht\Wire\Decoder $encoder)
+    final public static function unserialize(\fpoirotte\Pssht\Wire\Decoder $encoder)
     {
         return new static();
     }

@@ -9,12 +9,12 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\Random;
+namespace fpoirotte\Pssht\Random;
 
 /**
  * Fake PRNG that returns a fixed string.
  */
-class Fixed implements \Clicky\Pssht\RandomInterface
+class Fixed implements \fpoirotte\Pssht\RandomInterface
 {
     /// Fixed data to return.
     protected $data;

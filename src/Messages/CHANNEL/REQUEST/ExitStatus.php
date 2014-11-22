@@ -9,13 +9,13 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\Messages\CHANNEL\REQUEST;
+namespace fpoirotte\Pssht\Messages\CHANNEL\REQUEST;
 
 /**
  * SSH_MSG_CHANNEL_REQUEST message (RFC 4254)
  * for the "exit-status" request type.
  */
-class ExitStatus extends \Clicky\Pssht\Messages\CHANNEL\REQUEST\Base
+class ExitStatus extends \fpoirotte\Pssht\Messages\CHANNEL\REQUEST\Base
 {
     /// Exit status of the process.
     protected $status;
@@ -36,14 +36,14 @@ class ExitStatus extends \Clicky\Pssht\Messages\CHANNEL\REQUEST\Base
         $this->status = $status;
     }
 
-    public function serialize(\Clicky\Pssht\Wire\Encoder $encoder)
+    public function serialize(\fpoirotte\Pssht\Wire\Encoder $encoder)
     {
         parent::serialize($encoder);
         $encoder->encodeUint32($this->status);
         return $this;
     }
 
-    protected static function unserializeSub(\Clicky\Pssht\Wire\Decoder $decoder)
+    protected static function unserializeSub(\fpoirotte\Pssht\Wire\Decoder $decoder)
     {
         return array($decoder->decodeUint32());
     }

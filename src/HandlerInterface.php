@@ -9,7 +9,7 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht;
+namespace fpoirotte\Pssht;
 
 /**
  * Interface for an SSH message handler.
@@ -22,10 +22,10 @@ interface HandlerInterface
      *  \param int $msgType
      *      Message identifier.
      *
-     *  \param Clicky::Pssht::Wire::Decoder $decoder
+     *  \param fpoirotte::Pssht::Wire::Decoder $decoder
      *      Decoder for the message.
      *
-     *  \param Clicky::Pssht::Transport $transport
+     *  \param fpoirotte::Pssht::Transport $transport
      *      Transport layer the message was received from.
      *
      *  \param array $context
@@ -33,8 +33,8 @@ interface HandlerInterface
      */
     public function handle(
         $msgType,
-        \Clicky\Pssht\Wire\Decoder $decoder,
-        \Clicky\Pssht\Transport $transport,
+        \fpoirotte\Pssht\Wire\Decoder $decoder,
+        \fpoirotte\Pssht\Transport $transport,
         array &$context
     );
 }

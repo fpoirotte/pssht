@@ -9,7 +9,7 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\MAC;
+namespace fpoirotte\Pssht\MAC;
 
 /**
  * Interface for MAC algorithms where the output
@@ -26,7 +26,7 @@ interface Base96Interface
      *
      *  \note
      *      The base class returned by this method must implement
-     *      the \\Clicky\\Pssht\\MACInterface interface.
+     *      the fpoirotte::Pssht::MACInterface interface.
      */
     public static function getBaseClass();
 }

@@ -9,12 +9,12 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\Messages;
+namespace fpoirotte\Pssht\Messages;
 
 /**
  * SSH_MSG_UNIMPLEMENTED message (RFC 4253).
  */
-class UNIMPLEMENTED implements \Clicky\Pssht\MessageInterface
+class UNIMPLEMENTED implements \fpoirotte\Pssht\MessageInterface
 {
     /// Sequence number for the unimplemented message.
     protected $sequenceNo;
@@ -40,13 +40,13 @@ class UNIMPLEMENTED implements \Clicky\Pssht\MessageInterface
         return 3;
     }
 
-    public function serialize(\Clicky\Pssht\Wire\Encoder $encoder)
+    public function serialize(\fpoirotte\Pssht\Wire\Encoder $encoder)
     {
         $encoder->encodeUint32($this->sequenceNo);
         return $this;
     }
 
-    public static function unserialize(\Clicky\Pssht\Wire\Decoder $decoder)
+    public static function unserialize(\fpoirotte\Pssht\Wire\Decoder $decoder)
     {
         return new static($decoder->decodeUint32());
     }

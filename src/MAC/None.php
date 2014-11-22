@@ -9,12 +9,12 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\MAC;
+namespace fpoirotte\Pssht\MAC;
 
 /**
  * Null MAC generation (= no MAC).
  */
-class None implements \Clicky\Pssht\MACInterface
+class None implements \fpoirotte\Pssht\MACInterface
 {
     public function __construct($key)
     {

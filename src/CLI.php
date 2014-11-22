@@ -32,10 +32,10 @@ function main()
     $logging    = \Plop::getInstance();
 
     // Elliptic curves
-    \Clicky\Pssht\ECC\Curve::initialize();
+    \fpoirotte\Pssht\ECC\Curve::initialize();
 
     // Patches
-    \Clicky\Pssht\Patches::apply();
+    \fpoirotte\Pssht\Patches::apply();
 
     // Sockets
     $sockets    = array('servers' => array(), 'clients' => array());
@@ -126,7 +126,7 @@ function main()
                     while ($clients[$id]->readMessage()) {
                         // Each message gets processed by readMessage().
                     }
-                } catch (\Clicky\Pssht\Messages\DISCONNECT $e) {
+                } catch (\fpoirotte\Pssht\Messages\DISCONNECT $e) {
                     $peer   = stream_socket_get_name($socket, true);
                     $logging->info(
                         '#%(id)d Client disconnected from %(peer)s',

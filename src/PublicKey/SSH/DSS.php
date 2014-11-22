@@ -9,13 +9,13 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\PublicKey\SSH;
+namespace fpoirotte\Pssht\PublicKey\SSH;
 
 /**
  * Public key using the Digital Signature Algorithm (DSA),
  * as used in the Digital Signature Standard (DSS).
  */
-class DSS implements \Clicky\Pssht\PublicKeyInterface
+class DSS implements \fpoirotte\Pssht\PublicKeyInterface
 {
     /// DER header for DSA.
     const DER_HEADER = "\x30\x20\x30\x0c\x06\x08\x2a\x86\x48\x86\xf7\x0d\x02\x05\x05\x00\x04\x10";
@@ -92,7 +92,7 @@ class DSS implements \Clicky\Pssht\PublicKeyInterface
 
     public static function loadPublic($b64)
     {
-        $decoder = new \Clicky\Pssht\Wire\Decoder();
+        $decoder = new \fpoirotte\Pssht\Wire\Decoder();
         $decoder->getBuffer()->push(base64_decode($b64));
         $type       = $decoder->decodeString();
         if ($type !== static::getName()) {
@@ -114,7 +114,7 @@ class DSS implements \Clicky\Pssht\PublicKeyInterface
         return 'ssh-dss';
     }
 
-    public function serialize(\Clicky\Pssht\Wire\Encoder $encoder)
+    public function serialize(\fpoirotte\Pssht\Wire\Encoder $encoder)
     {
         $encoder->encodeString(self::getName());
         $encoder->encodeMpint($this->p);

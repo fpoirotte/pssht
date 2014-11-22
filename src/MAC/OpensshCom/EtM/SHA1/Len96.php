@@ -9,14 +9,14 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\MAC\OpensshCom\EtM\SHA1;
+namespace fpoirotte\Pssht\MAC\OpensshCom\EtM\SHA1;
 
-use \Clicky\Pssht\MAC\OpensshCom\EtM\EtMInterface;
+use \fpoirotte\Pssht\MAC\OpensshCom\EtM\EtMInterface;
 
 /**
  * MAC generation using a truncated SHA1 hash in Encrypt-then-MAC mode.
  */
-class Len96 extends \Clicky\Pssht\MAC\SHA1\Len96 implements EtMInterface
+class Len96 extends \fpoirotte\Pssht\MAC\SHA1\Len96 implements EtMInterface
 {
     public static function getName()
     {

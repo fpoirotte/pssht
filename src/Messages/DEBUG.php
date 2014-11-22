@@ -9,12 +9,12 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\Messages;
+namespace fpoirotte\Pssht\Messages;
 
 /**
  * SSH_MSG_DEBUG message (RFC 4253).
  */
-class DEBUG implements \Clicky\Pssht\MessageInterface
+class DEBUG implements \fpoirotte\Pssht\MessageInterface
 {
     /// Whether to always display the message or not.
     protected $alwaysDisplay;
@@ -62,7 +62,7 @@ class DEBUG implements \Clicky\Pssht\MessageInterface
         return 4;
     }
 
-    public function serialize(\Clicky\Pssht\Wire\Encoder $encoder)
+    public function serialize(\fpoirotte\Pssht\Wire\Encoder $encoder)
     {
         $encoder->encodeBoolean($this->alwaysDisplay);
         $encoder->encodeString($this->message);
@@ -70,7 +70,7 @@ class DEBUG implements \Clicky\Pssht\MessageInterface
         return $this;
     }
 
-    public static function unserialize(\Clicky\Pssht\Wire\Decoder $decoder)
+    public static function unserialize(\fpoirotte\Pssht\Wire\Decoder $decoder)
     {
         return new static(
             $decoder->decodeBoolean(),

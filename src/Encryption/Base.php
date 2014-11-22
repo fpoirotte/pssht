@@ -9,11 +9,11 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\Encryption;
+namespace fpoirotte\Pssht\Encryption;
 
-use Clicky\Pssht\EncryptionInterface;
-use Clicky\Pssht\AvailabilityInterface;
-use Clicky\Pssht\Encryption\BaseInterface;
+use fpoirotte\Pssht\EncryptionInterface;
+use fpoirotte\Pssht\AvailabilityInterface;
+use fpoirotte\Pssht\Encryption\BaseInterface;
 
 /**
  * Abstract base for encryption ciphers.

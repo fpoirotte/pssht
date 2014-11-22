@@ -9,13 +9,13 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\PublicKey\ECDSA\SHA2;
+namespace fpoirotte\Pssht\PublicKey\ECDSA\SHA2;
 
 /**
  * Public key using the Elliptic Curve Digital Signature Algorithm (ECDSA)
  * with the NIST P-521 elliptic curve.
  */
-class NISTp521 extends \Clicky\Pssht\PublicKey\ECDSA\SHA2\Base
+class NISTp521 extends \fpoirotte\Pssht\PublicKey\ECDSA\SHA2\Base
 {
     public static function getHash()
     {

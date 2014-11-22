@@ -9,7 +9,7 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht;
+namespace fpoirotte\Pssht;
 
 /**
  * Interface for an authentication method.
@@ -39,10 +39,10 @@ interface AuthenticationInterface extends AlgorithmInterface
     /**
      * Check the contents of an authentication request.
      *
-     *  \param Clicky::Pssht::Messages::USERAUTH::REQUEST::Base $message
+     *  \param fpoirotte::Pssht::Messages::USERAUTH::REQUEST::Base $message
      *      Message to check.
      *
-     *  \param Clicky::Pssht::Transport $transport
+     *  \param fpoirotte::Pssht::Transport $transport
      *      Transport layer the message originated from.
      *
      *  \param array $context
@@ -54,18 +54,18 @@ interface AuthenticationInterface extends AlgorithmInterface
      *      or AuthenticationInterface::CHECK_IGNORE.
      */
     public function check(
-        \Clicky\Pssht\Messages\USERAUTH\REQUEST\Base $message,
-        \Clicky\Pssht\Transport $transport,
+        \fpoirotte\Pssht\Messages\USERAUTH\REQUEST\Base $message,
+        \fpoirotte\Pssht\Transport $transport,
         array &$context
     );
 
     /**
      * Handle an authentication request.
      *
-     *  \param Clicky::Pssht::Messages::USERAUTH::REQUEST::Base $message
+     *  \param fpoirotte::Pssht::Messages::USERAUTH::REQUEST::Base $message
      *      Authenticate request to handle.
      *
-     *  \param Clicky::Pssht::Transport $transport
+     *  \param fpoirotte::Pssht::Transport $transport
      *      Transport layer the message originated from.
      *
      *  \param array $context
@@ -77,8 +77,8 @@ interface AuthenticationInterface extends AlgorithmInterface
      *      or AuthenticationInterface::AUTH_REMOVE.
      */
     public function authenticate(
-        \Clicky\Pssht\Messages\USERAUTH\REQUEST\Base $message,
-        \Clicky\Pssht\Transport $transport,
+        \fpoirotte\Pssht\Messages\USERAUTH\REQUEST\Base $message,
+        \fpoirotte\Pssht\Transport $transport,
         array &$context
     );
 }

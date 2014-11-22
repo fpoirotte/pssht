@@ -9,12 +9,12 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\Encryption\CTR;
+namespace fpoirotte\Pssht\Encryption\CTR;
 
 /**
  * CAST-128 cipher in CTR mode
  * (OPTIONAL in RFC 4344).
  */
-class CAST128 extends \Clicky\Pssht\Encryption\CBC\CAST128
+class CAST128 extends \fpoirotte\Pssht\Encryption\CBC\CAST128
 {
 }

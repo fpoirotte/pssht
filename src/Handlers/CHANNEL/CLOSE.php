@@ -9,7 +9,7 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\Handlers\CHANNEL;
+namespace fpoirotte\Pssht\Handlers\CHANNEL;
 
 /**
  * Handler for SSH_MSG_CHANNEL_CLOSE messages.
@@ -19,13 +19,13 @@ class CLOSE extends Base
     // SSH_MSG_CHANNEL_CLOSE = 97
     public function handle(
         $msgType,
-        \Clicky\Pssht\Wire\Decoder $decoder,
-        \Clicky\Pssht\Transport $transport,
+        \fpoirotte\Pssht\Wire\Decoder $decoder,
+        \fpoirotte\Pssht\Transport $transport,
         array &$context
     ) {
-        $message = \Clicky\Pssht\Messages\CHANNEL\CLOSE::unserialize($decoder);
+        $message = \fpoirotte\Pssht\Messages\CHANNEL\CLOSE::unserialize($decoder);
         $channel = $message->getChannel();
-        $response = new \Clicky\Pssht\Messages\CHANNEL\CLOSE(
+        $response = new \fpoirotte\Pssht\Messages\CHANNEL\CLOSE(
             $this->connection->getChannel($channel)
         );
         $transport->writeMessage($response);

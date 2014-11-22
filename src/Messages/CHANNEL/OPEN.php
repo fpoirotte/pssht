@@ -9,7 +9,7 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\Messages\CHANNEL;
+namespace fpoirotte\Pssht\Messages\CHANNEL;
 
 /**
  * SSH_MSG_CHANNEL_OPEN message (RFC 4254).
@@ -53,7 +53,7 @@ class OPEN extends Base
         return 90;
     }
 
-    public function serialize(\Clicky\Pssht\Wire\Encoder $encoder)
+    public function serialize(\fpoirotte\Pssht\Wire\Encoder $encoder)
     {
         $encoder->encodeString($this->type);
         parent::serialize($encoder);
@@ -62,7 +62,7 @@ class OPEN extends Base
         return $this;
     }
 
-    public static function unserialize(\Clicky\Pssht\Wire\Decoder $decoder)
+    public static function unserialize(\fpoirotte\Pssht\Wire\Decoder $decoder)
     {
         return new static(
             $decoder->decodeString(),

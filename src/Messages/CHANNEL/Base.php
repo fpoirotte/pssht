@@ -9,12 +9,12 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\Messages\CHANNEL;
+namespace fpoirotte\Pssht\Messages\CHANNEL;
 
 /**
  * Abstract SSH_MSG_CHANNEL_* message (RFC 4254).
  */
-abstract class Base implements \Clicky\Pssht\MessageInterface
+abstract class Base implements \fpoirotte\Pssht\MessageInterface
 {
     /// Local channel identifier.
     protected $channel;
@@ -30,13 +30,13 @@ abstract class Base implements \Clicky\Pssht\MessageInterface
         $this->channel = $channel;
     }
 
-    public function serialize(\Clicky\Pssht\Wire\Encoder $encoder)
+    public function serialize(\fpoirotte\Pssht\Wire\Encoder $encoder)
     {
         $encoder->encodeUint32($this->channel);
         return $this;
     }
 
-    public static function unserialize(\Clicky\Pssht\Wire\Decoder $decoder)
+    public static function unserialize(\fpoirotte\Pssht\Wire\Decoder $decoder)
     {
         return new static($decoder->decodeUint32());
     }

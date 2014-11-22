@@ -9,7 +9,7 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\ECC;
+namespace fpoirotte\Pssht\ECC;
 
 /**
  * Representation of a point on an elliptic curve.
@@ -75,7 +75,7 @@ class Point implements \ArrayAccess
         throw new \InvalidArgumentException();
     }
 
-    public function serialize(\Clicky\Pssht\ECC\Curve $curve)
+    public function serialize(\fpoirotte\Pssht\ECC\Curve $curve)
     {
         if ($this->coordinates['x'] === null ||
             $this->coordinates['y'] === null) {
@@ -94,7 +94,7 @@ class Point implements \ArrayAccess
         return "\x04" . $x . $y;
     }
 
-    public static function unserialize(\Clicky\Pssht\ECC\Curve $curve, $s)
+    public static function unserialize(\fpoirotte\Pssht\ECC\Curve $curve, $s)
     {
         $len = strlen($s);
 
@@ -130,9 +130,9 @@ class Point implements \ArrayAccess
     }
 
     public static function add(
-        \Clicky\Pssht\ECC\Curve $curve,
-        \Clicky\Pssht\ECC\Point $P,
-        \Clicky\Pssht\ECC\Point $Q
+        \fpoirotte\Pssht\ECC\Curve $curve,
+        \fpoirotte\Pssht\ECC\Point $P,
+        \fpoirotte\Pssht\ECC\Point $Q
     ) {
         $mod = $curve->getModulus();
         $xP = $P->coordinates['x'];
@@ -159,7 +159,7 @@ class Point implements \ArrayAccess
         );
     }
 
-    public function multiply(\Clicky\Pssht\ECC\Curve $curve, $n)
+    public function multiply(\fpoirotte\Pssht\ECC\Curve $curve, $n)
     {
         if (is_int($n) || is_string($n)) {
             $n = gmp_init($n);

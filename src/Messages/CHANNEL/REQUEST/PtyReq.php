@@ -9,13 +9,13 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\Messages\CHANNEL\REQUEST;
+namespace fpoirotte\Pssht\Messages\CHANNEL\REQUEST;
 
 /**
  * SSH_MSG_CHANNEL_REQUEST message (RFC 4254)
  * for the "pty-req" request type.
  */
-class PtyReq extends \Clicky\Pssht\Messages\CHANNEL\REQUEST\Base
+class PtyReq extends \fpoirotte\Pssht\Messages\CHANNEL\REQUEST\Base
 {
     /// Terminal to emulate.
     protected $term;
@@ -79,7 +79,7 @@ class PtyReq extends \Clicky\Pssht\Messages\CHANNEL\REQUEST\Base
         $this->modes            = $modes;
     }
 
-    public function serialize(\Clicky\Pssht\Wire\Encoder $encoder)
+    public function serialize(\fpoirotte\Pssht\Wire\Encoder $encoder)
     {
         parent::serialize($encoder);
         $encoder->encodeString($this->term);
@@ -91,7 +91,7 @@ class PtyReq extends \Clicky\Pssht\Messages\CHANNEL\REQUEST\Base
         return $this;
     }
 
-    protected static function unserializeSub(\Clicky\Pssht\Wire\Decoder $decoder)
+    protected static function unserializeSub(\fpoirotte\Pssht\Wire\Decoder $decoder)
     {
         return array(
             $decoder->decodeString(),

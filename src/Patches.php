@@ -8,7 +8,7 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht;
+namespace fpoirotte\Pssht;
 
 /**
  * Runtime "patches" for PHP.

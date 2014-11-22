@@ -9,7 +9,7 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht;
+namespace fpoirotte\Pssht;
 
 /**
  * Interface for a public key algorithm.
@@ -47,13 +47,13 @@ interface PublicKeyInterface extends AlgorithmInterface
     /**
      * Serialize a key.
      *
-     *  \param Clicky::Pssht::Wire::Encoder $encoder
+     *  \param fpoirotte::Pssht::Wire::Encoder $encoder
      *      Encoder to use to serialize the key.
      *
      *  \retval string
      *      Serialized representation of the key.
      */
-    public function serialize(\Clicky\Pssht\Wire\Encoder $encoder);
+    public function serialize(\fpoirotte\Pssht\Wire\Encoder $encoder);
 
     /**
      * Sign a message using the key.

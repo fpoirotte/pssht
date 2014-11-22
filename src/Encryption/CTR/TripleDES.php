@@ -9,12 +9,12 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\Encryption\CTR;
+namespace fpoirotte\Pssht\Encryption\CTR;
 
 /**
  * 3DES cipher in CTR mode
  * (RECOMMENDED in RFC 4344).
  */
-class TripleDES extends \Clicky\Pssht\Encryption\CBC\TripleDES
+class TripleDES extends \fpoirotte\Pssht\Encryption\CBC\TripleDES
 {
 }

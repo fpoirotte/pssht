@@ -9,12 +9,12 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\Messages\USERAUTH;
+namespace fpoirotte\Pssht\Messages\USERAUTH;
 
 /**
  * SSH_MSG_USERAUTH_BANNER message (RFC 4252).
  */
-class BANNER implements \Clicky\Pssht\MessageInterface
+class BANNER implements \fpoirotte\Pssht\MessageInterface
 {
     /// Banner to display.
     protected $message;
@@ -51,14 +51,14 @@ class BANNER implements \Clicky\Pssht\MessageInterface
         return 53;
     }
 
-    public function serialize(\Clicky\Pssht\Wire\Encoder $encoder)
+    public function serialize(\fpoirotte\Pssht\Wire\Encoder $encoder)
     {
         $encoder->encodeString($this->message);
         $encoder->encodeString($this->language);
         return $this;
     }
 
-    public static function unserialize(\Clicky\Pssht\Wire\Decoder $decoder)
+    public static function unserialize(\fpoirotte\Pssht\Wire\Decoder $decoder)
     {
         return new static(
             $decoder->decodeString(),

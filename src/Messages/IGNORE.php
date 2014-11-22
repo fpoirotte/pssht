@@ -9,12 +9,12 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\Messages;
+namespace fpoirotte\Pssht\Messages;
 
 /**
  * SSH_MSG_IGNORE message (RFC 4253).
  */
-class IGNORE implements \Clicky\Pssht\MessageInterface
+class IGNORE implements \fpoirotte\Pssht\MessageInterface
 {
     /// Payload for the ignore message.
     protected $data;
@@ -39,13 +39,13 @@ class IGNORE implements \Clicky\Pssht\MessageInterface
         return 2;
     }
 
-    public function serialize(\Clicky\Pssht\Wire\Encoder $encoder)
+    public function serialize(\fpoirotte\Pssht\Wire\Encoder $encoder)
     {
         $encoder->encodeString($this->data);
         return $this;
     }
 
-    public static function unserialize(\Clicky\Pssht\Wire\Decoder $decoder)
+    public static function unserialize(\fpoirotte\Pssht\Wire\Decoder $decoder)
     {
         return new static($decoder->decodeString());
     }

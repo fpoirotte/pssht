@@ -9,12 +9,12 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\Encryption\CTR;
+namespace fpoirotte\Pssht\Encryption\CTR;
 
 /**
  * Serpent cipher in CTR mode with a 256-bit key
  * (OPTIONAL in RFC 4344).
  */
-class Serpent256 extends \Clicky\Pssht\Encryption\CBC\Serpent256
+class Serpent256 extends \fpoirotte\Pssht\Encryption\CBC\Serpent256
 {
 }

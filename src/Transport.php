@@ -9,7 +9,7 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht;
+namespace fpoirotte\Pssht;
 
 /**
  * Transport layer for the SSH protocol (RFC 4253).
@@ -73,14 +73,14 @@ class Transport
      *                      private key, in "file:///path/to/key.pem" format
      *          -   "passphrase": (optional) passphrase for the key
      *
-     *  \param Clicky::Pssht::Handlers::SERVICE::REQUEST $authMethods
+     *  \param fpoirotte::Pssht::Handlers::SERVICE::REQUEST $authMethods
      *      Allowed authentication methods.
      *
-     *  \param Clicky::Pssht::Wire::Encoder $encoder
+     *  \param fpoirotte::Pssht::Wire::Encoder $encoder
      *      (optional) Encoder to use when sending SSH messages.
      *      If omitted, a new encoder is automatically created.
      *
-     *  \param Clicky::Pssht::Wire::Decoder $decoder
+     *  \param fpoirotte::Pssht::Wire::Decoder $decoder
      *      (optional) Decoder to use when sending SSH messages.
      *      If omitted, a new decoder is automatically created.
      *
@@ -93,18 +93,18 @@ class Transport
      */
     public function __construct(
         array $serverKeys,
-        \Clicky\Pssht\Handlers\SERVICE\REQUEST $authMethods,
-        \Clicky\Pssht\Wire\Encoder $encoder = null,
-        \Clicky\Pssht\Wire\Decoder $decoder = null
+        \fpoirotte\Pssht\Handlers\SERVICE\REQUEST $authMethods,
+        \fpoirotte\Pssht\Wire\Encoder $encoder = null,
+        \fpoirotte\Pssht\Wire\Decoder $decoder = null
     ) {
         if ($encoder === null) {
-            $encoder = new \Clicky\Pssht\Wire\Encoder();
+            $encoder = new \fpoirotte\Pssht\Wire\Encoder();
         }
         if ($decoder === null) {
-            $decoder = new \Clicky\Pssht\Wire\Decoder();
+            $decoder = new \fpoirotte\Pssht\Wire\Decoder();
         }
 
-        $algos  = \Clicky\Pssht\Algorithms::factory();
+        $algos  = \fpoirotte\Pssht\Algorithms::factory();
         $keys   = array();
         foreach ($serverKeys as $keyType => $params) {
             $cls = $algos->getClass('PublicKey', $keyType);
@@ -131,43 +131,43 @@ class Transport
         $this->encoder      = $encoder;
         $this->decoder      = $decoder;
 
-        $this->compressor   = new \Clicky\Pssht\Compression\None(
-            \Clicky\Pssht\CompressionInterface::MODE_COMPRESS
+        $this->compressor   = new \fpoirotte\Pssht\Compression\None(
+            \fpoirotte\Pssht\CompressionInterface::MODE_COMPRESS
         );
 
-        $this->uncompressor = new \Clicky\Pssht\Compression\None(
-            \Clicky\Pssht\CompressionInterface::MODE_UNCOMPRESS
+        $this->uncompressor = new \fpoirotte\Pssht\Compression\None(
+            \fpoirotte\Pssht\CompressionInterface::MODE_UNCOMPRESS
         );
 
-        $this->encryptor    = new \Clicky\Pssht\Encryption\None(null, null);
-        $this->decryptor    = new \Clicky\Pssht\Encryption\None(null, null);
+        $this->encryptor    = new \fpoirotte\Pssht\Encryption\None(null, null);
+        $this->decryptor    = new \fpoirotte\Pssht\Encryption\None(null, null);
 
-        $this->inMAC        = new \Clicky\Pssht\MAC\None(null);
-        $this->outMAC       = new \Clicky\Pssht\MAC\None(null);
+        $this->inMAC        = new \fpoirotte\Pssht\MAC\None(null);
+        $this->outMAC       = new \fpoirotte\Pssht\MAC\None(null);
 
         $this->handlers     = array(
-            \Clicky\Pssht\Messages\DISCONNECT::getMessageId() =>
-                new \Clicky\Pssht\Handlers\DISCONNECT(),
+            \fpoirotte\Pssht\Messages\DISCONNECT::getMessageId() =>
+                new \fpoirotte\Pssht\Handlers\DISCONNECT(),
 
-            \Clicky\Pssht\Messages\IGNORE::getMessageId() =>
-                new \Clicky\Pssht\Handlers\IGNORE(),
+            \fpoirotte\Pssht\Messages\IGNORE::getMessageId() =>
+                new \fpoirotte\Pssht\Handlers\IGNORE(),
 
-            \Clicky\Pssht\Messages\DEBUG::getMessageId() =>
-                new \Clicky\Pssht\Handlers\DEBUG(),
+            \fpoirotte\Pssht\Messages\DEBUG::getMessageId() =>
+                new \fpoirotte\Pssht\Handlers\DEBUG(),
 
-            \Clicky\Pssht\Messages\SERVICE\REQUEST::getMessageId() =>
+            \fpoirotte\Pssht\Messages\SERVICE\REQUEST::getMessageId() =>
                 $authMethods,
 
-            \Clicky\Pssht\Messages\KEXINIT::getMessageId() =>
-                new \Clicky\Pssht\Handlers\KEXINIT(),
+            \fpoirotte\Pssht\Messages\KEXINIT::getMessageId() =>
+                new \fpoirotte\Pssht\Handlers\KEXINIT(),
 
-            \Clicky\Pssht\Messages\NEWKEYS::getMessageId() =>
-                new \Clicky\Pssht\Handlers\NEWKEYS(),
+            \fpoirotte\Pssht\Messages\NEWKEYS::getMessageId() =>
+                new \fpoirotte\Pssht\Handlers\NEWKEYS(),
 
-            \Clicky\Pssht\Messages\KEXDH\INIT::getMessageId() =>
-                new \Clicky\Pssht\Handlers\KEXDH\INIT(),
+            \fpoirotte\Pssht\Messages\KEXDH\INIT::getMessageId() =>
+                new \fpoirotte\Pssht\Handlers\KEXDH\INIT(),
 
-            256 => new \Clicky\Pssht\Handlers\InitialState(),
+            256 => new \fpoirotte\Pssht\Handlers\InitialState(),
         );
 
         $ident = "SSH-2.0-pssht_1.0.x_dev";
@@ -224,7 +224,7 @@ class Transport
     /**
      * Get the object used to encode outgoing packets.
      *
-     *  \retval Clicky::Pssht::Wire::Encoder
+     *  \retval fpoirotte::Pssht::Wire::Encoder
      *      Encoder used for sending SSH messages.
      */
     public function getEncoder()
@@ -235,7 +235,7 @@ class Transport
     /**
      * Get the object used to decode incoming packets.
      *
-     *  \retval Clicky::Pssht::Wire::Decoder
+     *  \retval fpoirotte::Pssht::Wire::Decoder
      *      Decoder used for receiving SSH messages.
      */
     public function getDecoder()
@@ -246,7 +246,7 @@ class Transport
     /**
      * Get the object used to compress outgoing packets.
      *
-     *  \retval Clicky::Pssht::CompressionInterface
+     *  \retval fpoirotte::Pssht::CompressionInterface
      *      Outgoing packets' compressor.
      */
     public function getCompressor()
@@ -257,15 +257,15 @@ class Transport
     /**
      * Set the object used to compress outgoing packets.
      *
-     *  \param Clicky::Pssht::CompressionInterface $compressor
+     *  \param fpoirotte::Pssht::CompressionInterface $compressor
      *      Outgoing packets' compressor.
      *
      *  \retval Transport
      *      Return this transport layer.
      */
-    public function setCompressor(\Clicky\Pssht\CompressionInterface $compressor)
+    public function setCompressor(\fpoirotte\Pssht\CompressionInterface $compressor)
     {
-        if ($compressor->getMode() !== \Clicky\Pssht\CompressionInterface::MODE_COMPRESS) {
+        if ($compressor->getMode() !== \fpoirotte\Pssht\CompressionInterface::MODE_COMPRESS) {
             throw new \InvalidArgumentException();
         }
 
@@ -276,7 +276,7 @@ class Transport
     /**
      * Get the object used to uncompress incoming packets.
      *
-     *  \retval Clicky::Pssht::CompressionInterface
+     *  \retval fpoirotte::Pssht::CompressionInterface
      *      Incoming packets' uncompressor.
      */
     public function getUncompressor()
@@ -287,15 +287,15 @@ class Transport
     /**
      * Set the object used to uncompress incoming packets.
      *
-     *  \param Clicky::Pssht::CompressionInterface $uncompressor
+     *  \param fpoirotte::Pssht::CompressionInterface $uncompressor
      *      Incoming packets' uncompressor.
      *
      *  \retval Transport
      *      Return this transport layer.
      */
-    public function setUncompressor(\Clicky\Pssht\CompressionInterface $uncompressor)
+    public function setUncompressor(\fpoirotte\Pssht\CompressionInterface $uncompressor)
     {
-        if ($uncompressor->getMode() !== \Clicky\Pssht\CompressionInterface::MODE_UNCOMPRESS) {
+        if ($uncompressor->getMode() !== \fpoirotte\Pssht\CompressionInterface::MODE_UNCOMPRESS) {
             throw new \InvalidArgumentException();
         }
 
@@ -306,7 +306,7 @@ class Transport
     /**
      * Get the object used to encrypt outgoing packets.
      *
-     *  \retval Clicky::Pssht::EncryptionInterface
+     *  \retval fpoirotte::Pssht::EncryptionInterface
      *      Outgoing packets' encryptor.
      */
     public function getEncryptor()
@@ -317,13 +317,13 @@ class Transport
     /**
      * Set the object used to encrypt outgoing packets.
      *
-     *  \param Clicky::Pssht::EncryptionInterface $encryptor
+     *  \param fpoirotte::Pssht::EncryptionInterface $encryptor
      *      Outgoing packets' encryptor.
      *
      *  \retval Transport
      *      Return this transport layer.
      */
-    public function setEncryptor(\Clicky\Pssht\EncryptionInterface $encryptor)
+    public function setEncryptor(\fpoirotte\Pssht\EncryptionInterface $encryptor)
     {
         $this->encryptor = $encryptor;
         return $this;
@@ -332,7 +332,7 @@ class Transport
     /**
      * Get the object used to decrypt incoming packets.
      *
-     *  \retval Clicky::Pssht::EncryptionInterface
+     *  \retval fpoirotte::Pssht::EncryptionInterface
      *      Incoming packets' decryptor.
      */
     public function getDecryptor()
@@ -343,13 +343,13 @@ class Transport
     /**
      * Set the object used to decrypt incoming packets.
      *
-     *  \param Clicky::Pssht::EncryptionInterface $decryptor
+     *  \param fpoirotte::Pssht::EncryptionInterface $decryptor
      *      Incoming packets' decryptor.
      *
      *  \retval Transport
      *      Return this transport layer.
      */
-    public function setDecryptor(\Clicky\Pssht\EncryptionInterface $decryptor)
+    public function setDecryptor(\fpoirotte\Pssht\EncryptionInterface $decryptor)
     {
         $this->decryptor = $decryptor;
         return $this;
@@ -358,7 +358,7 @@ class Transport
     /**
      * Get the object used to check integrity of incoming packets.
      *
-     *  \retval Clicky::Pssht::MACInterface
+     *  \retval fpoirotte::Pssht::MACInterface
      *      Incoming packets' MAC checker.
      */
     public function getInputMAC()
@@ -369,13 +369,13 @@ class Transport
     /**
      * Set the object used to check integrity of incoming packets.
      *
-     *  \param Clicky::Pssht::MACInterface $inputMAC
+     *  \param fpoirotte::Pssht::MACInterface $inputMAC
      *      Incoming packets' MAC checker.
      *
      *  \retval Transport
      *      Return this transport layer.
      */
-    public function setInputMAC(\Clicky\Pssht\MACInterface $inputMAC)
+    public function setInputMAC(\fpoirotte\Pssht\MACInterface $inputMAC)
     {
         $this->inMAC = $inputMAC;
         return $this;
@@ -384,7 +384,7 @@ class Transport
     /**
      * Get the object used to check integrity of outgoing packets.
      *
-     *  \retval Clicky::Pssht::MACInterface
+     *  \retval fpoirotte::Pssht::MACInterface
      *      Outgoing packets' MAC generator.
      */
     public function getOutputMAC()
@@ -395,13 +395,13 @@ class Transport
     /**
      * Set the object used to generate MACs for outgoing packets.
      *
-     *  \param Clicky::Pssht::MACInterface $outputMAC
+     *  \param fpoirotte::Pssht::MACInterface $outputMAC
      *      Outgoing packets' MAC generator.
      *
      *  \retval Transport
      *      Return this transport layer.
      */
-    public function setOutputMAC(\Clicky\Pssht\MACInterface $outputMAC)
+    public function setOutputMAC(\fpoirotte\Pssht\MACInterface $outputMAC)
     {
         $this->outMAC = $outputMAC;
         return $this;
@@ -472,7 +472,7 @@ class Transport
      *  \param int $type
      *      Message type.
      *
-     *  \retval Clicky::Pssht::HandlerInterface
+     *  \retval fpoirottefpoirotte::Pssht::HandlerInterface
      *      Handler associated with the given message type.
      *
      *  \retval null
@@ -497,7 +497,7 @@ class Transport
      *  \param int $type
      *      Message type.
      *
-     *  \param Clicky::Pssht::HandlerInterface $handler
+     *  \param fpoirotte::Pssht::HandlerInterface $handler
      *      Handler to register for that message type.
      *
      *  \retval Transport
@@ -507,7 +507,7 @@ class Transport
      *      The given handler will overwrite any previously
      *      registered handler for that message type.
      */
-    public function setHandler($type, \Clicky\Pssht\HandlerInterface $handler)
+    public function setHandler($type, \fpoirotte\Pssht\HandlerInterface $handler)
     {
         if (!is_int($type) || $type < 0 || $type > 255) {
             throw new \InvalidArgumentException();
@@ -523,13 +523,13 @@ class Transport
      *  \param int $type
      *      Message type.
      *
-     *  \param Clicky::Pssht::HandlerInterface $handler
+     *  \param fpoirotte::Pssht::HandlerInterface $handler
      *      Handler to unregister for that message type.
      *
      *  \retval Transport
      *      Returns this transport layer.
      */
-    public function unsetHandler($type, \Clicky\Pssht\HandlerInterface $handler)
+    public function unsetHandler($type, \fpoirotte\Pssht\HandlerInterface $handler)
     {
         if (!is_int($type) || $type < 0 || $type > 255) {
             throw new \InvalidArgumentException();
@@ -544,18 +544,18 @@ class Transport
     /**
      * Write an SSH message into the output buffer.
      *
-     *  \param Clicky::Pssht::MessageInterface $message
+     *  \param fpoirotte::Pssht::MessageInterface $message
      *      Message to write into the output buffer.
      *
      *  \retval Transport
      *      Returns this transport layer.
      */
-    public function writeMessage(\Clicky\Pssht\MessageInterface $message)
+    public function writeMessage(\fpoirotte\Pssht\MessageInterface $message)
     {
         $logging = \Plop::getInstance();
 
         // Serialize the message.
-        $encoder    = new \Clicky\Pssht\Wire\Encoder();
+        $encoder    = new \fpoirotte\Pssht\Wire\Encoder();
         $encoder->encodeBytes(chr($message::getMessageId()));
         $message->serialize($encoder);
         $payload    = $encoder->getBuffer()->get(0);
@@ -569,7 +569,7 @@ class Transport
         // Compute padding requirements.
         // See http://api.libssh.org/rfc/PROTOCOL
         // for more information on EtM (Encrypt-then-MAC).
-        if ($this->outMAC instanceof \Clicky\Pssht\MAC\OpensshCom\EtM\EtMInterface) {
+        if ($this->outMAC instanceof \fpoirotte\Pssht\MAC\OpensshCom\EtM\EtMInterface) {
             $padSize    = $blockSize - ((1 + $size) % $blockSize);
         } else {
             $padSize    = $blockSize - ((1 + 4 + $size) % $blockSize);
@@ -583,7 +583,7 @@ class Transport
         // will be encrypted, except possibly for the packet
         // length (see below).
         $encoder->encodeUint32(1 + $size + $padSize);
-        if ($this->outMAC instanceof \Clicky\Pssht\MAC\OpensshCom\EtM\EtMInterface) {
+        if ($this->outMAC instanceof \fpoirotte\Pssht\MAC\OpensshCom\EtM\EtMInterface) {
             // Send the packet length in plaintext.
             $encSize = $encoder->getBuffer()->get(0);
             $this->encoder->encodeBytes($encSize);
@@ -595,7 +595,7 @@ class Transport
         $encrypted  = $this->encryptor->encrypt($packet);
 
         // Compute the MAC.
-        if ($this->outMAC instanceof \Clicky\Pssht\MAC\OpensshCom\EtM\EtMInterface) {
+        if ($this->outMAC instanceof \fpoirotte\Pssht\MAC\OpensshCom\EtM\EtMInterface) {
             $mac = $this->outMAC->compute(pack('N', $this->outSeqNo) . $encSize . $encrypted);
         } else {
             $mac = $this->outMAC->compute(pack('N', $this->outSeqNo) . $packet);
@@ -654,7 +654,7 @@ class Transport
 
         // See http://api.libssh.org/rfc/PROTOCOL
         // for more information on EtM (Encrypt-then-MAC).
-        if ($this->inMAC instanceof \Clicky\Pssht\MAC\OpensshCom\EtM\EtMInterface) {
+        if ($this->inMAC instanceof \fpoirotte\Pssht\MAC\OpensshCom\EtM\EtMInterface) {
             $firstRead  = 4;
             $encPayload = $this->decoder->getBuffer()->get(4);
             if ($encPayload === null) {
@@ -668,12 +668,12 @@ class Transport
             }
             $unencrypted = $this->decryptor->decrypt($encPayload);
         }
-        $buffer         = new \Clicky\Pssht\Buffer($unencrypted);
-        $decoder        = new \Clicky\Pssht\Wire\Decoder($buffer);
+        $buffer         = new \fpoirotte\Pssht\Buffer($unencrypted);
+        $decoder        = new \fpoirotte\Pssht\Wire\Decoder($buffer);
         $packetLength   = $decoder->decodeUint32();
 
         // Read the rest of the message.
-        if ($this->inMAC instanceof \Clicky\Pssht\MAC\OpensshCom\EtM\EtMInterface) {
+        if ($this->inMAC instanceof \fpoirotte\Pssht\MAC\OpensshCom\EtM\EtMInterface) {
             $toRead = $packetLength;
         } else {
             $toRead         =
@@ -715,7 +715,7 @@ class Transport
                 return false;
             }
 
-            if ($this->inMAC instanceof \Clicky\Pssht\MAC\OpensshCom\EtM\EtMInterface) {
+            if ($this->inMAC instanceof \fpoirotte\Pssht\MAC\OpensshCom\EtM\EtMInterface) {
                 // $encPayload actually contains packet length (in plaintext).
                 $macData = $encPayload . $encPayload2;
             } else {
@@ -739,7 +739,7 @@ class Transport
         }
 
         $payload    = $this->uncompressor->update($payload);
-        $decoder    = new \Clicky\Pssht\Wire\Decoder(new \Clicky\Pssht\Buffer($payload));
+        $decoder    = new \fpoirotte\Pssht\Wire\Decoder(new \fpoirotte\Pssht\Buffer($payload));
         $msgType    = ord($decoder->decodeBytes(1));
         $logging->debug('Received payload: %s', array(\escape($payload)));
 
@@ -755,7 +755,7 @@ class Transport
             );
             try {
                 $res = $handler->handle($msgType, $decoder, $this, $this->context);
-            } catch (\Clicky\Pssht\Messages\DISCONNECT $e) {
+            } catch (\fpoirotte\Pssht\Messages\DISCONNECT $e) {
                 if ($e->getCode() !== 0) {
                     $this->writeMessage($e);
                 }
@@ -763,7 +763,7 @@ class Transport
             }
         } else {
             $logging->warn('Unimplemented message type (%d)', array($msgType));
-            $response = new \Clicky\Pssht\Messages\UNIMPLEMENTED($this->inSeqNo);
+            $response = new \fpoirotte\Pssht\Messages\UNIMPLEMENTED($this->inSeqNo);
             $this->writeMessage($response);
         }
 

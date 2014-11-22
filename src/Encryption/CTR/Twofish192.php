@@ -9,12 +9,12 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\Encryption\CTR;
+namespace fpoirotte\Pssht\Encryption\CTR;
 
 /**
  * Twofish cipher in CTR mode with a 192-bit key
  * (OPTIONAL in RFC 4344).
  */
-class Twofish192 extends \Clicky\Pssht\Encryption\CBC\Twofish192
+class Twofish192 extends \fpoirotte\Pssht\Encryption\CBC\Twofish192
 {
 }

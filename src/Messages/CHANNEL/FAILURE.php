@@ -9,7 +9,7 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\Messages\CHANNEL;
+namespace fpoirotte\Pssht\Messages\CHANNEL;
 
 /**
  * SSH_MSG_CHANNEL_FAILURE message (RFC 4254).

@@ -9,12 +9,12 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\Messages\USERAUTH;
+namespace fpoirotte\Pssht\Messages\USERAUTH;
 
 /**
  * SSH_MSG_USERAUTH_SUCCESS message (RFC 4252).
  */
-class SUCCESS extends \Clicky\Pssht\Messages\Base
+class SUCCESS extends \fpoirotte\Pssht\Messages\Base
 {
     public static function getMessageId()
     {

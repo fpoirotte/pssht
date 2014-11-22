@@ -9,7 +9,7 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\MAC\OpensshCom\EtM;
+namespace fpoirotte\Pssht\MAC\OpensshCom\EtM;
 
 /**
  * Interface for Encrypt-then-MAC mode.

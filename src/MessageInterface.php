@@ -9,7 +9,7 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht;
+namespace fpoirotte\Pssht;
 
 /**
  * Interface for an SSH message.
@@ -27,22 +27,22 @@ interface MessageInterface
     /**
      * Serialize the message.
      *
-     *  \param Clicky::Pssht::Wire::Encoder $encoder
+     *  \param fpoirotte::Pssht::Wire::Encoder $encoder
      *      Encoder to use to perform serialization.
      *
      *  \retval MessageInterface
      *      Returns this message.
      */
-    public function serialize(\Clicky\Pssht\Wire\Encoder $encoder);
+    public function serialize(\fpoirotte\Pssht\Wire\Encoder $encoder);
 
     /**
      * Unserialize some data into a message.
      *
-     *  \param Clicky::Pssht::Wire::Decoder $decoder
+     *  \param fpoirotte::Pssht::Wire::Decoder $decoder
      *      Decoder to use to perform unserialization.
      *
      *  \retval MessageInterface
      *      Unserialized message.
      */
-    public static function unserialize(\Clicky\Pssht\Wire\Decoder $decoder);
+    public static function unserialize(\fpoirotte\Pssht\Wire\Decoder $decoder);
 }

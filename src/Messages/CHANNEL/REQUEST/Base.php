@@ -9,12 +9,12 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\Messages\CHANNEL\REQUEST;
+namespace fpoirotte\Pssht\Messages\CHANNEL\REQUEST;
 
 /**
  * Abstract SSH_MSG_CHANNEL_REQUEST message (RFC 4254).
  */
-abstract class Base extends \Clicky\Pssht\Messages\CHANNEL\Base
+abstract class Base extends \fpoirotte\Pssht\Messages\CHANNEL\Base
 {
     /// Message type.
     protected $type;
@@ -24,7 +24,7 @@ abstract class Base extends \Clicky\Pssht\Messages\CHANNEL\Base
 
 
     /**
-     *  \copydetails Clicky::Pssht::Messages::CHANNEL::Base::__construct
+     *  \copydetails fpoirotte::Pssht::Messages::CHANNEL::Base::__construct
      *
      *  \param string $type
      *      Message type.
@@ -53,7 +53,7 @@ abstract class Base extends \Clicky\Pssht\Messages\CHANNEL\Base
         return 98;
     }
 
-    public function serialize(\Clicky\Pssht\Wire\Encoder $encoder)
+    public function serialize(\fpoirotte\Pssht\Wire\Encoder $encoder)
     {
         parent::serialize($encoder);
         $encoder->encodeString($this->type);
@@ -64,7 +64,7 @@ abstract class Base extends \Clicky\Pssht\Messages\CHANNEL\Base
     /**
      * Unserialize the sub-message.
      *
-     *  \param Clicky::Pssht::Wire::Decoder $decoder
+     *  \param fpoirotte::Pssht::Wire::Decoder $decoder
      *      Decoder to use during unserialization.
      *
      *  \retval array
@@ -77,12 +77,12 @@ abstract class Base extends \Clicky\Pssht\Messages\CHANNEL\Base
      *
      *  @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    protected static function unserializeSub(\Clicky\Pssht\Wire\Decoder $decoder)
+    protected static function unserializeSub(\fpoirotte\Pssht\Wire\Decoder $decoder)
     {
         throw new \RuntimeException();
     }
 
-    final public static function unserialize(\Clicky\Pssht\Wire\Decoder $decoder)
+    final public static function unserialize(\fpoirotte\Pssht\Wire\Decoder $decoder)
     {
         $reflector  = new \ReflectionClass(get_called_class());
         $args       = array_merge(

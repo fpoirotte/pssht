@@ -9,7 +9,7 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht;
+namespace fpoirotte\Pssht;
 
 /**
  * A singleton that gives access to supported algorithms.
@@ -31,11 +31,11 @@ class Algorithms
     private function __construct()
     {
         $this->interfaces = array(
-            'MAC'           => '\\Clicky\\Pssht\\MACInterface',
-            'Compression'   => '\\Clicky\\Pssht\\CompressionInterface',
-            'PublicKey'     => '\\Clicky\\Pssht\\PublicKeyInterface',
-            'KEX'           => '\\Clicky\\Pssht\\KEXInterface',
-            'Encryption'    => '\\Clicky\\Pssht\\EncryptionInterface',
+            'MAC'           => '\\fpoirotte\\Pssht\\MACInterface',
+            'Compression'   => '\\fpoirotte\\Pssht\\CompressionInterface',
+            'PublicKey'     => '\\fpoirotte\\Pssht\\PublicKeyInterface',
+            'KEX'           => '\\fpoirotte\\Pssht\\KEXInterface',
+            'Encryption'    => '\\fpoirotte\\Pssht\\EncryptionInterface',
         );
 
         $this->algos = array(
@@ -129,7 +129,7 @@ class Algorithms
         }
 
         // Non-existing classes.
-        $class = "\\Clicky\\Pssht\\$type$name";
+        $class = "\\fpoirotte\\Pssht\\$type$name";
         if (!class_exists($class)) {
             return null;
         }
@@ -142,7 +142,7 @@ class Algorithms
 
         // Classes that implement AvailabilityInterface
         // where the algorithm is not currently available.
-        $iface = '\\Clicky\\Pssht\\AvailabilityInterface';
+        $iface = '\\fpoirotte\\Pssht\\AvailabilityInterface';
         if ($reflector->implementsInterface($iface) && !$class::isAvailable()) {
             return null;
         }

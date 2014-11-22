@@ -9,16 +9,16 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht;
+namespace fpoirotte\Pssht;
 
-use Clicky\Pssht\Messages\USERAUTH\REQUEST;
-use Clicky\Pssht\Wire\Encoder;
-use Clicky\Pssht\Wire\Decoder;
+use fpoirotte\Pssht\Messages\USERAUTH\REQUEST;
+use fpoirotte\Pssht\Wire\Encoder;
+use fpoirotte\Pssht\Wire\Decoder;
 
 /**
  * Connection layer for the SSH protocol (RFC 4254).
  */
-class Connection implements \Clicky\Pssht\HandlerInterface
+class Connection implements \fpoirotte\Pssht\HandlerInterface
 {
     /// Opened SSH channels.
     protected $channels;
@@ -26,26 +26,26 @@ class Connection implements \Clicky\Pssht\HandlerInterface
     /**
      * Construct a new SSH connection layer.
      *
-     *  \param Clicky::Pssht::Transport $transport
+     *  \param fpoirotte::Pssht::Transport $transport
      *      SSH transport layer.
      */
     public function __construct(
-        \Clicky\Pssht\Transport $transport
+        \fpoirotte\Pssht\Transport $transport
     ) {
         $this->channels     = array();
 
         $transport->setHandler(
             // 90
-            \Clicky\Pssht\Messages\CHANNEL\OPEN::getMessageId(),
-            new \Clicky\Pssht\Handlers\CHANNEL\OPEN($this)
+            \fpoirotte\Pssht\Messages\CHANNEL\OPEN::getMessageId(),
+            new \fpoirotte\Pssht\Handlers\CHANNEL\OPEN($this)
         )->setHandler(
             // 97
-            \Clicky\Pssht\Messages\CHANNEL\CLOSE::getMessageId(),
-            new \Clicky\Pssht\Handlers\CHANNEL\CLOSE($this)
+            \fpoirotte\Pssht\Messages\CHANNEL\CLOSE::getMessageId(),
+            new \fpoirotte\Pssht\Handlers\CHANNEL\CLOSE($this)
         )->setHandler(
             // 98
-            \Clicky\Pssht\Messages\CHANNEL\REQUEST\Base::getMessageId(),
-            new \Clicky\Pssht\Handlers\CHANNEL\REQUEST($this)
+            \fpoirotte\Pssht\Messages\CHANNEL\REQUEST\Base::getMessageId(),
+            new \fpoirotte\Pssht\Handlers\CHANNEL\REQUEST($this)
         );
 
         foreach (array_merge(range(91, 96), array(99, 100)) as $msgId) {
@@ -55,12 +55,12 @@ class Connection implements \Clicky\Pssht\HandlerInterface
 
     public function handle(
         $msgType,
-        \Clicky\Pssht\Wire\Decoder $decoder,
-        \Clicky\Pssht\Transport $transport,
+        \fpoirotte\Pssht\Wire\Decoder $decoder,
+        \fpoirotte\Pssht\Transport $transport,
         array &$context
     ) {
         $localChannel   = $decoder->decodeUint32();
-        $encoder        = new \Clicky\Pssht\Wire\Encoder();
+        $encoder        = new \fpoirotte\Pssht\Wire\Encoder();
         $encoder->encodeUint32($localChannel);
         $decoder->getBuffer()->unget($encoder->getBuffer()->get(0));
 
@@ -84,13 +84,13 @@ class Connection implements \Clicky\Pssht\HandlerInterface
     /**
      * Allocate a new communication channel.
      *
-     *  \param Clicky::Pssht::Messages::CHANNEL::OPEN $message
+     *  \param fpoirotte::Pssht::Messages::CHANNEL::OPEN $message
      *      Original message requesting channel allocation.
      *
      *  \return int
      *      Newly allocated channel's identifier.
      */
-    public function allocateChannel(\Clicky\Pssht\Messages\CHANNEL\OPEN $message)
+    public function allocateChannel(\fpoirotte\Pssht\Messages\CHANNEL\OPEN $message)
     {
         for ($i = 0; isset($this->channels[$i]); ++$i) {
             // Do nothing.
@@ -123,7 +123,7 @@ class Connection implements \Clicky\Pssht\HandlerInterface
     /**
      * Retrieve the channel associated with a message.
      *
-     *  \param int|Clicky::Pssht::Messages::CHANNEL::REQUEST::Base $message
+     *  \param int|fpoirotte::Pssht::Messages::CHANNEL::REQUEST::Base $message
      *      Either a message or the message's channel identifier.
      *
      *  \retval int
@@ -140,26 +140,26 @@ class Connection implements \Clicky\Pssht\HandlerInterface
     /**
      * Register a handler.
      *
-     *  \param int|Clicky::Pssht::Messages::CHANNEL::REQUEST::Base $message
+     *  \param int|fpoirotte::Pssht::Messages::CHANNEL::REQUEST::Base $message
      *      Either a message or the message's channel identifier.
      *
      *  \param int $type
      *      Message type.
      *
-     *  \param Clicky::Pssht::HandlerInterface $handler
+     *  \param fpoirotte::Pssht::HandlerInterface $handler
      *      Handler to associate with the message.
      */
     public function setHandler(
         $message,
         $type,
-        \Clicky\Pssht\HandlerInterface $handler
+        \fpoirotte\Pssht\HandlerInterface $handler
     ) {
         if (!is_int($type) || $type < 0 || $type > 255) {
             throw new \InvalidArgumentException();
         }
 
         if (!is_int($message)) {
-            if (!($message instanceof \Clicky\Pssht\Messages\CHANNEL\REQUEST\Base)) {
+            if (!($message instanceof \fpoirotte\Pssht\Messages\CHANNEL\REQUEST\Base)) {
                 throw new \InvalidArgumentException();
             }
             $message = $message->getChannel();
@@ -172,26 +172,26 @@ class Connection implements \Clicky\Pssht\HandlerInterface
     /**
      * Unregister a handler.
      *
-     *  \param int|Clicky::Pssht::Messages::CHANNEL::REQUEST::Base $message
+     *  \param int|fpoirotte::Pssht::Messages::CHANNEL::REQUEST::Base $message
      *      Either a message or the message's channel identifier.
      *
      *  \param int $type
      *      Message type.
      *
-     *  \param Clicky::Pssht::HandlerInterface $handler
+     *  \param fpoirotte::Pssht::HandlerInterface $handler
      *      Handler to unregister.
      */
     public function unsetHandler(
         $message,
         $type,
-        \Clicky\Pssht\HandlerInterface $handler
+        \fpoirotte\Pssht\HandlerInterface $handler
     ) {
         if (!is_int($type) || $type < 0 || $type > 255) {
             throw new \InvalidArgumentException();
         }
 
         if (!is_int($message)) {
-            if (!($message instanceof \Clicky\Pssht\Messages\CHANNEL\REQUEST\Base)) {
+            if (!($message instanceof \fpoirotte\Pssht\Messages\CHANNEL\REQUEST\Base)) {
                 throw new \InvalidArgumentException();
             }
             $message = $message->getChannel();

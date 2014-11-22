@@ -9,9 +9,9 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\Authentication;
+namespace fpoirotte\Pssht\Authentication;
 
-use Clicky\Pssht\AuthenticationInterface;
+use fpoirotte\Pssht\AuthenticationInterface;
 
 /**
  * Public key authentication.
@@ -24,10 +24,10 @@ class PublicKey implements AuthenticationInterface
     /**
      * Construct a new public key authentication handler.
      *
-     *  \param Clicky::Pssht::KeyStore $store
+     *  \param fpoirotte::Pssht::KeyStore $store
      *      Store containing the public keys to authorize.
      */
-    public function __construct(\Clicky\Pssht\KeyStore $store)
+    public function __construct(\fpoirotte\Pssht\KeyStore $store)
     {
         $this->store = $store;
     }
@@ -38,11 +38,11 @@ class PublicKey implements AuthenticationInterface
     }
 
     public function check(
-        \Clicky\Pssht\Messages\USERAUTH\REQUEST\Base $message,
-        \Clicky\Pssht\Transport $transport,
+        \fpoirotte\Pssht\Messages\USERAUTH\REQUEST\Base $message,
+        \fpoirotte\Pssht\Transport $transport,
         array &$context
     ) {
-        if (!($message instanceof \Clicky\Pssht\Messages\USERAUTH\REQUEST\PublicKey)) {
+        if (!($message instanceof \fpoirotte\Pssht\Messages\USERAUTH\REQUEST\PublicKey)) {
             throw new \InvalidArgumentException();
         }
 
@@ -50,10 +50,10 @@ class PublicKey implements AuthenticationInterface
             return self::CHECK_OK;
         }
 
-        $algos = \Clicky\Pssht\Algorithms::factory();
+        $algos = \fpoirotte\Pssht\Algorithms::factory();
         if ($algos->getClass('PublicKey', $message->getAlgorithm()) !== null &&
             $this->store->exists($message->getUserName(), $message->getKey())) {
-            $response = new \Clicky\Pssht\Messages\USERAUTH\PK\OK(
+            $response = new \fpoirotte\Pssht\Messages\USERAUTH\PK\OK(
                 $message->getAlgorithm(),
                 $message->getKey()
             );
@@ -64,11 +64,11 @@ class PublicKey implements AuthenticationInterface
     }
 
     public function authenticate(
-        \Clicky\Pssht\Messages\USERAUTH\REQUEST\Base $message,
-        \Clicky\Pssht\Transport $transport,
+        \fpoirotte\Pssht\Messages\USERAUTH\REQUEST\Base $message,
+        \fpoirotte\Pssht\Transport $transport,
         array &$context
     ) {
-        if (!($message instanceof \Clicky\Pssht\Messages\USERAUTH\REQUEST\PublicKey)) {
+        if (!($message instanceof \fpoirotte\Pssht\Messages\USERAUTH\REQUEST\PublicKey)) {
             throw new \InvalidArgumentException();
         }
 
@@ -79,7 +79,7 @@ class PublicKey implements AuthenticationInterface
 
         $logging    = \Plop::getInstance();
         $reverse    = gethostbyaddr($transport->getAddress());
-        $algos      = \Clicky\Pssht\Algorithms::factory();
+        $algos      = \fpoirotte\Pssht\Algorithms::factory();
         $cls        = $algos->getClass('PublicKey', $message->getAlgorithm());
         if ($cls === null || !$this->store->exists($message->getUserName(), $message->getKey())) {
             $logging->info(
@@ -94,9 +94,9 @@ class PublicKey implements AuthenticationInterface
         }
 
         $key        = $cls::loadPublic(base64_encode($message->getKey()));
-        $encoder    = new \Clicky\Pssht\Wire\Encoder();
+        $encoder    = new \fpoirotte\Pssht\Wire\Encoder();
         $encoder->encodeString($context['DH']->getExchangeHash());
-        $encoder->encodeBytes(chr(\Clicky\Pssht\Messages\USERAUTH\REQUEST\Base::getMessageId()));
+        $encoder->encodeBytes(chr(\fpoirotte\Pssht\Messages\USERAUTH\REQUEST\Base::getMessageId()));
         $encoder->encodeString($message->getUserName());
         $encoder->encodeString($message->getServiceName());
         $encoder->encodeString(static::getName());

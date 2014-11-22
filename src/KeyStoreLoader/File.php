@@ -9,7 +9,7 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\KeyStoreLoader;
+namespace fpoirotte\Pssht\KeyStoreLoader;
 
 /**
  * Public keys loader from a file.
@@ -22,15 +22,15 @@ class File
     /**
      * Construct a new loader.
      *
-     *  \param Clicky::Pssht::KeyStore $store
+     *  \param fpoirotte::Pssht::KeyStore $store
      *      (optional) Object where the keys will be stored.
      *      If omitted, a new (empty) store is automatically
      *      created.
      */
-    public function __construct(\Clicky\Pssht\KeyStore $store = null)
+    public function __construct(\fpoirotte\Pssht\KeyStore $store = null)
     {
         if ($store === null) {
-            $store = new \Clicky\Pssht\KeyStore();
+            $store = new \fpoirotte\Pssht\KeyStore();
         }
 
         $this->store    = $store;
@@ -61,7 +61,7 @@ class File
             throw new \InvalidArgumentException();
         }
 
-        $algos = \Clicky\Pssht\Algorithms::factory();
+        $algos = \fpoirotte\Pssht\Algorithms::factory();
         $types = array(
             'ssh-dss',
             'ssh-rsa',
@@ -119,7 +119,7 @@ class File
     /**
      * Return the key store associated with this loader.
      *
-     *  \retval Clicky::Pssht::KeyStore
+     *  \retval fpoirotte::Pssht::KeyStore
      *      The store for this loader.
      */
     public function getStore()

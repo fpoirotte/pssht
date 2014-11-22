@@ -9,30 +9,30 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\Handlers;
+namespace fpoirotte\Pssht\Handlers;
 
-use Clicky\Pssht\CompressionInterface;
+use fpoirotte\Pssht\CompressionInterface;
 
 /**
  * Handler for SSH_MSG_NEWKEYS messages.
  */
-class NEWKEYS implements \Clicky\Pssht\HandlerInterface
+class NEWKEYS implements \fpoirotte\Pssht\HandlerInterface
 {
     // SSH_MSG_NEWKEYS = 21
     public function handle(
         $msgType,
-        \Clicky\Pssht\Wire\Decoder $decoder,
-        \Clicky\Pssht\Transport $transport,
+        \fpoirotte\Pssht\Wire\Decoder $decoder,
+        \fpoirotte\Pssht\Transport $transport,
         array &$context
     ) {
-        $response = new \Clicky\Pssht\Messages\NEWKEYS();
+        $response = new \fpoirotte\Pssht\Messages\NEWKEYS();
         $transport->writeMessage($response);
         $logging = \Plop::getInstance();
 
         // Reset the various keys.
         $kexAlgo    = $context['kexAlgo'];
         $kexAlgo    = new $kexAlgo();
-        $encoder    = new \Clicky\Pssht\Wire\Encoder();
+        $encoder    = new \fpoirotte\Pssht\Wire\Encoder();
         $encoder->encodeMpint($context['DH']->getSharedSecret());
         $sharedSecret   = $encoder->getBuffer()->get(0);
         $exchangeHash   = $context['DH']->getExchangeHash();

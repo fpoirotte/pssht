@@ -9,15 +9,15 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\MAC\SHA1;
+namespace fpoirotte\Pssht\MAC\SHA1;
 
 /**
  * MAC generation using a truncated SHA1 hash.
  */
-class Len96 extends \Clicky\Pssht\MAC\Base96
+class Len96 extends \fpoirotte\Pssht\MAC\Base96
 {
     public static function getBaseClass()
     {
-        return '\\Clicky\\Pssht\\MAC\\SHA1';
+        return '\\fpoirotte\\Pssht\\MAC\\SHA1';
     }
 }

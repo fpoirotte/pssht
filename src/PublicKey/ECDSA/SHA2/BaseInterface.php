@@ -9,7 +9,7 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\PublicKey\ECDSA\SHA2;
+namespace fpoirotte\Pssht\PublicKey\ECDSA\SHA2;
 
 /**
  * Base interface for encryption/decryption ciphers.

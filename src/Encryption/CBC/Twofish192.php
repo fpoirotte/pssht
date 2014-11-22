@@ -9,7 +9,7 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\Encryption\CBC;
+namespace fpoirotte\Pssht\Encryption\CBC;
 
 /**
  * Twofish cipher in CBC mode with a 192-bit key

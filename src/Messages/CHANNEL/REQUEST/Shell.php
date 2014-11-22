@@ -9,15 +9,15 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\Messages\CHANNEL\REQUEST;
+namespace fpoirotte\Pssht\Messages\CHANNEL\REQUEST;
 
 /**
  * SSH_MSG_CHANNEL_REQUEST message (RFC 4254)
  * for the "shell" request type.
  */
-class Shell extends \Clicky\Pssht\Messages\CHANNEL\REQUEST\Base
+class Shell extends \fpoirotte\Pssht\Messages\CHANNEL\REQUEST\Base
 {
-    protected static function unserializeSub(\Clicky\Pssht\Wire\Decoder $decoder)
+    protected static function unserializeSub(\fpoirotte\Pssht\Wire\Decoder $decoder)
     {
         return array();
     }

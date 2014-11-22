@@ -9,32 +9,32 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\Handlers;
+namespace fpoirotte\Pssht\Handlers;
 
 /**
  * Handler for the SSH protocol's initial state.
  */
-class InitialState implements \Clicky\Pssht\HandlerInterface
+class InitialState implements \fpoirotte\Pssht\HandlerInterface
 {
     // Initial state
     public function handle(
         $msgType,
-        \Clicky\Pssht\Wire\Decoder $decoder,
-        \Clicky\Pssht\Transport $transport,
+        \fpoirotte\Pssht\Wire\Decoder $decoder,
+        \fpoirotte\Pssht\Transport $transport,
         array &$context
     ) {
-        $algos = \Clicky\Pssht\Algorithms::factory();
+        $algos = \fpoirotte\Pssht\Algorithms::factory();
         $ident = $decoder->getBuffer()->get("\r\n");
         if ($ident === null) {
             throw new \RuntimeException();
         }
         $context['identity']['client'] = (string) substr($ident, 0, -2);
         if (strncmp($ident, 'SSH-2.0-', 8) !== 0) {
-            throw new \Clicky\Pssht\Messages\DISCONNECT();
+            throw new \fpoirotte\Pssht\Messages\DISCONNECT();
         }
 
         // Cookie
-        $random = new \Clicky\Pssht\Random\OpenSSL();
+        $random = new \fpoirotte\Pssht\Random\OpenSSL();
 
         // KEX
         $kexAlgos = $algos->getAlgorithms('KEX');
@@ -76,7 +76,7 @@ class InitialState implements \Clicky\Pssht\HandlerInterface
         }
 
 
-        $kex    = new \Clicky\Pssht\Messages\KEXINIT(
+        $kex    = new \fpoirotte\Pssht\Messages\KEXINIT(
             $random,
             $kexAlgos,
             $serverHostKeyAlgos,

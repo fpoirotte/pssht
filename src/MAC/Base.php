@@ -9,11 +9,11 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\MAC;
+namespace fpoirotte\Pssht\MAC;
 
-use Clicky\Pssht\MACInterface;
-use Clicky\Pssht\AvailabilityInterface;
-use Clicky\Pssht\MAC\BaseInterface;
+use fpoirotte\Pssht\MACInterface;
+use fpoirotte\Pssht\AvailabilityInterface;
+use fpoirotte\Pssht\MAC\BaseInterface;
 
 /**
  * Abstract class representing a MAC algorithm.

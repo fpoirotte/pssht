@@ -9,15 +9,15 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\Messages\USERAUTH\REQUEST;
+namespace fpoirotte\Pssht\Messages\USERAUTH\REQUEST;
 
 /**
  * SSH_MSG_USERAUTH_REQUEST message (RFC 4252)
  * for the "none" method.
  */
-class None extends \Clicky\Pssht\Messages\USERAUTH\REQUEST\Base
+class None extends \fpoirotte\Pssht\Messages\USERAUTH\REQUEST\Base
 {
-    protected static function unserializeSub(\Clicky\Pssht\Wire\Decoder $decoder)
+    protected static function unserializeSub(\fpoirotte\Pssht\Wire\Decoder $decoder)
     {
         return array();
     }

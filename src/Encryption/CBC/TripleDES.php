@@ -9,13 +9,13 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\Encryption\CBC;
+namespace fpoirotte\Pssht\Encryption\CBC;
 
 /**
  * 3DES cipher in CBC mode
  * (REQUIRED in RFC 4253).
  */
-class TripleDES extends \Clicky\Pssht\Encryption\Base
+class TripleDES extends \fpoirotte\Pssht\Encryption\Base
 {
     public static function getName()
     {

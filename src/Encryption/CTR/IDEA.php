@@ -9,12 +9,12 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\Encryption\CTR;
+namespace fpoirotte\Pssht\Encryption\CTR;
 
 /**
  * IDEA cipher in CTR mode
  * (OPTIONAL in RFC 4344).
  */
-class IDEA extends \Clicky\Pssht\Encryption\CBC\IDEA
+class IDEA extends \fpoirotte\Pssht\Encryption\CBC\IDEA
 {
 }

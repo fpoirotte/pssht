@@ -9,21 +9,21 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\Handlers;
+namespace fpoirotte\Pssht\Handlers;
 
 /**
  * Handler for SSH_MSG_DEBUG messages.
  */
-class DEBUG implements \Clicky\Pssht\HandlerInterface
+class DEBUG implements \fpoirotte\Pssht\HandlerInterface
 {
     // SSH_MSG_DEBUG = 4
     public function handle(
         $msgType,
-        \Clicky\Pssht\Wire\Decoder $decoder,
-        \Clicky\Pssht\Transport $transport,
+        \fpoirotte\Pssht\Wire\Decoder $decoder,
+        \fpoirotte\Pssht\Transport $transport,
         array &$context
     ) {
-        $message = \Clicky\Pssht\Messages\DEBUG::unserialize($decoder);
+        $message = \fpoirotte\Pssht\Messages\DEBUG::unserialize($decoder);
         if ($message->mustAlwaysDisplay()) {
             echo escape($message->getMessage()) . PHP_EOL;
         }

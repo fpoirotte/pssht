@@ -9,12 +9,12 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\Messages\SERVICE;
+namespace fpoirotte\Pssht\Messages\SERVICE;
 
 /**
  * SSH_MSG_SERVICE_REQUEST message (RFC 4253).
  */
-class REQUEST extends \Clicky\Pssht\Messages\SERVICE\Base
+class REQUEST extends \fpoirotte\Pssht\Messages\SERVICE\Base
 {
     public static function getMessageId()
     {

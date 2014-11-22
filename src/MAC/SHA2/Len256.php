@@ -9,13 +9,13 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\MAC\SHA2;
+namespace fpoirotte\Pssht\MAC\SHA2;
 
 /**
  * MAC generation using the SHA2 hashing algorithm
  * with a 256 bits long MAC (aka "SHA-256").
  */
-class Len256 extends \Clicky\Pssht\MAC\Base
+class Len256 extends \fpoirotte\Pssht\MAC\Base
 {
     public static function getName()
     {

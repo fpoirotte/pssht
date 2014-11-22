@@ -9,12 +9,12 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\Encryption\CTR;
+namespace fpoirotte\Pssht\Encryption\CTR;
 
 /**
  * AES cipher in CTR mode with a 256-bit key
  * (RECOMMENDED in RFC 4344).
  */
-class AES256 extends \Clicky\Pssht\Encryption\CBC\AES256
+class AES256 extends \fpoirotte\Pssht\Encryption\CBC\AES256
 {
 }

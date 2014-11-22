@@ -9,9 +9,9 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\Authentication;
+namespace fpoirotte\Pssht\Authentication;
 
-use Clicky\Pssht\AuthenticationInterface;
+use fpoirotte\Pssht\AuthenticationInterface;
 
 /**
  * Host based authentication.
@@ -24,10 +24,10 @@ class HostBased implements AuthenticationInterface
     /**
      * Construct a new host based authentication handler.
      *
-     *  \param Clicky::Pssht::KeyStore $store
+     *  \param fpoirotte::Pssht::KeyStore $store
      *      Store containing the host keys to authorize.
      */
-    public function __construct(\Clicky\Pssht\KeyStore $store)
+    public function __construct(\fpoirotte\Pssht\KeyStore $store)
     {
         $this->store = $store;
     }
@@ -38,11 +38,11 @@ class HostBased implements AuthenticationInterface
     }
 
     public function check(
-        \Clicky\Pssht\Messages\USERAUTH\REQUEST\Base $message,
-        \Clicky\Pssht\Transport $transport,
+        \fpoirotte\Pssht\Messages\USERAUTH\REQUEST\Base $message,
+        \fpoirotte\Pssht\Transport $transport,
         array &$context
     ) {
-        if (!($message instanceof \Clicky\Pssht\Messages\USERAUTH\REQUEST\HostBased)) {
+        if (!($message instanceof \fpoirotte\Pssht\Messages\USERAUTH\REQUEST\HostBased)) {
             throw new \InvalidArgumentException();
         }
 
@@ -50,18 +50,18 @@ class HostBased implements AuthenticationInterface
     }
 
     public function authenticate(
-        \Clicky\Pssht\Messages\USERAUTH\REQUEST\Base $message,
-        \Clicky\Pssht\Transport $transport,
+        \fpoirotte\Pssht\Messages\USERAUTH\REQUEST\Base $message,
+        \fpoirotte\Pssht\Transport $transport,
         array &$context
     ) {
-        if (!($message instanceof \Clicky\Pssht\Messages\USERAUTH\REQUEST\HostBased)) {
+        if (!($message instanceof \fpoirotte\Pssht\Messages\USERAUTH\REQUEST\HostBased)) {
             throw new \InvalidArgumentException();
         }
 
         $logging        = \Plop::getInstance();
         $reverse        = gethostbyaddr($transport->getAddress());
         $untrustedHost  = rtrim($message->getHostname(), '.');
-        $algos          = \Clicky\Pssht\Algorithms::factory();
+        $algos          = \fpoirotte\Pssht\Algorithms::factory();
         $cls            = $algos->getClass('PublicKey', $message->getAlgorithm());
 
         if ($cls === null || !$this->store->exists($message->getUserName(), $message->getKey())) {
@@ -80,9 +80,9 @@ class HostBased implements AuthenticationInterface
         }
 
         $key        = $cls::loadPublic(base64_encode($message->getKey()));
-        $encoder    = new \Clicky\Pssht\Wire\Encoder();
+        $encoder    = new \fpoirotte\Pssht\Wire\Encoder();
         $encoder->encodeString($context['DH']->getExchangeHash());
-        $encoder->encodeBytes(chr(\Clicky\Pssht\Messages\USERAUTH\REQUEST\Base::getMessageId()));
+        $encoder->encodeBytes(chr(\fpoirotte\Pssht\Messages\USERAUTH\REQUEST\Base::getMessageId()));
         $encoder->encodeString($message->getUserName());
         $encoder->encodeString($message->getServiceName());
         $encoder->encodeString(static::getName());

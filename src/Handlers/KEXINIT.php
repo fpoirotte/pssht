@@ -9,22 +9,22 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\Handlers;
+namespace fpoirotte\Pssht\Handlers;
 
 /**
  * Handler for SSH_MSG_KEXINIT messages.
  */
-class KEXINIT implements \Clicky\Pssht\HandlerInterface
+class KEXINIT implements \fpoirotte\Pssht\HandlerInterface
 {
     // SSH_MSG_KEXINIT = 20
     public function handle(
         $msgType,
-        \Clicky\Pssht\Wire\Decoder $decoder,
-        \Clicky\Pssht\Transport $transport,
+        \fpoirotte\Pssht\Wire\Decoder $decoder,
+        \fpoirotte\Pssht\Transport $transport,
         array &$context
     ) {
-        $algos      = \Clicky\Pssht\Algorithms::factory();
-        $kex        = \Clicky\Pssht\Messages\KEXINIT::unserialize($decoder);
+        $algos      = \fpoirotte\Pssht\Algorithms::factory();
+        $kex        = \fpoirotte\Pssht\Messages\KEXINIT::unserialize($decoder);
         $context['kex']['client'] = $kex;
 
         // KEX method

@@ -9,9 +9,9 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\Authentication;
+namespace fpoirotte\Pssht\Authentication;
 
-use Clicky\Pssht\AuthenticationInterface;
+use fpoirotte\Pssht\AuthenticationInterface;
 
 /**
  * Password authentication.
@@ -39,11 +39,11 @@ class Password implements AuthenticationInterface
     }
 
     public function check(
-        \Clicky\Pssht\Messages\USERAUTH\REQUEST\Base $message,
-        \Clicky\Pssht\Transport $transport,
+        \fpoirotte\Pssht\Messages\USERAUTH\REQUEST\Base $message,
+        \fpoirotte\Pssht\Transport $transport,
         array &$context
     ) {
-        if (!($message instanceof \Clicky\Pssht\Messages\USERAUTH\REQUEST\Password)) {
+        if (!($message instanceof \fpoirotte\Pssht\Messages\USERAUTH\REQUEST\Password)) {
             throw new \InvalidArgumentException();
         }
 
@@ -51,11 +51,11 @@ class Password implements AuthenticationInterface
     }
 
     public function authenticate(
-        \Clicky\Pssht\Messages\USERAUTH\REQUEST\Base $message,
-        \Clicky\Pssht\Transport $transport,
+        \fpoirotte\Pssht\Messages\USERAUTH\REQUEST\Base $message,
+        \fpoirotte\Pssht\Transport $transport,
         array &$context
     ) {
-        if (!($message instanceof \Clicky\Pssht\Messages\USERAUTH\REQUEST\Password)) {
+        if (!($message instanceof \fpoirotte\Pssht\Messages\USERAUTH\REQUEST\Password)) {
             throw new \InvalidArgumentException();
         }
 

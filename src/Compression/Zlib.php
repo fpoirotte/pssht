@@ -9,7 +9,7 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\Compression;
+namespace fpoirotte\Pssht\Compression;
 
 use \HttpInflateStream;
 use \HttpDeflateStream;
@@ -18,8 +18,8 @@ use \HttpDeflateStream;
  * ZLIB compression.
  */
 class Zlib implements
-    \Clicky\Pssht\CompressionInterface,
-    \Clicky\Pssht\AvailabilityInterface
+    \fpoirotte\Pssht\CompressionInterface,
+    \fpoirotte\Pssht\AvailabilityInterface
 {
     /// Compression/decompression stream.
     protected $stream;

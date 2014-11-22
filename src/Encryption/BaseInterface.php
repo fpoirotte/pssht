@@ -9,7 +9,7 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\Encryption;
+namespace fpoirotte\Pssht\Encryption;
 
 /**
  * Base interface for encryption/decryption ciphers.

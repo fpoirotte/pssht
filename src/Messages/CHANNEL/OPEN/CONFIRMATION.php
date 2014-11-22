@@ -9,12 +9,12 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\Messages\CHANNEL\OPEN;
+namespace fpoirotte\Pssht\Messages\CHANNEL\OPEN;
 
 /**
  * SSH_MSG_CHANNEL_OPEN_CONFIRMATION message (RFC 4254).
  */
-class CONFIRMATION implements \Clicky\Pssht\MessageInterface
+class CONFIRMATION implements \fpoirotte\Pssht\MessageInterface
 {
     /// Recipient channel.
     protected $recipientChannel;
@@ -57,7 +57,7 @@ class CONFIRMATION implements \Clicky\Pssht\MessageInterface
         return 91;
     }
 
-    public function serialize(\Clicky\Pssht\Wire\Encoder $encoder)
+    public function serialize(\fpoirotte\Pssht\Wire\Encoder $encoder)
     {
         $encoder->encodeUint32($this->recipientChannel);
         $encoder->encodeUint32($this->senderChannel);
@@ -66,7 +66,7 @@ class CONFIRMATION implements \Clicky\Pssht\MessageInterface
         return $this;
     }
 
-    public static function unserialize(\Clicky\Pssht\Wire\Decoder $decoder)
+    public static function unserialize(\fpoirotte\Pssht\Wire\Decoder $decoder)
     {
         return new static(
             $decoder->decodeUint32(),

@@ -9,13 +9,13 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\Encryption\Stream;
+namespace fpoirotte\Pssht\Encryption\Stream;
 
 /**
  * Arcfour cipher in stream mode with a 128-bit key
  * and no discarded bytes (OPTIONAL in RFC 4253).
  */
-class Arcfour extends \Clicky\Pssht\Encryption\Base
+class Arcfour extends \fpoirotte\Pssht\Encryption\Base
 {
     public static function getName()
     {

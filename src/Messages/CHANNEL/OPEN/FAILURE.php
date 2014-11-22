@@ -9,12 +9,12 @@
 * file that was distributed with this source code.
 */
 
-namespace Clicky\Pssht\Messages\CHANNEL\OPEN;
+namespace fpoirotte\Pssht\Messages\CHANNEL\OPEN;
 
 /**
  * SSH_MSG_CHANNEL_OPEN_FAILURE message (RFC 4254).
  */
-class FAILURE extends \Clicky\Pssht\Messages\CHANNEL\Base
+class FAILURE extends \fpoirotte\Pssht\Messages\CHANNEL\Base
 {
     /// The requested action was administratively prohibited.
     const SSH_OPEN_ADMINISTRATIVELY_PROHIBITED  = 1;
@@ -69,7 +69,7 @@ class FAILURE extends \Clicky\Pssht\Messages\CHANNEL\Base
         return 92;
     }
 
-    public function serialize(\Clicky\Pssht\Wire\Encoder $encoder)
+    public function serialize(\fpoirotte\Pssht\Wire\Encoder $encoder)
     {
         parent::serialize($encoder);
         $encoder->encodeUint32($this->reasonCode);
@@ -78,7 +78,7 @@ class FAILURE extends \Clicky\Pssht\Messages\CHANNEL\Base
         return $this;
     }
 
-    public static function unserialize(\Clicky\Pssht\Wire\Decoder $decoder)
+    public static function unserialize(\fpoirotte\Pssht\Wire\Decoder $decoder)
     {
         return new static(
             $decoder->decodeUint32(),   // channel
