@@ -59,12 +59,13 @@ class Point implements \ArrayAccess
             throw new \InvalidArgumentException();
         }
 
-        if (is_int($value) || is_string($value) || is_float($value)) {
-            $value = gmp_init($value);
-        }
-
-        if (!is_resource($value) && $value !== null) {
-            throw new \InvalidArgumentException();
+        if (!(is_null($value) ||
+            (is_resource($value) && get_resource_type($value) === 'GMP integer') ||
+            (is_object($value) && ($value instanceof \GMP)))) {
+            $value = @gmp_init($value);
+            if ($value === false) {
+                throw new \InvalidArgumentException();
+            }
         }
 
         $this->coordinates[$offset] = $value;
@@ -161,11 +162,12 @@ class Point implements \ArrayAccess
 
     public function multiply(\fpoirotte\Pssht\ECC\Curve $curve, $n)
     {
-        if (is_int($n) || is_string($n)) {
-            $n = gmp_init($n);
-        }
-        if (!is_resource($n)) {
-            throw new \InvalidArgumentException();
+        if (!((is_resource($n) && get_resource_type($n) === 'GMP integer') ||
+            (is_object($n) && ($n instanceof \GMP)))) {
+            $n = @gmp_init($n);
+            if ($n === false) {
+                throw new \InvalidArgumentException();
+            }
         }
 
         if (gmp_cmp($n, '1') === 0) {
