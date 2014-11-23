@@ -58,8 +58,26 @@ for its configuration. Have a look at the default
 for ways to configure pssht.
 
 
-Extensions
-----------
+Compatibility
+-------------
+
+pssht supports the following features for compatibility with other
+Secure Shell implementations:
+
+-   `RFC 4250 <http://www.openssh.com/txt/rfc4250.txt>`_ |---| SSH Protocol Assigned Numbers
+-   `RFC 4251 <http://www.openssh.com/txt/rfc4251.txt>`_ |---| SSH Protocol Architecture
+-   `RFC 4252 <http://www.openssh.com/txt/rfc4252.txt>`_ |---| SSH Authentication Protocol
+-   `RFC 4253 <http://www.openssh.com/txt/rfc4253.txt>`_ |---| SSH Transport Layer Protocol
+-   `RFC 4254 <http://www.openssh.com/txt/rfc4254.txt>`_ |---| SSH Connection Protocol
+-   `RFC 4344 <http://www.openssh.com/txt/rfc4344.txt>`_ |---| SSH Transport Layer Encryption Modes
+-   `RFC 4345 <http://www.openssh.com/txt/rfc4345.txt>`_ |---| Improved Arcfour Modes for the SSH Transport Layer Protocol
+-   `RFC 5656 <http://www.openssh.com/txt/rfc5656.txt>`_ |---| Elliptic Curve Algorithm Integration in SSH
+-   `RFC 6668 <http://www.openssh.com/txt/rfc6668.txt>`_ |---| SHA-2 Data Integrity Algorithms
+-   `zlib@openssh.com <draft-miller-secsh-compression-delayed-00.txt>`_ |---| Delayed compression until after authentication
+
+
+Integration
+-----------
 
 pssht is mainly intended for use as an embedded SSH server for PHP applications.
 By default, only the bare structure for an SSH server is provided.
@@ -102,4 +120,7 @@ FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
 COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
 IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+..  |---| unicode:: U+02014 .. em dash
+    :trim:
 
