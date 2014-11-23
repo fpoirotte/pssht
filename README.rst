@@ -64,16 +64,41 @@ Compatibility
 pssht supports the following features for compatibility with other
 Secure Shell implementations:
 
--   `RFC 4250 <http://www.openssh.com/txt/rfc4250.txt>`_ |---| SSH Protocol Assigned Numbers
--   `RFC 4251 <http://www.openssh.com/txt/rfc4251.txt>`_ |---| SSH Protocol Architecture
--   `RFC 4252 <http://www.openssh.com/txt/rfc4252.txt>`_ |---| SSH Authentication Protocol
--   `RFC 4253 <http://www.openssh.com/txt/rfc4253.txt>`_ |---| SSH Transport Layer Protocol
--   `RFC 4254 <http://www.openssh.com/txt/rfc4254.txt>`_ |---| SSH Connection Protocol
--   `RFC 4344 <http://www.openssh.com/txt/rfc4344.txt>`_ |---| SSH Transport Layer Encryption Modes
--   `RFC 4345 <http://www.openssh.com/txt/rfc4345.txt>`_ |---| Improved Arcfour Modes for the SSH Transport Layer Protocol
--   `RFC 5656 <http://www.openssh.com/txt/rfc5656.txt>`_ |---| Elliptic Curve Algorithm Integration in SSH
--   `RFC 6668 <http://www.openssh.com/txt/rfc6668.txt>`_ |---| SHA-2 Data Integrity Algorithms
--   `zlib@openssh.com <draft-miller-secsh-compression-delayed-00.txt>`_ |---| Delayed compression until after authentication
+-   `RFC 4250 <https://tools.ietf.org/html/rfc4250>`_
+    |---| SSH Protocol Assigned Numbers
+
+-   `RFC 4251 <https://tools.ietf.org/html/rfc4251>`_
+    |---| SSH Protocol Architecture
+
+-   `RFC 4252 <https://tools.ietf.org/html/rfc4252>`_
+    |---| SSH Authentication Protocol
+
+-   `RFC 4253 <https://tools.ietf.org/html/rfc4253>`_
+    |---| SSH Transport Layer Protocol
+
+-   `RFC 4254 <https://tools.ietf.org/html/rfc4254>`_
+    |---| SSH Connection Protocol
+
+-   `RFC 4344 <https://tools.ietf.org/html/rfc4344>`_
+    |---| SSH Transport Layer Encryption Modes
+
+-   `RFC 4345 <https://tools.ietf.org/html/rfc4345>`_
+    |---| Improved Arcfour Modes for the SSH Transport Layer Protocol
+
+-   `RFC 5656 <https://tools.ietf.org/html/rfc5656>`_
+    |---| Elliptic Curve Algorithm Integration in SSH [1]_
+
+-   `RFC 6668 <https://tools.ietf.org/html/rfc6668>`_
+    |---| SHA-2 Data Integrity Algorithms
+
+-   `zlib@openssh.com <https://tools.ietf.org/html/draft-miller-secsh-compression-delayed-00>`_
+    |---| Delayed compression until after authentication
+
+
+..  [1] Only the ``ecdsa-sha2-nistp256``, ``ecdsa-sha2-nistp384``
+    and ``ecdsa-sha2-nistp521`` curves over ``GF(p)`` are supported.
+    Elliptic curve points encoded using point compression
+    are **not** accepted or generated.
 
 
 Integration
