@@ -17,17 +17,17 @@
             Application to run after a connection has been accepted.
             This class' constructor will be called with the following
             arguments:
-            *   \Clicky\Pssht\Transport (transport layer for the session)
-            *   \Clicky\Pssht\Connection (connection layer for the session)
-            *   \Clicky\Pssht\MessageInterface (SSH message which caused
+            *   \fpoirotte\Pssht\Transport (transport layer for the session)
+            *   \fpoirotte\Pssht\Connection (connection layer for the session)
+            *   \fpoirotte\Pssht\MessageInterface (SSH message which caused
                 a new instance of the application to be created; usually
-                an instance of \Clicky\Pssht\Messages\CHANNEL\REQUEST\Exec
-                or \Clicky\Pssht\Messages\CHANNEL\REQUEST\Shell)
+                an instance of \fpoirotte\Pssht\Messages\CHANNEL\REQUEST\Exec
+                or \fpoirotte\Pssht\Messages\CHANNEL\REQUEST\Shell)
 
             Alternatively, you may modify the "client" or "applicationFactory"
             services to set another application factory.
         -->
-        <parameter key="application">\Clicky\Pssht\XRL</parameter>
+        <parameter key="application">\fpoirotte\Pssht\XRL</parameter>
 
         <!--
             A banner (eg. legal disclaimer) to display upon connection.
@@ -107,7 +107,7 @@
 
     <services>
         <!-- The "client" service is used to handle new clients. -->
-        <service id="client" scope="prototype" class="\Clicky\Pssht\Transport">
+        <service id="client" scope="prototype" class="\fpoirotte\Pssht\Transport">
             <argument>%server_keys%</argument>
             <argument type="service" id="authMethods"/>
             <call method="setApplicationFactory">
@@ -162,9 +162,9 @@
             which authentication methods are allowed.
         -->
         <service id="authMethods" public="false"
-            class="\Clicky\Pssht\Handlers\SERVICE\REQUEST">
+            class="\fpoirotte\Pssht\Handlers\SERVICE\REQUEST">
             <argument type="service">
-                <service class="\Clicky\Pssht\Handlers\USERAUTH\REQUEST">
+                <service class="\fpoirotte\Pssht\Handlers\USERAUTH\REQUEST">
                     <argument type="collection">
 
                         <!--
@@ -173,7 +173,7 @@
                             to disable password-based authentication.
                         -->
                         <argument type="service">
-                            <service class="\Clicky\Pssht\Authentication\Password">
+                            <service class="\fpoirotte\Pssht\Authentication\Password">
                                 <argument>%auth.passwords%</argument>
                             </service>
                         </argument>
@@ -185,7 +185,7 @@
                             to disable public key-based authentication.
                         -->
                         <argument type="service">
-                            <service class="\Clicky\Pssht\Authentication\PublicKey">
+                            <service class="\fpoirotte\Pssht\Authentication\PublicKey">
                                 <argument type="service">
                                     <service public="false"
                                         factory-service="authPublicKeysLoader"
@@ -201,7 +201,7 @@
                             to disable host-based authentication.
                         -->
                         <argument type="service">
-                            <service class="\Clicky\Pssht\Authentication\HostBased">
+                            <service class="\fpoirotte\Pssht\Authentication\HostBased">
                                 <argument type="service">
                                     <service public="false"
                                         factory-service="authPublicKeysLoader"
@@ -220,13 +220,13 @@
 
         <!-- The following services are factories used by other services. -->
         <service id="authPublicKeysLoader" public="false"
-            class="\Clicky\Pssht\KeyStoreLoader\File">
+            class="\fpoirotte\Pssht\KeyStoreLoader\File">
             <call method="loadBulk">
                 <argument>%auth.pubkeys%</argument>
             </call>
         </service>
         <service id="authHostBasedLoader" public="false"
-            class="\Clicky\Pssht\KeyStoreLoader\File">
+            class="\fpoirotte\Pssht\KeyStoreLoader\File">
             <call method="loadBulk">
                 <argument>%auth.hostbased%</argument>
             </call>
