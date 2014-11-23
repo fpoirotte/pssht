@@ -29,7 +29,6 @@
     },
     "require-dev": {
         "phing/phing": "*",
-        "behat/behat": "*",
         "phpmd/phpmd": "*",
         "sebastian/phpcpd": "*",
         "phpunit/phpunit": "<4",

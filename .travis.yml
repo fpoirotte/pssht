@@ -6,10 +6,12 @@ php:
     - 5.5
     - 5.6
     - hhvm
+    - hhvm-nightly
 
 matrix:
     allow_failures:
-        - php: hhvm
+    - hhvm
+    - hhvm-nightly
 
 notifications:
     email: false
@@ -24,6 +26,6 @@ script:
     - phpunit --coverage-clover clover.xml tests/unit/
 
 after_script:
-    - composer require --dev $prefer_source "satooshi/php-coveralls dev-master"
+    - composer require --dev "satooshi/php-coveralls dev-master"
     - php vendor/bin/coveralls -n -v
 

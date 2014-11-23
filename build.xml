@@ -22,5 +22,9 @@
 
     <target name="all" description="Main target -- Does nothing"/>
 
+    <target name="qa"
+        depends="qa_lint,qa_codesniffer,qa_duplicates,qa_test"
+        description="Run Qualify-Assurance (QA) tools"/>
+
     <import file="vendor/erebot/buildenv/build.xml"/>
 </project>
