@@ -102,7 +102,7 @@ class Encoder
     public function encodeUint64($value)
     {
         $s = gmp_strval($value, 16);
-        $s = pack('H*', str_pad($s, ((strlen($s) + 1) >> 1) << 1, '0', STR_PAD_LEFT));
+        $s = str_pad($s, 16, '0', STR_PAD_LEFT);
         return $this->encodeBytes(pack('H*', $s));
     }
 
