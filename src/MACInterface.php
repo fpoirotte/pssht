@@ -27,13 +27,17 @@ interface MACInterface extends AlgorithmInterface
     /**
      * Compute the MAC for some data.
      *
+     *  \param int $seqno
+     *      Sequence number of the message
+     *      for which the MAC applies.
+     *
      *  \param string $data
      *      Data whose MAC must be computed.
      *
      *  \retval string
      *      MAC for the given data.
      */
-    public function compute($data);
+    public function compute($seqno, $data);
 
     /**
      * Get the size of a MAC signature

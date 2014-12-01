@@ -37,7 +37,7 @@ class INIT implements \fpoirotte\Pssht\HandlerInterface
             throw new \RuntimeException();
         }
 
-        $logging    = \Plop::getInstance();
+        $logging    = \Plop\Plop::getInstance();
         $response   = new \fpoirotte\Pssht\Messages\KEXDH\REPLY(
             $message,
             $context['serverKeys'][$hostAlgo],

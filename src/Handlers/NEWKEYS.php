@@ -27,7 +27,7 @@ class NEWKEYS implements \fpoirotte\Pssht\HandlerInterface
     ) {
         $response = new \fpoirotte\Pssht\Messages\NEWKEYS();
         $transport->writeMessage($response);
-        $logging = \Plop::getInstance();
+        $logging = \Plop\Plop::getInstance();
 
         // Reset the various keys.
         $kexAlgo    = $context['kexAlgo'];

@@ -66,7 +66,7 @@ class Connection implements \fpoirotte\Pssht\HandlerInterface
 
         if (isset($this->handlers[$localChannel][$msgType])) {
             $handler = $this->handlers[$localChannel][$msgType];
-            $logging = \Plop::getInstance();
+            $logging = \Plop\Plop::getInstance();
             $logging->debug(
                 'Calling %(handler)s for channel #%(channel)d ' .
                 'with message type #%(msgType)d',

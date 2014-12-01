@@ -29,7 +29,7 @@ function main()
     $loader     = new XmlFileLoader($container, new FileLocator(getcwd()));
     $loader->load('pssht.xml');
     $container->get('logging', ContainerInterface::NULL_ON_INVALID_REFERENCE);
-    $logging    = \Plop::getInstance();
+    $logging    = \Plop\Plop::getInstance();
 
     // Elliptic curves
     \fpoirotte\Pssht\ECC\Curve::initialize();

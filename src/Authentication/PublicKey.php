@@ -77,7 +77,7 @@ class PublicKey implements AuthenticationInterface
             return self::AUTH_REJECT;
         }
 
-        $logging    = \Plop::getInstance();
+        $logging    = \Plop\Plop::getInstance();
         $reverse    = gethostbyaddr($transport->getAddress());
         $algos      = \fpoirotte\Pssht\Algorithms::factory();
         $cls        = $algos->getClass('PublicKey', $message->getAlgorithm());

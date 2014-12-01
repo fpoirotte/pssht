@@ -27,7 +27,7 @@
             Alternatively, you may modify the "client" or "applicationFactory"
             services to set another application factory.
         -->
-        <parameter key="application">\fpoirotte\Pssht\XRL</parameter>
+        <parameter key="application">\fpoirotte\Pssht\Application\EchoService</parameter>
 
         <!--
             A banner (eg. legal disclaimer) to display upon connection.
@@ -121,23 +121,23 @@
         <!-- End of "client" service. -->
 
         <!-- The "logging" service is used to log messages. -->
-        <service id="logging" factory-class="Plop" factory-method="getInstance">
+        <service id="logging" factory-class="\Plop\Plop" factory-method="getInstance">
             <call method="addLogger">
                 <argument type="service">
-                    <service class="Plop_Logger">
+                    <service class="\Plop\Logger">
                         <argument type="constant">NULL</argument>
                         <argument type="constant">NULL</argument>
                         <argument type="constant">NULL</argument>
                         <argument type="service">
-                            <service class="Plop_HandlersCollection">
+                            <service class="\Plop\HandlersCollection">
                                 <call method="offsetSet">
                                     <argument type="constant">NULL</argument>
                                     <argument type="service">
-                                        <service class="Plop_Handler_Stream">
+                                        <service class="\Plop\Handler\Stream">
                                             <argument type="constant">STDERR</argument>
                                             <call method="setFormatter">
                                                 <argument type="service">
-                                                    <service class="Plop_Formatter">
+                                                    <service class="\Plop\Formatter">
                                                         <argument>[%%(asctime)s] %%(levelname)s: %%(message)s</argument>
                                                         <argument>r</argument>
                                                     </service>
@@ -148,9 +148,9 @@
                                 </call>
                             </service>
                         </argument>
-                        <call method="setLevel">
-                            <argument type="constant">Plop::DEBUG</argument>
-                        </call>
+<!--                        <call method="setLevel">-->
+<!--                            <argument type="constant">\Plop::DEBUG</argument>-->
+<!--                        </call>-->
                     </service>
                 </argument>
             </call>

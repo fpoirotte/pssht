@@ -127,7 +127,7 @@ class REPLY implements \fpoirotte\Pssht\MessageInterface
         $sub->encodeMpint($this->f);
         $sub->encodeMpint($this->K);
 
-        $logging    = \Plop::getInstance();
+        $logging    = \Plop\Plop::getInstance();
         $origData   = $sub->getBuffer()->get(0);
         $data       = wordwrap(bin2hex($origData), 4, ' ', true);
         $data       = wordwrap($data, 32 + 7, PHP_EOL, true);

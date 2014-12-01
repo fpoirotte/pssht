@@ -58,7 +58,7 @@ class HostBased implements AuthenticationInterface
             throw new \InvalidArgumentException();
         }
 
-        $logging        = \Plop::getInstance();
+        $logging        = \Plop\Plop::getInstance();
         $reverse        = gethostbyaddr($transport->getAddress());
         $untrustedHost  = rtrim($message->getHostname(), '.');
         $algos          = \fpoirotte\Pssht\Algorithms::factory();

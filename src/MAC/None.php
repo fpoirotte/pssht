@@ -25,7 +25,7 @@ class None implements \fpoirotte\Pssht\MACInterface
         return 'none';
     }
 
-    public function compute($data)
+    public function compute($nonce, $data)
     {
         return '';
     }

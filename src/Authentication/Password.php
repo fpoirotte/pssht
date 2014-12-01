@@ -59,7 +59,7 @@ class Password implements AuthenticationInterface
             throw new \InvalidArgumentException();
         }
 
-        $logging = \Plop::getInstance();
+        $logging = \Plop\Plop::getInstance();
         $reverse = gethostbyaddr($transport->getAddress());
 
         if (isset($this->credentials[$message->getUserName()]) &&

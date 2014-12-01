@@ -552,7 +552,7 @@ class Transport
      */
     public function writeMessage(\fpoirotte\Pssht\MessageInterface $message)
     {
-        $logging = \Plop::getInstance();
+        $logging = \Plop\Plop::getInstance();
 
         // Serialize the message.
         $encoder    = new \fpoirotte\Pssht\Wire\Encoder();
@@ -596,9 +596,9 @@ class Transport
 
         // Compute the MAC.
         if ($this->outMAC instanceof \fpoirotte\Pssht\MAC\OpensshCom\EtM\EtMInterface) {
-            $mac = $this->outMAC->compute(pack('N', $this->outSeqNo) . $encSize . $encrypted);
+            $mac = $this->outMAC->compute($this->outSeqNo, $encSize . $encrypted);
         } else {
-            $mac = $this->outMAC->compute(pack('N', $this->outSeqNo) . $packet);
+            $mac = $this->outMAC->compute($this->outSeqNo, $packet);
         }
 
         // Send the packet on the wire.
@@ -637,7 +637,7 @@ class Transport
      */
     public function readMessage()
     {
-        $logging = \Plop::getInstance();
+        $logging = \Plop\Plop::getInstance();
 
         // Initial state: expect the client's identification string.
         if (!isset($this->context['identity']['client'])) {
@@ -723,7 +723,7 @@ class Transport
             }
 
             $expectedMAC = $this->inMAC->compute(
-                pack('N', $this->inSeqNo) .
+                $this->inSeqNo,
                 ((string) substr($macData, 0, $packetLength + 4))
             );
 

@@ -25,7 +25,7 @@
         "ext-gmp": "*",
         "symfony/dependency-injection": "*",
         "symfony/config": "*",
-        "erebot/plop": "*@dev"
+        "erebot/plop": "~0.5"
     },
     "require-dev": {
         "phing/phing": "*",
@@ -36,7 +36,8 @@
         "erebot/buildenv": "master-dev"
     },
     "suggest": {
-        "ext-http": "~1.0"
+        "ext-http": "Add zlib-compression support (~1.0)",
+        "ext-hash": "Add support for various Message Authentication Code (MAC) algorithms"
     },
     "autoload": {
         "psr-4": {

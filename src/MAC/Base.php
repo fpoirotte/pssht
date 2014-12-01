@@ -31,10 +31,10 @@ abstract class Base implements
         $this->key = $key;
     }
 
-    final public function compute($data)
+    final public function compute($seqno, $data)
     {
         $cls = get_called_class();
-        return hash_hmac($cls::getHash(), $data, $this->key, true);
+        return hash_hmac($cls::getHash(), pack('N', $seqno) . $data, $this->key, true);
     }
 
     final public static function getSize()

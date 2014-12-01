@@ -39,10 +39,10 @@ abstract class Base96 implements
         return $cls::getName() . '-96';
     }
 
-    final public function compute($data)
+    final public function compute($seqno, $data)
     {
         return substr(
-            $this->subhash->compute($data),
+            $this->subhash->compute($seqno, $data),
             0,
             $this->getSize() >> 3
         );
