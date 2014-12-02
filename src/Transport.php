@@ -61,6 +61,9 @@ class Transport
     /// SSH banner.
     protected $banner;
 
+    protected $rekeyingBytes;
+    protected $rekeyingTime;
+
 
     /**
      * Construct a new SSH transport layer.
@@ -95,13 +98,24 @@ class Transport
         array $serverKeys,
         \fpoirotte\Pssht\Handlers\SERVICE\REQUEST $authMethods,
         \fpoirotte\Pssht\Wire\Encoder $encoder = null,
-        \fpoirotte\Pssht\Wire\Decoder $decoder = null
+        \fpoirotte\Pssht\Wire\Decoder $decoder = null,
+        $rekeyingBytes = 1073741824,
+        $rekeyingTime = 3600
     ) {
         if ($encoder === null) {
             $encoder = new \fpoirotte\Pssht\Wire\Encoder();
         }
+
         if ($decoder === null) {
             $decoder = new \fpoirotte\Pssht\Wire\Decoder();
+        }
+
+        if ($rekeyingBytes <= 1024) {
+            throw new \InvalidArgumentException();
+        }
+
+        if ($rekeyingTime <= 60) {
+            throw new \InvalidArgumentException();
         }
 
         $algos  = \fpoirotte\Pssht\Algorithms::factory();
@@ -123,7 +137,13 @@ class Transport
         $this->address      = null;
         $this->appFactory   = null;
         $this->banner       = null;
-        $this->context      = array();
+        $this->context      = array(
+            'rekeyingBytes' => 0,
+            'rekeyingTime'  => time() + $rekeyingTime,
+        );
+
+        $this->rekeyingBytes    = $rekeyingBytes;
+        $this->rekeyingTime     = $rekeyingTime;
 
         $this->inSeqNo      = 0;
         $this->outSeqNo     = 0;
@@ -219,6 +239,54 @@ class Transport
     public function getAddress()
     {
         return $this->address;
+    }
+
+    /**
+     * Update statistics about the number of bytes
+     * written to the client.
+     *
+     *  \param int $written
+     *      Number of additional bytes written.
+     *
+     *  \return
+     *      This method does not return anything.
+     */
+    public function updateWriteStats($written)
+    {
+        if (!is_int($written)) {
+            throw new \InvalidArgumentException('Not an integer');
+        }
+        $time = time();
+        $this->context['rekeyingBytes'] += $written;
+
+        if (isset($this->context['rekeying'])) {
+            // Do not restart key exchange
+            // if already rekeying.
+            return;
+        }
+
+        $logging = \Plop\Plop::getInstance();
+        $stats = array(
+            'bytes' => $this->context['rekeyingBytes'],
+            'duration' =>
+                $time - $this->context['rekeyingTime'] +
+                $this->rekeyingTime,
+        );
+        $logging->debug(
+            '%(bytes)d bytes sent in %(duration)d seconds',
+            $stats
+        );
+
+
+        if ($this->context['rekeyingBytes'] >= $this->rekeyingBytes ||
+            $time >= $this->context['rekeyingTime']) {
+            $logging->debug('Initiating rekeying');
+            $this->context['rekeying']      = 'server';
+            $this->context['rekeyingBytes'] = 0;
+            $this->context['rekeyingTime']  = $time + $this->rekeyingTime;
+            $kexinit = new \fpoirotte\Pssht\Handlers\InitialState();
+            $kexinit->handleKEXINIT($this, $this->context);
+        }
     }
 
     /**

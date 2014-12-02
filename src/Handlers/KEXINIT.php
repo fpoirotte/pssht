@@ -27,6 +27,10 @@ class KEXINIT implements \fpoirotte\Pssht\HandlerInterface
         $kex        = \fpoirotte\Pssht\Messages\KEXINIT::unserialize($decoder);
         $context['kex']['client'] = $kex;
 
+        if (!isset($context['rekeying'])) {
+            $context['rekeying'] = 'client';
+        }
+
         // KEX method
         $context['kexAlgo'] = null;
         foreach ($kex->getKEXAlgos() as $algo) {
@@ -117,6 +121,11 @@ class KEXINIT implements \fpoirotte\Pssht\HandlerInterface
         // No suitable S2C MAC found.
         if (!isset($context['S2C']['MAC'])) {
             throw new \RuntimeException();
+        }
+
+        if ($context['rekeying'] === 'client') {
+            $kexinit = new \fpoirotte\Pssht\Handlers\InitialState();
+            return $kexinit->handleKEXINIT($transport, $context);
         }
 
         return true;

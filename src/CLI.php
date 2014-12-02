@@ -163,6 +163,7 @@ function main()
                 );
                 $logging->log(5, '%s', array(escape(substr($data, 0, $written))));
                 $data   = substr($data, $written);
+                $clients[$id]->updateWriteStats($written);
                 $size  -= $written;
             }
         }

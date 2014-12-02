@@ -96,6 +96,9 @@
                 <parameter></parameter>
             </parameter>
         </parameter>
+
+        <parameter key="rekeying.size">1073741824</parameter>
+        <parameter key="rekeying.time">3600</parameter>
     </parameters>
 
 
@@ -110,12 +113,23 @@
         <service id="client" scope="prototype" class="\fpoirotte\Pssht\Transport">
             <argument>%server_keys%</argument>
             <argument type="service" id="authMethods"/>
+
+            <!-- Encoder -->
+            <argument type="constant">null</argument>
+
+            <!-- Decoder -->
+            <argument type="constant">null</argument>
+
+            <argument>%rekeying.size%</argument>
+            <argument>%rekeying.time%</argument>
+
             <call method="setApplicationFactory">
                 <argument type="collection">
                     <argument type="service" id="applicationFactory"/>
                     <argument>newInstance</argument>
                 </argument>
             </call>
+
             <call method="setBanner"><argument>%banner%</argument></call>
         </service>
         <!-- End of "client" service. -->

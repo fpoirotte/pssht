@@ -25,6 +25,7 @@ class NEWKEYS implements \fpoirotte\Pssht\HandlerInterface
         \fpoirotte\Pssht\Transport $transport,
         array &$context
     ) {
+        unset($context['rekeying']);
         $response = new \fpoirotte\Pssht\Messages\NEWKEYS();
         $transport->writeMessage($response);
         $logging = \Plop\Plop::getInstance();

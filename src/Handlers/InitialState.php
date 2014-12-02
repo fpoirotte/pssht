@@ -23,7 +23,6 @@ class InitialState implements \fpoirotte\Pssht\HandlerInterface
         \fpoirotte\Pssht\Transport $transport,
         array &$context
     ) {
-        $algos = \fpoirotte\Pssht\Algorithms::factory();
         $ident = $decoder->getBuffer()->get("\r\n");
         if ($ident === null) {
             throw new \RuntimeException();
@@ -32,6 +31,16 @@ class InitialState implements \fpoirotte\Pssht\HandlerInterface
         if (strncmp($ident, 'SSH-2.0-', 8) !== 0) {
             throw new \fpoirotte\Pssht\Messages\DISCONNECT();
         }
+
+        $context['rekeying'] = 'server';
+        return $this->handleKEXINIT($transport, $context);
+    }
+
+    public function handleKEXINIT(
+        \fpoirotte\Pssht\Transport $transport,
+        array &$context
+    ) {
+        $algos = \fpoirotte\Pssht\Algorithms::factory();
 
         // Cookie
         $random = new \fpoirotte\Pssht\Random\OpenSSL();
@@ -75,7 +84,6 @@ class InitialState implements \fpoirotte\Pssht\HandlerInterface
             throw new \RuntimeException();
         }
 
-
         $kex    = new \fpoirotte\Pssht\Messages\KEXINIT(
             $random,
             $kexAlgos,
@@ -89,6 +97,7 @@ class InitialState implements \fpoirotte\Pssht\HandlerInterface
         );
         $context['kex']['server'] = $kex;
         $transport->writeMessage($kex);
+
         return true;
     }
 }
