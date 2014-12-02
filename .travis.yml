@@ -22,7 +22,6 @@ before_script:
     - composer install --dev -n
 
 script:
-    - vendor/bin/phing qa
     - phpunit --coverage-clover clover.xml tests/unit/
 
 after_script:
