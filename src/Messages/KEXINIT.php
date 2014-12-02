@@ -54,7 +54,7 @@ class KEXINIT implements \fpoirotte\Pssht\MessageInterface
 
 
     /**
-     * Construction a new SSH_MSG_KEXINIT message.
+     * Construct a new SSH_MSG_KEXINIT message.
      *
      *  \param fpoirotte::Pssht::RandomInterface $random
      *      RNG from which the KEX cookie will be generated.
