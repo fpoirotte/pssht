@@ -10,13 +10,27 @@
 
 namespace fpoirotte\Pssht\Application;
 
-class EchoService
+class EchoService implements \fpoirotte\Pssht\HandlerInterface
 {
     public function __construct(
         \fpoirotte\Pssht\Transport $transport,
         \fpoirotte\Pssht\Connection $connection,
         \fpoirotte\Pssht\MessageInterface $message
     ) {
-        
+        $transport->setHandler(\fpoirotte\Pssht\Messages\CHANNEL\DATA::getMessageId(), $this);
+    }
+
+    // SSH_MSG_CHANNEL_DATA = 94
+    public function handle(
+        $msgType,
+        \fpoirotte\Pssht\Wire\Decoder $decoder,
+        \fpoirotte\Pssht\Transport $transport,
+        array &$context
+    ) {
+        $message    = \fpoirotte\Pssht\Messages\CHANNEL\DATA::unserialize($decoder);
+        $channel    = $message->getChannel();
+        $response   = new \fpoirotte\Pssht\Messages\CHANNEL\DATA($channel, $message->getData());
+        $transport->writeMessage($response);
+        return true;
     }
 }
