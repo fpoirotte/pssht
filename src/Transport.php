@@ -110,11 +110,11 @@ class Transport
             $decoder = new \fpoirotte\Pssht\Wire\Decoder();
         }
 
-        if ($rekeyingBytes <= 1024) {
+        if (!is_int($rekeyingBytes) || $rekeyingBytes <= 1024) {
             throw new \InvalidArgumentException();
         }
 
-        if ($rekeyingTime <= 60) {
+        if (!is_int($rekeyingTime) || $rekeyingTime <= 60) {
             throw new \InvalidArgumentException();
         }
 
