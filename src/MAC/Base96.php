@@ -48,6 +48,12 @@ abstract class Base96 implements
         );
     }
 
+    final public static function getKeySize()
+    {
+        $cls = static::getBaseClass();
+        return $cls::getKeySize();
+    }
+
     final public static function getSize()
     {
         return 96 >> 3;

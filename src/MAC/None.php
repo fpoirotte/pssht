@@ -34,4 +34,9 @@ class None implements \fpoirotte\Pssht\MACInterface
     {
         return 0;
     }
+
+    public static function getKeySize()
+    {
+        return 0;
+    }
 }

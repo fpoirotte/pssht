@@ -20,6 +20,7 @@ abstract class Base implements \fpoirotte\Pssht\MACInterface
     {
         $encoder    = new \fpoirotte\Pssht\Wire\Encoder();
         $nonce      = $encoder->encodeUint64($seqno)->getBuffer()->get(0);
-        return $this->umac->umac($this->key, $data, $nonce);
+        $res        = $this->umac->umac($this->key, $data, $nonce);
+        return $res;
     }
 }

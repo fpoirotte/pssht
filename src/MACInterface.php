@@ -47,4 +47,13 @@ interface MACInterface extends AlgorithmInterface
      *      MAC size in bytes.
      */
     public static function getSize();
+
+    /**
+     * Get the size of a key compatible
+     * with this MAC algorithm.
+     *
+     *  \retval int
+     *      MAC key size in bytes.
+     */
+    public static function getKeySize();
 }

@@ -37,10 +37,15 @@ abstract class Base implements
         return hash_hmac($cls::getHash(), pack('N', $seqno) . $data, $this->key, true);
     }
 
-    final public static function getSize()
+    final public static function getKeySize()
     {
         $cls = get_called_class();
         return strlen(hash($cls::getHash(), '', true));
+    }
+
+    final public static function getSize()
+    {
+        return static::getKeySize();
     }
 
     final public static function isAvailable()

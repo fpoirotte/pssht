@@ -43,8 +43,8 @@ class NEWKEYS implements \fpoirotte\Pssht\HandlerInterface
             'B' => array($context['S2C']['Encryption'], 'getIVSize'),
             'C' => array($context['C2S']['Encryption'], 'getKeySize'),
             'D' => array($context['S2C']['Encryption'], 'getKeySize'),
-            'E' => array($context['C2S']['MAC'], 'getSize'),
-            'F' => array($context['C2S']['MAC'], 'getSize'),
+            'E' => array($context['C2S']['MAC'], 'getKeySize'),
+            'F' => array($context['C2S']['MAC'], 'getKeySize'),
         );
 
         $shared = gmp_strval($context['DH']->getSharedSecret(), 16);

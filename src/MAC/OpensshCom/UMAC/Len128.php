@@ -13,15 +13,20 @@ namespace fpoirotte\Pssht\MAC\OpensshCom\UMAC;
 
 class Len128 extends Base
 {
-    public function __construct($key)
+    final public function __construct($key)
     {
         $this->key  = $key;
         $this->umac = new \fpoirotte\Pssht\UMAC\UMAC128();
     }
 
-    public static function getSize()
+    final public static function getKeySize()
     {
-        return 32;
+        return 16;
+    }
+
+    final public static function getSize()
+    {
+        return 16;
     }
 
     public static function getName()
