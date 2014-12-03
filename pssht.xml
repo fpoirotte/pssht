@@ -175,10 +175,11 @@
             The "authMethods" service is used to indicate
             which authentication methods are allowed.
         -->
-        <service id="authMethods" public="false"
+        <service id="authMethods" scope="prototype" public="false"
             class="\fpoirotte\Pssht\Handlers\SERVICE\REQUEST">
             <argument type="service">
-                <service class="\fpoirotte\Pssht\Handlers\USERAUTH\REQUEST">
+                <service scope="prototype"
+                    class="\fpoirotte\Pssht\Handlers\USERAUTH\REQUEST">
                     <argument type="collection">
 
                         <!--
