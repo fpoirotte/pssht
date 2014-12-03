@@ -61,18 +61,22 @@ abstract class Base
 
     protected function PDF($k, $nonce)
     {
+        $nlen   = strlen($nonce);
+        $nonce  = gmp_init(bin2hex($nonce), 16);
+
         // Extract and zero low bit(s) of Nonce if needed
         if ($this->taglen <= 8) {
             $index = gmp_intval(gmp_mod($nonce, gmp_init($this->blocklen / $this->taglen)));
             $nonce = gmp_xor($nonce, $index);
         }
 
-        // Make Nonce BLOCKLEN bytes by appending zeroes if needed
         $nonce = gmp_strval($nonce, 16);
-        $nonce = pack('H*', str_pad($nonce, ((strlen($nonce) + 1) >> 1) << 1, '0', STR_PAD_LEFT));
+        $nonce = pack('H*', str_pad($nonce, $nlen << 1, '0', STR_PAD_LEFT));
+
+        // Make Nonce BLOCKLEN bytes by appending zeroes if needed
         $nonce = str_pad($nonce, $this->blocklen, "\x00");
 
-        $kprime = $this->KDF($k, 0, strlen($nonce));
+        $kprime = $this->KDF($k, 0, strlen($k));
         $t = mcrypt_encrypt($this->cipher, $kprime, $nonce, 'ecb');
 
         if ($this->taglen <= 8) {
@@ -85,7 +89,7 @@ abstract class Base
     public function UMAC($k, $m, $nonce)
     {
         $hashed = $this->UHASH($k, $m);
-        $pad = $this->PDF($k, gmp_init(bin2hex($nonce), 16));
+        $pad = $this->PDF($k, $nonce);
         $tag = gmp_xor(gmp_init(bin2hex($pad), 16), gmp_init(bin2hex($hashed), 16));
         $tag = gmp_strval($tag, 16);
         $tag = pack('H*', str_pad($tag, ((strlen($tag) + 1) >> 1) << 1, '0', STR_PAD_LEFT));
