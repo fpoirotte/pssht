@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "ac55e7e870e8cbb87e66c8604544ad9e",
+    "hash": "33cf7f6e7c03f8f43f54e95002aac8e2",
     "packages": [
         {
             "name": "erebot/plop",

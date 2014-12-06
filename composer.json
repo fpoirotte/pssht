@@ -1,8 +1,8 @@
 {
     "prefer-stable": true,
     "name": "fpoirotte/pssht",
-    "description": "SSH library for PHP",
-    "keywords": ["SSH"],
+    "description": "SSH server library written in PHP",
+    "keywords": ["SSH", "server", "secure", "shell"],
     "homepage": "https://github.com/fpoirotte/pssht",
     "license": "MIT",
     "authors": [
