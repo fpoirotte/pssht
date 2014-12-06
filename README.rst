@@ -187,9 +187,6 @@ For compatibility with other SSH implementations, pssht also advertises
 support for the ``rijndael-cbc@lysator.liu.se`` encryption algorithm
 (as an alias for ``aes256-cbc``).
 
-The PHP ``hash`` extension must be installed for these algorithms
-to work properly.
-
 MAC algorithms
 ~~~~~~~~~~~~~~
 
@@ -215,6 +212,9 @@ The following MAC algorithms are supported:
 -   ``umac-64-etm@openssh.com``
 -   ``umac-128@openssh.com``
 -   ``umac-128-etm@openssh.com``
+
+The PHP ``hash`` extension must be installed for these algorithms
+to work properly.
 
 Public key algorithms
 ~~~~~~~~~~~~~~~~~~~~~
