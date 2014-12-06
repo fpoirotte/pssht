@@ -320,10 +320,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ..  _`RFC 6668`:
     https://tools.ietf.org/html/rfc6668
 
-..  _`umac@openssh.com`:
+..  _`draft-miller-secsh-umac-01`:
     https://tools.ietf.org/html/draft-miller-secsh-umac-01
 
-..  _`zlib@openssh.com`:
+..  _`draft-miller-secsh-compression-delayed-00`:
     https://tools.ietf.org/html/draft-miller-secsh-compression-delayed-00
 
 ..  |---| unicode:: U+02014 .. em dash
