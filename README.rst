@@ -13,7 +13,39 @@ What we're aiming for:
 What we're not specifically aiming for, but still interested in:
 
 *   Completeness (like support for TCP port forwarding, TUN/TAP tunneling,
-    scp/sftp subsystems, etc.)
+    the scp/sftp subsystems, etc.)
+*   Strong security (peer reviews, security audits, etc.)
+
+
+Disclaimer
+----------
+
+This should be obvious from the get-go, but **DO NOT USE** pssht in production.
+This project merely exists for two reasons:
+
+-   First, I wanted to provide a """somewhat secure""" cross-platform way
+    to expose `Erebot internals <https://github.com/Erebot/Erebot>`_
+    for introspection purposes and I did not want to install an external
+    SSH daemon.
+-   Secondly, I wanted to learn more about the SSH protocol itself.
+
+The implementation did not pass any specific security audit. In addition,
+no attempt has been made to avoid some common classes of vulnerabilities, eg.
+`timing attacks <http://blog.ircmaxell.com/2014/11/its-all-about-time.html>`_.
+Not to mention that the PHP interpreter itself is known to be frequently
+subject to vulnerabilities `of its own
+<http://www.cvedetails.com/product/128/PHP-PHP.html?vendor_id=74>`_.
+
+If you are looking for an SSH daemon with thorough testing and frequent code
+audits to integrate with your PHP code, we recommend that you look into
+the `OpenSSH project <http://www.openssh.com/>`_.
+
+If you still aren't convinced that you shouldn't use this code in production,
+see `this reddit page <http://www.reddit.com/r/lolphp/comments/1yvm6v/php_can_do_anything_what_about_some_ssh_mtgox>`_
+which relates part of the story of a similar project by MtGox's CEO.
+
+In no event shall the authors of pssht be liable for anything that happens
+while using this library. See also the `license`_ for the full disclaimer.
 
 
 Installation & Usage
