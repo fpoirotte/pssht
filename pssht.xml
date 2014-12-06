@@ -97,6 +97,15 @@
             </parameter>
         </parameter>
 
+        <!--
+            Controls the frequency of key re-exchange (aka. rekeying).
+            *   "rekeying.size" specifies how many bytes may be sent
+                before rekeying is requested.
+                The default is one gigabyte as recommended in RFC 4253.
+            *   "rekeying.time" specifies how many seconds may pass
+                before rekeying is requested.
+                The default is one hour as recommended in RFC 4253.
+        -->
         <parameter key="rekeying.size">1073741824</parameter>
         <parameter key="rekeying.time">3600</parameter>
     </parameters>
@@ -130,7 +139,9 @@
                 </argument>
             </call>
 
-            <call method="setBanner"><argument>%banner%</argument></call>
+            <call method="setBanner">
+                <argument>%banner%</argument>
+            </call>
         </service>
         <!-- End of "client" service. -->
 
