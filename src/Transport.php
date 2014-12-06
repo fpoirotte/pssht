@@ -184,9 +184,6 @@ class Transport
             \fpoirotte\Pssht\Messages\NEWKEYS::getMessageId() =>
                 new \fpoirotte\Pssht\Handlers\NEWKEYS(),
 
-            \fpoirotte\Pssht\Messages\KEXDH\INIT::getMessageId() =>
-                new \fpoirotte\Pssht\Handlers\KEXDH\INIT(),
-
             256 => new \fpoirotte\Pssht\Handlers\InitialState(),
         );
 
@@ -540,7 +537,7 @@ class Transport
      *  \param int $type
      *      Message type.
      *
-     *  \retval fpoirottefpoirotte::Pssht::HandlerInterface
+     *  \retval fpoirotte::Pssht::HandlerInterface
      *      Handler associated with the given message type.
      *
      *  \retval null

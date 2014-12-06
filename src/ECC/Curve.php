@@ -16,6 +16,9 @@ namespace fpoirotte\Pssht\ECC;
  */
 class Curve
 {
+    /// Name.
+    protected $name;
+
     /// Modulus.
     protected $p;
 
@@ -31,16 +34,21 @@ class Curve
     /// Curve order.
     protected $n;
 
+    /// Curve co-factor.
+    protected $h;
+
     /// Array with standard curves.
     protected static $curves = array();
 
-    public function __construct($p, $a, $b, \fpoirotte\Pssht\ECC\Point $G, $n)
+    public function __construct($name, $p, $a, $b, \fpoirotte\Pssht\ECC\Point $G, $n, $h)
     {
-        $this->p = $p;
-        $this->a = $a;
-        $this->b = $b;
-        $this->G = $G;
-        $this->n = $n;
+        $this->name = $name;
+        $this->p    = $p;
+        $this->a    = $a;
+        $this->b    = $b;
+        $this->G    = $G;
+        $this->n    = $n;
+        $this->h    = $h;
     }
 
     public static function initialize()
@@ -49,7 +57,9 @@ class Curve
             return;
         }
 
+        # (name, p_XXX, a, b, (xG, yG), n, h)
         static::$curves['nistp256'] = new static(
+            'nistp256',
             gmp_init('0xffffffff00000001000000000000000000000000ffffffffffffffffffffffff'),
             gmp_init('0xffffffff00000001000000000000000000000000fffffffffffffffffffffffc'),
             gmp_init('0x5ac635d8aa3a93e7b3ebbd55769886bc651d06b0cc53b0f63bce3c3e27d2604b'),
@@ -57,9 +67,11 @@ class Curve
                 '0x6b17d1f2e12c4247f8bce6e563a440f277037d812deb33a0f4a13945d898c296',
                 '0x4fe342e2fe1a7f9b8ee7eb4a7c0f9e162bce33576b315ececbb6406837bf51f5'
             ),
-            gmp_init('0xffffffff00000000ffffffffffffffffbce6faada7179e84f3b9cac2fc632551')
+            gmp_init('0xffffffff00000000ffffffffffffffffbce6faada7179e84f3b9cac2fc632551'),
+            1
         );
         static::$curves['nistp384'] = new static(
+            'nistp384',
             gmp_init(
                 '0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF' .
                 'FFFFFFEFFFFFFFF0000000000000000FFFFFFFF'
@@ -81,9 +93,11 @@ class Curve
             gmp_init(
                 '0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFC7634D81F' .
                 '4372DDF581A0DB248B0A77AECEC196ACCC52973'
-            )
+            ),
+            1
         );
         static::$curves['nistp521'] = new static(
+            'nistp521',
             gmp_init(
                 '0x01FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF' .
                 'FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF' .
@@ -111,7 +125,8 @@ class Curve
                 '0x01FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF' .
                 'FFFFFFFFFFA51868783BF2F966B7FCC0148F709A5D03BB5C9B8899C47AE' .
                 'BB6FB71E91386409'
-            )
+            ),
+            1
         );
     }
 
@@ -121,6 +136,11 @@ class Curve
             throw new \InvalidArgumentException();
         }
         return static::$curves[$name];
+    }
+
+    public function getName()
+    {
+        return $this->name;
     }
 
     public function getModulus()
@@ -146,5 +166,10 @@ class Curve
     public function getOrder()
     {
         return $this->n;
+    }
+
+    public function getCofactor()
+    {
+        return $this->h;
     }
 }

@@ -35,7 +35,7 @@ class KEXINIT implements \fpoirotte\Pssht\HandlerInterface
         $context['kexAlgo'] = null;
         foreach ($kex->getKEXAlgos() as $algo) {
             if ($algos->getClass('KEX', $algo) !== null) {
-                $context['kexAlgo'] = $algos->getClass('KEX', $algo);
+                $kexCls = $context['kexAlgo'] = $algos->getClass('KEX', $algo);
                 break;
             }
         }
@@ -43,7 +43,7 @@ class KEXINIT implements \fpoirotte\Pssht\HandlerInterface
         if (!isset($context['kexAlgo'])) {
             throw new \RuntimeException();
         }
-
+        $kexCls::addHandlers($transport);
 
         // C2S encryption
         $context['C2S']['Encryption'] = null;

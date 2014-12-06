@@ -28,6 +28,10 @@ class INIT implements \fpoirotte\Pssht\MessageInterface
      */
     public function __construct($e)
     {
+        if (!((is_resource($n) && get_resource_type($n) === 'GMP integer') ||
+            (is_object($n) && ($n instanceof \GMP)))) {
+            throw new \InvalidArgumentException();
+        }
         $this->e = $e;
     }
 

@@ -23,9 +23,6 @@ class INIT implements \fpoirotte\Pssht\HandlerInterface
         \fpoirotte\Pssht\Transport $transport,
         array &$context
     ) {
-        $message    = \fpoirotte\Pssht\Messages\KEXDH\INIT::unserialize($decoder);
-        $kexAlgo    = $context['kexAlgo'];
-        $kexAlgo    = new $kexAlgo();
         $hostAlgo   = null;
         foreach ($context['kex']['client']->getServerHostKeyAlgos() as $algo) {
             if (isset($context['serverKeys'][$algo])) {
@@ -36,19 +33,9 @@ class INIT implements \fpoirotte\Pssht\HandlerInterface
         if ($hostAlgo === null) {
             throw new \RuntimeException();
         }
+        $response   = $this->createResponse($decoder, $transport, $context, $hostAlgo);
 
         $logging    = \Plop\Plop::getInstance();
-        $response   = new \fpoirotte\Pssht\Messages\KEXDH\REPLY(
-            $message,
-            $context['serverKeys'][$hostAlgo],
-            $transport->getEncryptor(),
-            $kexAlgo,
-            $context['kex']['server'],
-            $context['kex']['client'],
-            $context['identity']['server'],
-            $context['identity']['client']
-        );
-
         $secret = gmp_strval($response->getSharedSecret(), 16);
         $logging->debug(
             "Shared secret:\r\n%s",
@@ -70,5 +57,31 @@ class INIT implements \fpoirotte\Pssht\HandlerInterface
         $context['DH'] = $response;
         $transport->writeMessage($response);
         return true;
+    }
+
+    protected function createResponse(
+        \fpoirotte\Pssht\Wire\Decoder $decoder,
+        \fpoirotte\Pssht\Transport $transport,
+        array &$context,
+        $hostAlgo
+    ) {
+        $kexAlgo    = $context['kexAlgo'];
+        $kexAlgo    = new $kexAlgo();
+        $message    = \fpoirotte\Pssht\Messages\KEXDH\INIT::unserialize($decoder);
+
+        if (!$message->getQ()->isValid()) {
+            throw new \InvalidArgumentException();
+        }
+
+        return new \fpoirotte\Pssht\Messages\KEXDH\REPLY(
+            $message,
+            $context['serverKeys'][$hostAlgo],
+            $transport->getEncryptor(),
+            $kexAlgo,
+            $context['kex']['server'],
+            $context['kex']['client'],
+            $context['identity']['server'],
+            $context['identity']['client']
+        );
     }
 }

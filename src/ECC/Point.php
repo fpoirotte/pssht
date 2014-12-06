@@ -186,4 +186,11 @@ class Point implements \ArrayAccess
         }
         return $res;
     }
+
+    public function isIdentity(\fpoirotte\Pssht\ECC\Curve $curve)
+    {
+        $n = self::multiply($curve, 2);
+        return (!gmp_cmp($this['x'], $n['x']) &&
+                !gmp_cmp($this['y'], $n['y']));
+    }
 }

@@ -16,7 +16,7 @@ namespace fpoirotte\Pssht\KEX;
  * and Oakley Group 2 [RFC2409] (1024-bit MODP Group);
  * REQUIRED in RFC 4253.
  */
-class DHGroup1SHA1 implements \fpoirotte\Pssht\KEXInterface
+class DHGroup1SHA1 extends \fpoirotte\Pssht\KEX\DHGroupSHA1Base
 {
     public static function getName()
     {
@@ -41,10 +41,5 @@ class DHGroup1SHA1 implements \fpoirotte\Pssht\KEXInterface
             EE386BFB 5A899FA5 AE9F2411 7C4B1FE6 49286651 ECE65381
             FFFFFFFF FFFFFFFF'
         );
-    }
-
-    public function hash($data)
-    {
-        return sha1($data, true);
     }
 }

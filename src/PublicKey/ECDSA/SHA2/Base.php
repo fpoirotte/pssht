@@ -231,4 +231,44 @@ abstract class Base implements
         $this->rng = $rng;
         return $this;
     }
+
+    public function isValid()
+    {
+        $curve  = \fpoirotte\Pssht\ECC\Curve::getCurve(static::getIdentifier());
+        if ($this->Q->isIdentity($curve)) {
+            return false;
+        }
+
+        $p      = $curve->getModulus();
+        if (gmp_cmp($this->Q->x, 0) < 0 || gmp_cmp($this->Q->x, $p) >= 0 ||
+            gmp_cmp($this->Q->y, 0) < 0 || gmp_cmp($this->Q->y, $p) >= 0) {
+            return false;
+        }
+
+        $left   = gmp_mod(gmp_mul($this->Q->y, $this->Q->y), $p);
+        $right  = gmp_mod(
+            gmp_add(
+                gmp_add(
+                    gmp_pow($this->Q->x, 3),
+                    gmp_mul($curve->getA(), $this->Q->x)
+                ),
+                $curve->getB()
+            ),
+            $p
+        );
+        if (gmp_cmp($left, $right)) {
+            return false;
+        }
+
+        if ($curve->getCofactor() === 1) {
+            return true;
+        }
+
+        return $this->Q->multiply($curve->getOrder())->isIdentity();
+    }
+
+    public function getPublic()
+    {
+        return $this->Q;
+    }
 }
