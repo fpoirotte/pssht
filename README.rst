@@ -53,52 +53,163 @@ Configuration
 -------------
 
 pssht uses the Dependency Injection component from the Symfony2 framework
-for its configuration. Have a look at the default
-`pssht.xml <https://github.com/fpoirotte/pssht/blob/master/pssht.xml>`_
+for its configuration. Have a look at the default `pssht.xml
+<https://github.com/fpoirotte/pssht/blob/master/pssht.xml>`_
 for ways to configure pssht.
 
 
 Compatibility
 -------------
 
-pssht supports the following features for compatibility with other
-Secure Shell implementations:
+pssht supports the mechanisms and algorithms defined in the following
+documents for compatibility with other Secure Shell implementations:
 
--   `RFC 4250 <https://tools.ietf.org/html/rfc4250>`_
-    |---| SSH Protocol Assigned Numbers
+-   `RFC 4250`_ |---| SSH Protocol Assigned Numbers
+-   `RFC 4251`_ |---| SSH Protocol Architecture
+-   `RFC 4252`_ |---| SSH Authentication Protocol
+-   `RFC 4253`_ |---| SSH Transport Layer Protocol
+-   `RFC 4254`_ |---| SSH Connection Protocol
+-   `RFC 4344`_ |---| SSH Transport Layer Encryption Modes
+-   `RFC 4345`_ |---| Improved Arcfour Modes for the SSH Transport Layer Protocol
+-   `RFC 4462`_ |---| SSH Public Key File Format
+-   `RFC 5656`_ |---| Elliptic Curve Algorithm Integration in SSH
+-   `RFC 6668`_ |---| SHA-2 Data Integrity Algorithms
+-   `draft-miller-secsh-umac-01`_ |---| UMAC in the SSH Transport Layer Protocol
+-   `draft-miller-secsh-compression-delayed-00`_ |---| Delayed compression until after authentication
 
--   `RFC 4251 <https://tools.ietf.org/html/rfc4251>`_
-    |---| SSH Protocol Architecture
+The rest of this section describes precisely which algorithms and features
+are supported.
 
--   `RFC 4252 <https://tools.ietf.org/html/rfc4252>`_
-    |---| SSH Authentication Protocol
+Services
+~~~~~~~~
 
--   `RFC 4253 <https://tools.ietf.org/html/rfc4253>`_
-    |---| SSH Transport Layer Protocol
+The following services are supported:
 
--   `RFC 4254 <https://tools.ietf.org/html/rfc4254>`_
-    |---| SSH Connection Protocol
+-   ``ssh-userauth``
+-   ``ssh-connection``
 
--   `RFC 4344 <https://tools.ietf.org/html/rfc4344>`_
-    |---| SSH Transport Layer Encryption Modes
+Authentication methods
+~~~~~~~~~~~~~~~~~~~~~~
 
--   `RFC 4345 <https://tools.ietf.org/html/rfc4345>`_
-    |---| Improved Arcfour Modes for the SSH Transport Layer Protocol
+The following authentication methods are supported:
 
--   `RFC 5656 <https://tools.ietf.org/html/rfc5656>`_
-    |---| Elliptic Curve Algorithm Integration in SSH [1]_
+-   ``publickey``
+-   ``password``
+-   ``hostbased``
+-   ``none``
 
--   `RFC 6668 <https://tools.ietf.org/html/rfc6668>`_
-    |---| SHA-2 Data Integrity Algorithms
+Key exchange methods
+~~~~~~~~~~~~~~~~~~~~
 
--   `zlib@openssh.com <https://tools.ietf.org/html/draft-miller-secsh-compression-delayed-00>`_
-    |---| Delayed compression until after authentication
+The following key exchange methods are supported:
+
+-   ``diffie-hellman-group1-sha1``
+-   ``diffie-hellman-group14-sha1``
+-   ``ecdh-sha2-nistp256``
+-   ``ecdh-sha2-nistp384``
+-   ``ecdh-sha2-nistp521``
+
+The PHP ``hash`` extension must be installed for the ``ecdsa-sha2-*``
+family of algorithms to work properly. Also, elliptic curve points
+encoded using point compression are **not** accepted or generated.
 
 
-..  [1] Only the ``ecdsa-sha2-nistp256``, ``ecdsa-sha2-nistp384``
-    and ``ecdsa-sha2-nistp521`` curves over ``GF(p)`` are supported.
-    Elliptic curve points encoded using point compression
-    are **not** accepted or generated.
+Encryption algorithms
+~~~~~~~~~~~~~~~~~~~~~
+
+The following encryption algorithms are supported:
+
+-   ``3des-cbc``
+-   ``3des-ctr``
+-   ``aes128-cbc``
+-   ``aes192-cbc``
+-   ``aes256-cbc``
+-   ``aes128-ctr``
+-   ``aes192-ctr``
+-   ``aes256-ctr``
+-   ``arcfour``
+-   ``arcfour128``
+-   ``arcfour256``
+-   ``blowfish-cbc``
+-   ``blowfish-ctr``
+-   ``cast128-cbc``
+-   ``cast128-ctr``
+-   ``idea-cbc``
+-   ``idea-ctr``
+-   ``none``
+-   ``serpent128-cbc``
+-   ``serpent192-cbc``
+-   ``serpent256-cbc``
+-   ``serpent128-ctr``
+-   ``serpent192-ctr``
+-   ``serpent256-ctr``
+-   ``twofish-cbc``
+-   ``twofish128-cbc``
+-   ``twofish192-cbc``
+-   ``twofish256-cbc``
+-   ``twofish128-ctr``
+-   ``twofish192-ctr``
+-   ``twofish256-ctr``
+
+For compatibility with other SSH implementations, pssht also advertises
+support for the ``rijndael-cbc@lysator.liu.se`` encryption algorithm
+(as an alias for ``aes256-cbc``).
+
+The PHP ``hash`` extension must be installed for these algorithms
+to work properly.
+
+MAC algorithms
+~~~~~~~~~~~~~~
+
+The following MAC algorithms are supported:
+
+-   ``hmac-md5``
+-   ``hmac-md5-etm@openssh.com``
+-   ``hmac-md5-96``
+-   ``hmac-md5-96-etm@openssh.com``
+-   ``hmac-ripemd160``
+-   ``hmac-ripemd160-etm@openssh.com``
+-   ``hmac-sha1``
+-   ``hmac-sha1-etm@openssh.com``
+-   ``hmac-sha1-96``
+-   ``hmac-sha1-96-etm@openssh.com``
+-   ``hmac-sha2-256``
+-   ``hmac-sha2-256-etm@openssh.com``
+-   ``hmac-sha2-512``
+-   ``hmac-sha2-512-etm@openssh.com``
+-   ``none``
+-   ``ripemd160`` (as an alias for ``hmac-ripemd160``)
+-   ``umac-64@openssh.com``
+-   ``umac-64-etm@openssh.com``
+-   ``umac-128@openssh.com``
+-   ``umac-128-etm@openssh.com``
+
+Public key algorithms
+~~~~~~~~~~~~~~~~~~~~~
+
+The following public key algorithms are supported:
+
+-   ``ecdsa-sha2-nistp256``
+-   ``ecdsa-sha2-nistp384``
+-   ``ecdsa-sha2-nistp521``
+-   ``ssh-dss``
+-   ``ssh-rsa``
+
+The PHP ``hash`` extension must be installed for the ``ecdsa-sha2-*``
+family of algorithms to work properly. Also, elliptic curve points
+encoded using point compression are **not** accepted or generated.
+
+Compression algorithms
+~~~~~~~~~~~~~~~~~~~~~~
+
+The following compression algorithms are supported:
+
+-   ``none``
+-   ``zlib``
+-   ``zlib@openssh.com``
+
+The PHP ``http`` extension must be installed for the ``zlib`` and
+``zlib@openssh.com`` algorithms to work properly.
 
 
 Integration
@@ -145,6 +256,43 @@ FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
 COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
 IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+..  _`RFC 4250`:
+    https://tools.ietf.org/html/rfc4250
+
+..  _`RFC 4251`:
+    https://tools.ietf.org/html/rfc4251
+
+..  _`RFC 4252`:
+    https://tools.ietf.org/html/rfc4252
+
+..  _`RFC 4253`:
+    https://tools.ietf.org/html/rfc4253
+
+..  _`RFC 4254`:
+    https://tools.ietf.org/html/rfc4254
+
+..  _`RFC 4344`:
+    https://tools.ietf.org/html/rfc4344
+
+..  _`RFC 4345`:
+    https://tools.ietf.org/html/rfc4345
+
+..  _`RFC 4462`:
+    https://tools.ietf.org/html/rfc4462
+
+..  _`RFC 5656`:
+    https://tools.ietf.org/html/rfc5656
+
+..  _`RFC 6668`:
+    https://tools.ietf.org/html/rfc6668
+
+..  _`umac@openssh.com`:
+    https://tools.ietf.org/html/draft-miller-secsh-umac-01
+
+..  _`zlib@openssh.com`:
+    https://tools.ietf.org/html/draft-miller-secsh-compression-delayed-00
 
 ..  |---| unicode:: U+02014 .. em dash
     :trim:

@@ -37,7 +37,7 @@
     },
     "suggest": {
         "ext-http": "Add zlib-compression support (~1.0)",
-        "ext-hash": "Add support for various Message Authentication Code (MAC) algorithms"
+        "ext-hash": "Add support for various additional algorithms"
     },
     "autoload": {
         "psr-4": {
