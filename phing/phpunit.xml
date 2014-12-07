@@ -1,7 +1,10 @@
 <?xml version="1.0"?>
 <project name="Erebot_buildenv_phpunit">
-    <phpunit codecoverage="true">
-        <formatter type="plain" usefile="false"/>
-        <batchtest><fileset refid="tests"/></batchtest>
-    </phpunit>
+    <target name="qa_test" depends="qa_pre_coverage"
+        description="Run (unit) tests using PHPUnit">
+        <phpunit codecoverage="true">
+            <formatter type="plain" usefile="false"/>
+            <batchtest><fileset refid="tests"/></batchtest>
+        </phpunit>
+    </target>
 </project>

@@ -33,7 +33,7 @@
         "sebastian/phpcpd": "*",
         "phpunit/phpunit": "<4",
         "squizlabs/php_codesniffer": "*",
-        "erebot/buildenv": "master-dev"
+        "erebot/buildenv": "~1.2.0"
     },
     "suggest": {
         "ext-http": "Add zlib-compression support (~1.0)",

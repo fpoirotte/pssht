@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "33cf7f6e7c03f8f43f54e95002aac8e2",
+    "hash": "ad265d517ae182fbb34ffa66b52226de",
     "packages": [
         {
             "name": "erebot/plop",
@@ -225,23 +225,23 @@
     "packages-dev": [
         {
             "name": "erebot/buildenv",
-            "version": "dev-master",
+            "version": "1.2.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Erebot/Erebot_Buildenv.git",
-                "reference": "7e5fe26390a0a1aa9648f02044bfd65fb70b46ac"
+                "reference": "701ddb49f6c3f1f71e40b4356ec25d5dbfd487c9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Erebot/Erebot_Buildenv/zipball/7e5fe26390a0a1aa9648f02044bfd65fb70b46ac",
-                "reference": "7e5fe26390a0a1aa9648f02044bfd65fb70b46ac",
+                "url": "https://api.github.com/repos/Erebot/Erebot_Buildenv/zipball/701ddb49f6c3f1f71e40b4356ec25d5dbfd487c9",
+                "reference": "701ddb49f6c3f1f71e40b4356ec25d5dbfd487c9",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
                 "ext-phar": "*",
                 "ext-xsl": "*",
-                "phing/phing": ">=2.4.3",
+                "phing/phing": ">=2.9.0",
                 "php": ">=5.2.2"
             },
             "require-dev": {
@@ -270,7 +270,7 @@
             "keywords": [
                 "Erebot"
             ],
-            "time": "2014-11-23 12:29:53"
+            "time": "2014-12-06 23:45:08"
         },
         {
             "name": "pdepend/pdepend",
@@ -1200,9 +1200,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "erebot/buildenv": 20
-    },
+    "stability-flags": [],
     "prefer-stable": true,
     "platform": {
         "php": ">=5.3.3",
