@@ -111,19 +111,19 @@ abstract class Base
             $l3key1_i   = substr($l3key1, $i << 6, 64);
             $l3key2_i   = substr($l3key2, $i << 2, 4);
 
-            $a = $this->L1_HASH($l1key_i, $m);
+            $a = $this->l1Hash($l1key_i, $m);
             if (strlen($m) <= 1024) {
                 $b = "\x00\x00\x00\x00\x00\x00\x00\x00" . $a;
             } else {
-                $b = $this->L2_HASH($l2key_i, $a);
+                $b = $this->l2Hash($l2key_i, $a);
             }
-            $c = $this->L3_HASH($l3key1_i, $l3key2_i, $b);
+            $c = $this->l3Hash($l3key1_i, $l3key2_i, $b);
             $y .= $c;
         }
         return $y;
     }
 
-    protected function L1_HASH($k, $m)
+    protected function l1Hash($k, $m)
     {
         // Break M into 1024 byte chunks (final chunk may be shorter)
         $ms     = str_split($m, 1024);
@@ -190,7 +190,7 @@ abstract class Base
         return $y;
     }
 
-    protected function L2_HASH($k, $m)
+    protected function l2Hash($k, $m)
     {
         //  Extract keys and restrict to special key-sets
         $mask64     = gmp_init('0x01ffffff01ffffff', 16);
@@ -262,7 +262,7 @@ abstract class Base
         return $y;
     }
 
-    protected function L3_HASH($k1, $k2, $m)
+    protected function l3Hash($k1, $k2, $m)
     {
         $y = gmp_init(0);
         $prime36 = gmp_init(self::PRIME_36, 16);
