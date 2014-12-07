@@ -1,4 +1,10 @@
 language: php
+sudo: false
+
+cache:
+    directories:
+        - vendor
+        - $HOME/.composer/cache
 
 php:
     - 5.3
@@ -10,8 +16,9 @@ php:
 
 matrix:
     allow_failures:
-    - hhvm
-    - hhvm-nightly
+        php:
+            - hhvm
+            - hhvm-nightly
 
 notifications:
     email: false
