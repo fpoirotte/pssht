@@ -35,20 +35,21 @@ class GCM
 
         $this->cipher   = mcrypt_module_open($cipher, null, 'ecb', null);
         mcrypt_generic_init($this->cipher, $key, str_repeat("\x00", 16));
-        $this->H        = gmp_init(
-            bin2hex(mcrypt_generic($this->cipher, str_repeat("\x00", 16))),
-            16
-        );
         $this->taglen   = $taglen;
 
         $logging->debug('Pre-computing GCM table');
+        $H  = gmp_init(
+            bin2hex(mcrypt_generic($this->cipher, str_repeat("\x00", 16))),
+            16
+        );
         $this->table = array();
         for ($i = 0; $i < 16; $i++) {
             $this->table[$i] = array();
+            $pow = gmp_pow(2, 8 * $i);
             for ($j = 0; $j < 256; $j++) {
                 $this->table[$i][$j] = static::multiply(
-                    $this->H,
-                    gmp_mul(gmp_init($j, 10), gmp_pow(2, 8 * $i))
+                    $H,
+                    gmp_mul(gmp_init($j, 10), $pow)
                 );
             }
         }
@@ -134,7 +135,6 @@ class GCM
                 // Pad CB[i] to the block size (128 bits)
                 pack('H*', str_pad(gmp_strval($CB[$i], 16), 32, '0', STR_PAD_LEFT))
             );
-
             $t = gmp_xor(
                 gmp_init(bin2hex($Xn[$i - 1]), 16),
                 gmp_init(bin2hex($t), 16)
@@ -165,10 +165,13 @@ class GCM
         if ($ivlen === 12) {
             $J0 = $IV . "\x00\x00\x00\x01";
         } else {
-            $s  = (ceil($ivlen / 16) << 7) - ($ivlen << 3);
-            $t  = gmp_strval(gmp_init($ivlen, 10), 16);
-            $t  = $IV . pack('H*', str_pad($t, ($s + 128) >> 2), '0', STR_PAD_LEFT);
-            $J0 = $this->ghash($t);
+            $s  = (16 - ($ivlen % 16)) % 16;
+            $t  = gmp_strval(gmp_init($ivlen << 3, 10), 16);
+            $J0 = $this->ghash(
+                $IV .
+                str_repeat("\x00", $s) .
+                pack('H*', str_pad($t, 32, '0', STR_PAD_LEFT))
+            );
         }
 
         $J0 = gmp_init(bin2hex($J0), 16);
@@ -200,10 +203,13 @@ class GCM
         if ($ivlen === 12) {
             $J0 = $IV . "\x00\x00\x00\x01";
         } else {
-            $s  = (ceil($ivlen / 16) << 7) - ($ivlen << 3);
-            $t  = gmp_strval(gmp_init($ivlen, 10), 16);
-            $t  = $IV . pack('H*', str_pad($t, ($s + 128) >> 2), '0', STR_PAD_LEFT);
-            $J0 = $this->ghash($t);
+            $s  = (16 - ($ivlen % 16)) % 16;
+            $t  = gmp_strval(gmp_init($ivlen << 3, 10), 16);
+            $J0 = $this->ghash(
+                $IV .
+                str_repeat("\x00", $s) .
+                pack('H*', str_pad($t, 32, '0', STR_PAD_LEFT))
+            );
         }
 
         $J0 = gmp_init(bin2hex($J0), 16);
