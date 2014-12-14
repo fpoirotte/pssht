@@ -104,10 +104,12 @@ documents for compatibility with other Secure Shell implementations:
 -   `RFC 4344`_ |---| SSH Transport Layer Encryption Modes
 -   `RFC 4345`_ |---| Improved Arcfour Modes for the SSH Transport Layer Protocol
 -   `RFC 4462`_ |---| SSH Public Key File Format
+-   `RFC 5647`_ |---| AES Galois Counter Mode for the SSH Transport Layer Protocol
 -   `RFC 5656`_ |---| Elliptic Curve Algorithm Integration in SSH
 -   `RFC 6668`_ |---| SHA-2 Data Integrity Algorithms
 -   `draft-miller-secsh-umac-01`_ |---| UMAC in the SSH Transport Layer Protocol
 -   `draft-miller-secsh-compression-delayed-00`_ |---| Delayed compression until after authentication
+-   `OpenSSH PROTOCOL`_ |---| Various OpenSSH extensions to the SSH protocol
 
 The rest of this section describes precisely which algorithms and features
 are supported.
@@ -154,11 +156,13 @@ The following encryption algorithms are supported:
 -   ``3des-cbc``
 -   ``3des-ctr``
 -   ``aes128-cbc``
--   ``aes192-cbc``
--   ``aes256-cbc``
 -   ``aes128-ctr``
+-   ``aes128-gcm@openssh.com``
+-   ``aes192-cbc``
 -   ``aes192-ctr``
+-   ``aes256-cbc``
 -   ``aes256-ctr``
+-   ``aes256-gcm@openssh.com``
 -   ``arcfour``
 -   ``arcfour128``
 -   ``arcfour256``
@@ -169,6 +173,7 @@ The following encryption algorithms are supported:
 -   ``idea-cbc``
 -   ``idea-ctr``
 -   ``none``
+-   ``rijndael-cbc@lysator.liu.se`` (as an alias for ``aes256-cbc``)
 -   ``serpent128-cbc``
 -   ``serpent192-cbc``
 -   ``serpent256-cbc``
@@ -182,10 +187,6 @@ The following encryption algorithms are supported:
 -   ``twofish128-ctr``
 -   ``twofish192-ctr``
 -   ``twofish256-ctr``
-
-For compatibility with other SSH implementations, pssht also advertises
-support for the ``rijndael-cbc@lysator.liu.se`` encryption algorithm
-(as an alias for ``aes256-cbc``).
 
 MAC algorithms
 ~~~~~~~~~~~~~~
@@ -314,6 +315,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ..  _`RFC 4462`:
     https://tools.ietf.org/html/rfc4462
 
+..  _`RFC 5657`:
+    https://tools.ietf.org/html/rfc5657
+
 ..  _`RFC 5656`:
     https://tools.ietf.org/html/rfc5656
 
@@ -325,6 +329,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ..  _`draft-miller-secsh-compression-delayed-00`:
     https://tools.ietf.org/html/draft-miller-secsh-compression-delayed-00
+
+..  _`OpenSSH PROTOCOL`:
+    http://cvsweb.openbsd.org/cgi-bin/cvsweb/~checkout~/src/usr.bin/ssh/PROTOCOL?rev=1.24
 
 ..  |---| unicode:: U+02014 .. em dash
     :trim:
