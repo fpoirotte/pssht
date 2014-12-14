@@ -633,8 +633,11 @@ class Transport
 
         // Compute padding requirements.
         // See http://api.libssh.org/rfc/PROTOCOL
-        // for more information on EtM (Encrypt-then-MAC).
+        // for more information on EtM (Encrypt-then-MAC)
+        // and RFCs 5116 & 5647 for AEAD & AES-GCM.
         if ($this->outMAC instanceof \fpoirotte\Pssht\MAC\OpensshCom\EtM\EtMInterface) {
+            $padSize    = $blockSize - ((1 + $size) % $blockSize);
+        } elseif ($this->encryptor instanceof \fpoirotte\Pssht\AEADInterface) {
             $padSize    = $blockSize - ((1 + $size) % $blockSize);
         } else {
             $padSize    = $blockSize - ((1 + 4 + $size) % $blockSize);
@@ -715,17 +718,22 @@ class Transport
         }
 
         $blockSize  = max($this->decryptor->getBlockSize(), 8);
-        $firstRead  = $blockSize;
 
         // See http://api.libssh.org/rfc/PROTOCOL
         // for more information on EtM (Encrypt-then-MAC).
         if ($this->inMAC instanceof \fpoirotte\Pssht\MAC\OpensshCom\EtM\EtMInterface) {
-            $firstRead  = 4;
             $encPayload = $this->decoder->getBuffer()->get(4);
             if ($encPayload === null) {
                 return false;
             }
             $unencrypted = $encPayload;
+        } elseif ($this->decryptor instanceof \fpoirotte\Pssht\AEADInterface) {
+            $encPayload  = '';
+            $unencrypted = $this->decoder->getBuffer()->get(4);
+            if ($unencrypted === null) {
+                return false;
+            }
+            $this->decoder->getBuffer()->unget($unencrypted);
         } else {
             $encPayload = $this->decoder->getBuffer()->get($blockSize);
             if ($encPayload === null) {
@@ -740,8 +748,10 @@ class Transport
         // Read the rest of the message.
         if ($this->inMAC instanceof \fpoirotte\Pssht\MAC\OpensshCom\EtM\EtMInterface) {
             $toRead = $packetLength;
+        } elseif ($this->decryptor instanceof \fpoirotte\Pssht\AEADInterface) {
+            $toRead = 4 + $packetLength + $this->decryptor->getSize();
         } else {
-            $toRead         =
+            $toRead =
                 // Remove what we already read.
                 // Note: we must account for the "packet length" field
                 // not being included in $packetLength itself.
@@ -763,6 +773,9 @@ class Transport
                 return false;
             }
             $unencrypted2 = $this->decryptor->decrypt($encPayload2);
+            if ($unencrypted2 === null) {
+                return false;
+            }
             $buffer->push($unencrypted2);
         }
 
@@ -799,7 +812,7 @@ class Transport
 
         if (!isset($packetLength, $paddingLength, $payload, $padding, $actualMAC)) {
             $this->decoder->getBuffer()->unget($actualMAC)->unget($encPayload2)->unget($encPayload);
-            echo "Something went wrong during decoding" . PHP_EOL;
+            $logging->error('Something went wrong during decoding');
             return false;
         }
 

@@ -89,22 +89,22 @@ class NEWKEYS implements \fpoirotte\Pssht\HandlerInterface
         $logging->debug('S2C Encryption: %s', array($cls));
 
         // MAC
-        $cls            = $context['C2S']['MAC'];
+        $cls = $context['C2S']['MAC'];
         $transport->setInputMAC(new $cls($context['keys']['E']));
         $logging->debug('C2S MAC: %s', array($cls));
 
-        $cls            = $context['S2C']['MAC'];
+        $cls = $context['S2C']['MAC'];
         $transport->setOutputMAC(new $cls($context['keys']['F']));
         $logging->debug('S2C MAC: %s', array($cls));
 
         // Compression
-        $cls                = $context['C2S']['Compression'];
+        $cls = $context['C2S']['Compression'];
         $transport->setUncompressor(
             new $cls(CompressionInterface::MODE_UNCOMPRESS)
         );
         $logging->debug('C2S Compression: %s', array($cls));
 
-        $cls                = $context['S2C']['Compression'];
+        $cls = $context['S2C']['Compression'];
         $transport->setCompressor(
             new $cls(CompressionInterface::MODE_COMPRESS)
         );

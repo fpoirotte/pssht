@@ -73,10 +73,16 @@ class KEXINIT implements \fpoirotte\Pssht\HandlerInterface
 
         // C2S MAC
         $context['C2S']['MAC'] = null;
-        foreach ($kex->getC2SMACAlgos() as $algo) {
-            if ($algos->getClass('MAC', $algo) !== null) {
-                $context['C2S']['MAC'] = $algos->getClass('MAC', $algo);
-                break;
+        $reflector = new \ReflectionClass($context['C2S']['Encryption']);
+        // Skip MAC algorithm selection for AEAD.
+        if ($reflector->implementsInterface('\\fpoirotte\\Pssht\\AEADInterface')) {
+            $context['C2S']['MAC'] = '\\fpoirotte\\Pssht\\MAC\\None';
+        } else {
+            foreach ($kex->getC2SMACAlgos() as $algo) {
+                if ($algos->getClass('MAC', $algo) !== null) {
+                    $context['C2S']['MAC'] = $algos->getClass('MAC', $algo);
+                    break;
+                }
             }
         }
         // No suitable C2S MAC found.
@@ -112,10 +118,16 @@ class KEXINIT implements \fpoirotte\Pssht\HandlerInterface
 
         // S2C MAC
         $context['S2C']['MAC'] = null;
-        foreach ($kex->getS2CMACAlgos() as $algo) {
-            if ($algos->getClass('MAC', $algo) !== null) {
-                $context['S2C']['MAC'] = $algos->getClass('MAC', $algo);
-                break;
+        $reflector = new \ReflectionClass($context['S2C']['Encryption']);
+        // Skip MAC algorithm selection for AEAD.
+        if ($reflector->implementsInterface('\\fpoirotte\\Pssht\\AEADInterface')) {
+            $context['S2C']['MAC'] = '\\fpoirotte\\Pssht\\MAC\\None';
+        } else {
+            foreach ($kex->getS2CMACAlgos() as $algo) {
+                if ($algos->getClass('MAC', $algo) !== null) {
+                    $context['S2C']['MAC'] = $algos->getClass('MAC', $algo);
+                    break;
+                }
             }
         }
         // No suitable S2C MAC found.
