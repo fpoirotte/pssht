@@ -356,7 +356,8 @@ class Algorithms
     public static function sortAlgorithms($a, $b)
     {
         static $preferences = array(
-            // KEX
+            // DH (KEX)
+            'curve25519-sha256@libssh.org',
             'ecdh-sha2-nistp256',
             'ecdh-sha2-nistp384',
             'ecdh-sha2-nistp521',
@@ -372,10 +373,12 @@ class Algorithms
             'ecdsa-sha2-nistp256',
             'ecdsa-sha2-nistp384',
             'ecdsa-sha2-nistp521',
+            'ssh-ed25519-cert-v01@openssh.com',
             'ssh-rsa-cert-v01@openssh.com',
             'ssh-dss-cert-v01@openssh.com',
             'ssh-rsa-cert-v00@openssh.com',
             'ssh-dss-cert-v00@openssh.com',
+            'ssh-ed25519',
             'ssh-rsa',
             'ssh-dss',
 
@@ -385,6 +388,7 @@ class Algorithms
             'aes256-ctr',
             'aes128-gcm@openssh.com',
             'aes256-gcm@openssh.com',
+            'chacha20-poly1305@openssh.com',
             'arcfour256',
             'arcfour128',
             'aes128-cbc',
