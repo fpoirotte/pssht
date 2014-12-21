@@ -209,6 +209,7 @@ The following MAC algorithms are supported:
 -   ``hmac-sha2-512-etm@openssh.com``
 -   ``none``
 -   ``ripemd160`` (as an alias for ``hmac-ripemd160``)
+-   ``ripemd160@openssh.com`` (as an alias for ``hmac-ripemd160``)
 -   ``umac-64@openssh.com``
 -   ``umac-64-etm@openssh.com``
 -   ``umac-128@openssh.com``
