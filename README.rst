@@ -110,6 +110,8 @@ documents for compatibility with other Secure Shell implementations:
 -   `draft-miller-secsh-umac-01`_ |---| UMAC in the SSH Transport Layer Protocol
 -   `draft-miller-secsh-compression-delayed-00`_ |---| Delayed compression until after authentication
 -   `OpenSSH PROTOCOL`_ |---| Various OpenSSH extensions to the SSH protocol
+-   `OpenSSH private key format`_ |---| Specification for OpenSSH's private key format
+-   `Ed25519 curve`_ |---| Twisted Edwards Curve 2\*\*255-19
 
 The rest of this section describes precisely which algorithms and features
 are supported.
@@ -215,8 +217,8 @@ The following MAC algorithms are supported:
 -   ``umac-128@openssh.com``
 -   ``umac-128-etm@openssh.com``
 
-The PHP ``hash`` extension must be installed for these algorithms
-to work properly.
+All these algorithms except for the ``umac-*`` family require
+the PHP ``hash`` extension in order to work properly.
 
 Public key algorithms
 ~~~~~~~~~~~~~~~~~~~~~
@@ -227,11 +229,13 @@ The following public key algorithms are supported:
 -   ``ecdsa-sha2-nistp384``
 -   ``ecdsa-sha2-nistp521``
 -   ``ssh-dss``
+-   ``ssh-ed25519``
 -   ``ssh-rsa``
 
-The PHP ``hash`` extension must be installed for the ``ecdsa-sha2-*``
-family of algorithms to work properly. Also, elliptic curve points
-encoded using point compression are **not** accepted or generated.
+The PHP ``hash`` extension must be installed for the ``ssh-ed25519``
+and ``ecdsa-sha2-*`` family of algorithms to work properly.
+Also, elliptic curve points encoded using point compression
+are **not** accepted or generated.
 
 Compression algorithms
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -249,7 +253,7 @@ The PHP ``http`` extension must be installed for the ``zlib`` and
 Integration
 -----------
 
-pssht is mainly intended for use as an embedded SSH server for PHP applications.
+pssht is mainly intended to be used as an embedded SSH server for PHP applications.
 By default, only the bare structure for an SSH server is provided.
 The application using pssht is responsible for adding it's own logic on top
 of this structure.
@@ -260,7 +264,7 @@ Contributions
 
 Want to contribute back to the project?
 
--   `Fork the code <https://github.com/Erebot/Erebot/fork_select>`_
+-   `Fork the code <https://github.com/fpoirotte/pssht/fork_select>`_
     to your own account.
 -   Create a new branch.
 -   Hack around.
@@ -332,7 +336,13 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     https://tools.ietf.org/html/draft-miller-secsh-compression-delayed-00
 
 ..  _`OpenSSH PROTOCOL`:
-    http://cvsweb.openbsd.org/cgi-bin/cvsweb/~checkout~/src/usr.bin/ssh/PROTOCOL?rev=1.24
+    http://cvsweb.openbsd.org/cgi-bin/cvsweb/src/usr.bin/ssh/PROTOCOL?rev=HEAD
+
+..  _`OpenSSH private key format`:
+    http://cvsweb.openbsd.org/cgi-bin/cvsweb/src/usr.bin/ssh/PROTOCOL.key?rev=HEAD
+
+..  _`Ed25519 curve`:
+    http://ed25519.cr.yp.to/software.html
 
 ..  |---| unicode:: U+02014 .. em dash
     :trim:
