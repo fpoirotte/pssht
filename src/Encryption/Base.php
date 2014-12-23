@@ -31,7 +31,7 @@ abstract class Base implements
         $this->mcrypt = mcrypt_module_open(
             constant(static::getAlgorithm()),
             '',
-            constant(static::getMode()),
+            static::getMode(),
             ''
         );
         mcrypt_generic_init($this->mcrypt, $key, $iv);
@@ -45,13 +45,13 @@ abstract class Base implements
 
     final public static function isAvailable()
     {
-        if (!defined(static::getAlgorithm()) || !defined(static::getMode())) {
+        if (!defined(static::getAlgorithm())) {
             return false;
         }
         $res = @mcrypt_module_open(
             constant(static::getAlgorithm()),
             '',
-            constant(static::getMode()),
+            static::getMode(),
             ''
         );
         if ($res !== false) {
@@ -64,7 +64,7 @@ abstract class Base implements
     {
         return mcrypt_get_iv_size(
             constant(static::getAlgorithm()),
-            constant(static::getMode())
+            static::getMode()
         );
     }
 
@@ -72,7 +72,7 @@ abstract class Base implements
     {
         return mcrypt_get_block_size(
             constant(static::getAlgorithm()),
-            constant(static::getMode())
+            static::getMode()
         );
     }
 
@@ -95,13 +95,13 @@ abstract class Base implements
     public static function getMode()
     {
         $cls    = explode('\\', get_called_class());
-        $mode   = strtoupper($cls[count($cls) - 2]);
-        return 'MCRYPT_MODE_' . $mode;
+        $mode   = strtolower($cls[count($cls) - 2]);
+        return $mode;
     }
 
     public static function getName()
     {
         $algo = strtolower(substr(strrchr(get_called_class(), '\\'), 1));
-        return $algo . '-' . strtolower(substr(static::getMode(), 12));
+        return $algo . '-' . static::getMode();
     }
 }

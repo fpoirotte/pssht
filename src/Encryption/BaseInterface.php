@@ -20,12 +20,11 @@ interface BaseInterface
      * Get the encryption/decryption mode.
      *
      *  \retval string
-     *      Name of one of the mcrypt constants representing
-     *      the encryption/decryption mode to use.
+     *      Name of the cipher encryption/decryption mode to use.
      *
      *  \warning
-     *      The return value of this method is the name of the constant
-     *      for the mode to use (eg. "MCRYPT_MODE_CBC"), not its value.
+     *      The return value of this method is the name of the cipher mode,
+     *      ie. the value of one of the "MCRYPT_MODE_*" constants.
      */
     public static function getMode();
 
