@@ -25,9 +25,4 @@ class RawRIPEMD160 extends \fpoirotte\Pssht\MAC\RIPEMD160
     {
         return 'ripemd160';
     }
-
-    public static function getHash()
-    {
-        return 'ripemd160';
-    }
 }
