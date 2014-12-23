@@ -46,6 +46,7 @@ class Algorithms
             'Encryption'    => array(),
         );
 
+        $logging = \Plop\Plop::getInstance();;
         foreach (array_keys($this->algos) as $type) {
             $it = new \RecursiveIteratorIterator(
                 new \RecursiveDirectoryIterator(
@@ -78,6 +79,10 @@ class Algorithms
                     continue;
                 }
 
+                $logging->debug(
+                    'Adding "%(algo)s" (from %(class)s) to supported %(type)s algorithms',
+                    array('type' => $type, 'algo' => $algo, 'class' => $class)
+                );
                 $this->algos[$type][$algo] = $class;
             }
             uksort($this->algos[$type], array('self', 'sortAlgorithms'));
@@ -123,14 +128,25 @@ class Algorithms
      */
     protected function getValidClass($type, $name)
     {
+        $logging = \Plop\Plop::getInstance();;
         $w = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_1234567890\\';
         if (!is_string($name) || strspn($name, $w) !== strlen($name)) {
+            $logging->debug(
+                'Skipping %(type)s algorithm "%(name)s" (invalid class name)',
+                array('type' => $type, 'name' => $name)
+            );
             return null;
         }
 
         // Non-existing classes.
         $class = "\\fpoirotte\\Pssht\\$type$name";
         if (!class_exists($class)) {
+            if (!interface_exists($class)) {
+                $logging->debug(
+                    'Skipping %(type)s algorithm "%(name)s" (class does not exist)',
+                    array('type' => $type, 'name' => $name)
+                );
+            }
             return null;
         }
 
@@ -144,12 +160,20 @@ class Algorithms
         // where the algorithm is not currently available.
         $iface = '\\fpoirotte\\Pssht\\AvailabilityInterface';
         if ($reflector->implementsInterface($iface) && !$class::isAvailable()) {
+            $logging->debug(
+                'Skipping %(type)s algorithm "%(name)s" (not available)',
+                array('type' => $type, 'name' => $name)
+            );
             return null;
         }
 
         // Classes that do not implement the proper interface.
         $iface = $this->interfaces[$type];
         if ($iface !== null && !$reflector->implementsInterface($iface)) {
+            $logging->debug(
+                'Skipping %(type)s algorithm "%(name)s" (invalid interface)',
+                array('type' => $type, 'name' => $name)
+            );
             return null;
         }
 
@@ -170,11 +194,16 @@ class Algorithms
      */
     protected function getValidAlgorithm($class)
     {
+        $logging = \Plop\Plop::getInstance();;
         $w =    'abcdefghijklmnopqrstuvwxyz' .
                 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' .
                 '1234567890-@.';
         $name = $class::getName();
         if (!is_string($name) || strspn($name, $w) !== strlen($name)) {
+            $logging->debug(
+                'Skipping algorithm "%(name)s" (invalid algorithm name)',
+                array('name' => $name)
+            );
             return null;
         }
         return $name;
