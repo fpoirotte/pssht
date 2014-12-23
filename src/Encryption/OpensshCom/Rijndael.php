@@ -17,6 +17,11 @@ namespace fpoirotte\Pssht\Encryption\OpensshCom;
  */
 class Rijndael extends \fpoirotte\Pssht\Encryption\CBC\AES256
 {
+    public static function getMode()
+    {
+        return 'cbc';
+    }
+
     public static function getName()
     {
         return 'rijndael-cbc@lysator.liu.se';

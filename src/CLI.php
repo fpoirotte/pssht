@@ -34,6 +34,9 @@ function main()
     // Elliptic curves
     \fpoirotte\Pssht\ECC\Curve::initialize();
 
+    // Pre-load algorithms
+    \fpoirotte\Pssht\Algorithms::factory();
+
     // Sockets
     $sockets    = array('servers' => array(), 'clients' => array());
     $clients    = array();
