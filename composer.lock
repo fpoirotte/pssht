@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "erebot/plop",
-            "version": "0.5.0",
+            "version": "0.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Erebot/Plop.git",
-                "reference": "5a66660746d90f910d49e1fe26edf77548e4b4d2"
+                "reference": "0a5d9e3012c6fd575f53f0a937286580cdc8cfec"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Erebot/Plop/zipball/5a66660746d90f910d49e1fe26edf77548e4b4d2",
-                "reference": "5a66660746d90f910d49e1fe26edf77548e4b4d2",
+                "url": "https://api.github.com/repos/Erebot/Plop/zipball/0a5d9e3012c6fd575f53f0a937286580cdc8cfec",
+                "reference": "0a5d9e3012c6fd575f53f0a937286580cdc8cfec",
                 "shasum": ""
             },
             "require": {
@@ -27,7 +27,7 @@
                 "php": ">=5.3.3"
             },
             "require-dev": {
-                "erebot/buildenv": "dev-master",
+                "erebot/buildenv": "~1.2.0",
                 "pdepend/pdepend": "*",
                 "phpmd/phpmd": "*",
                 "phpunit/php-code-coverage": "*",
@@ -67,7 +67,7 @@
                 "log",
                 "logging"
             ],
-            "time": "2014-10-04 17:30:18"
+            "time": "2014-12-25 19:06:37"
         },
         {
             "name": "symfony/config",
@@ -935,16 +935,16 @@
         },
         {
             "name": "squizlabs/php_codesniffer",
-            "version": "2.0.0",
+            "version": "2.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/squizlabs/PHP_CodeSniffer.git",
-                "reference": "5b63fd3fe960e2020770c845e04254e5ca2b722a"
+                "reference": "d2a1d4c58fd2bb09ba376d0d19e67c0ab649e401"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/5b63fd3fe960e2020770c845e04254e5ca2b722a",
-                "reference": "5b63fd3fe960e2020770c845e04254e5ca2b722a",
+                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/d2a1d4c58fd2bb09ba376d0d19e67c0ab649e401",
+                "reference": "d2a1d4c58fd2bb09ba376d0d19e67c0ab649e401",
                 "shasum": ""
             },
             "require": {
@@ -1004,7 +1004,7 @@
                 "phpcs",
                 "standards"
             ],
-            "time": "2014-12-05 00:14:12"
+            "time": "2014-12-18 02:37:51"
         },
         {
             "name": "symfony/console",
@@ -1202,6 +1202,7 @@
     "minimum-stability": "stable",
     "stability-flags": [],
     "prefer-stable": true,
+    "prefer-lowest": false,
     "platform": {
         "php": ">=5.3.3",
         "ext-openssl": "*",
