@@ -54,16 +54,22 @@ interface EncryptionInterface extends AlgorithmInterface
     /**
      * Encrypt data using the algorithm.
      *
+     *  \param int $seqno
+     *      Sequence number.
+     *
      *  \param string $data
      *      Data to encrypt.
      *
      *  \retval string
      *      Encrypted data.
      */
-    public function encrypt($data);
+    public function encrypt($seqno, $data);
 
     /**
      * Decrypt data using the algorithm.
+     *
+     *  \param int $seqno
+     *      Sequence number.
      *
      *  \param string $data
      *      Data to decrypt.
@@ -71,5 +77,5 @@ interface EncryptionInterface extends AlgorithmInterface
      *  \retval string
      *      Decrypted data.
      */
-    public function decrypt($data);
+    public function decrypt($seqno, $data);
 }

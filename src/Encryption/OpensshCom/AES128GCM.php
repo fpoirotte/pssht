@@ -54,7 +54,7 @@ class AES128GCM implements \fpoirotte\Pssht\AEADInterface
         return 16; // 128 bits
     }
 
-    public function encrypt($data)
+    public function encrypt($seqno, $data)
     {
         $len        = substr($data, 0, 4);
         $plain      = (string) substr($data, 4);
@@ -64,8 +64,12 @@ class AES128GCM implements \fpoirotte\Pssht\AEADInterface
         return $len . $res[0] . $res[1];
     }
 
-    public function decrypt($data)
+    public function decrypt($seqno, $data)
     {
+        if (strlen($data) === 4) {
+            return $data;
+        }
+
         $len        = substr($data, 0, 4);
         $cipher     = (string) substr($data, 4, -static::getSize());
         $tag        = substr($data, -static::getSize());

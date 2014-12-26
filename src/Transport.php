@@ -660,7 +660,7 @@ class Transport
         $encoder->encodeBytes($payload);
         $encoder->encodeBytes($padding);
         $packet     = $encoder->getBuffer()->get(0);
-        $encrypted  = $this->encryptor->encrypt($packet);
+        $encrypted  = $this->encryptor->encrypt($this->outSeqNo, $packet);
 
         // Compute the MAC.
         if ($this->outMAC instanceof \fpoirotte\Pssht\MAC\OpensshCom\EtM\EtMInterface) {
@@ -728,18 +728,19 @@ class Transport
             }
             $unencrypted = $encPayload;
         } elseif ($this->decryptor instanceof \fpoirotte\Pssht\AEADInterface) {
-            $encPayload  = '';
-            $unencrypted = $this->decoder->getBuffer()->get(4);
-            if ($unencrypted === null) {
+            $encPayload = $this->decoder->getBuffer()->get(4);
+            if ($encPayload === null) {
                 return false;
             }
-            $this->decoder->getBuffer()->unget($unencrypted);
+            $unencrypted = $this->decryptor->decrypt($this->inSeqNo, $encPayload);
+            $this->decoder->getBuffer()->unget($encPayload);
+            $encPayload  = '';
         } else {
             $encPayload = $this->decoder->getBuffer()->get($blockSize);
             if ($encPayload === null) {
                 return false;
             }
-            $unencrypted = $this->decryptor->decrypt($encPayload);
+            $unencrypted = $this->decryptor->decrypt($this->inSeqNo, $encPayload);
         }
         $buffer         = new \fpoirotte\Pssht\Buffer($unencrypted);
         $decoder        = new \fpoirotte\Pssht\Wire\Decoder($buffer);
@@ -772,7 +773,7 @@ class Transport
                 $this->decoder->getBuffer()->unget($encPayload);
                 return false;
             }
-            $unencrypted2 = $this->decryptor->decrypt($encPayload2);
+            $unencrypted2 = $this->decryptor->decrypt($this->inSeqNo, $encPayload2);
             if ($unencrypted2 === null) {
                 return false;
             }

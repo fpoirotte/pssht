@@ -172,6 +172,7 @@ The following encryption algorithms are supported:
 -   ``blowfish-ctr``
 -   ``cast128-cbc``
 -   ``cast128-ctr``
+-   ``chacha20-poly1305@openssh.com``
 -   ``idea-cbc``
 -   ``idea-ctr``
 -   ``none``

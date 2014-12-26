@@ -42,12 +42,12 @@ class None implements EncryptionInterface
         return 0;
     }
 
-    public function encrypt($data)
+    public function encrypt($seqno, $data)
     {
         return $data;
     }
 
-    public function decrypt($data)
+    public function decrypt($seqno, $data)
     {
         return $data;
     }

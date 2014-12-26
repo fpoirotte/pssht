@@ -76,12 +76,12 @@ abstract class Base implements
         );
     }
 
-    final public function encrypt($data)
+    final public function encrypt($seqno, $data)
     {
         return mcrypt_generic($this->mcrypt, $data);
     }
 
-    final public function decrypt($data)
+    final public function decrypt($seqno, $data)
     {
         return mdecrypt_generic($this->mcrypt, $data);
     }
