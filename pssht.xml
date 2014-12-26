@@ -173,9 +173,9 @@
                                 </call>
                             </service>
                         </argument>
-<!--                        <call method="setLevel">-->
-<!--                            <argument type="constant">\Plop::DEBUG</argument>-->
-<!--                        </call>-->
+                        <call method="setLevel">
+                            <argument>DEBUG</argument>
+                        </call>
                     </service>
                 </argument>
             </call>
