@@ -1,11 +1,5 @@
 -   Add the rest of OpenSSH's extensions
     from http://api.libssh.org/rfc/PROTOCOL:
-    -   UMAC algorithms:
-        -   umac-64-etm@openssh.com
-        -   umac-128-etm@openssh.com
-        -   umac-64@openssh.com
-        -   umac-128@openssh.com
-        -   hmac-ripemd160@openssh.com
     -   Additional public key algorithms:
         -   "ssh-rsa-cert-v00@openssh.com"
         -   "ssh-dsa-cert-v00@openssh.com",
@@ -20,18 +14,6 @@
         hl=fr&source=gbs_ge_summary_r&cad=0#v=onepage&q&f=false
     The book lists several aliases / additional algorithms used by
     various implementations of the secure shell.
-
--   UMAC:
-    -   http://tools.ietf.org/html/draft-miller-secsh-umac-01
-    -   http://en.wikipedia.org/wiki/UMAC
-    -   http://tools.ietf.org/html/rfc4418
-
--   GCM / AEAD:
-    -   http://tools.ietf.org/html/rfc5116
-    -   http://csrc.nist.gov/publications/nistpubs/800-38D/SP-800-38D.pdf
-    -   http://tools.ietf.org/html/rfc5647
-    -   aes128-gcm@openssh.com
-    -   aes256-gcm@openssh.com
 
 -   Suite B crypto suites:
     -   http://www.rfc-editor.org/rfc/rfc6239.txt
