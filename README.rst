@@ -56,7 +56,7 @@ Installation & Usage
 Download the `composer.phar <https://getcomposer.org/composer.phar>`_
 executable or use the installer.
 
-..  sourcecode:: bash
+..  sourcecode:: console
 
     $ curl -sS https://getcomposer.org/installer | php
 
@@ -72,13 +72,13 @@ Create a ``composer.json`` that requires pssht.
 
 Run Composer.
 
-..  sourcecode:: bash
+..  sourcecode:: console
 
     $ php composer.phar install
 
 Run the server.
 
-..  sourcecode:: bash
+..  sourcecode:: console
 
     $ php bin/pssht
 
