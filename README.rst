@@ -108,12 +108,20 @@ documents for compatibility with other Secure Shell implementations:
 -   :rfc:`5647` |---| AES Galois Counter Mode for the SSH Transport Layer Protocol
 -   :rfc:`5656` |---| Elliptic Curve Algorithm Integration in SSH
 -   :rfc:`6668` |---| SHA-2 Data Integrity Algorithms
--   `draft-miller-secsh-umac-01`_ |---| UMAC in the SSH Transport Layer Protocol
--   `draft-miller-secsh-compression-delayed-00`_ |---| Delayed compression until after authentication
--   `OpenSSH PROTOCOL`_ |---| Various OpenSSH extensions to the SSH protocol
--   `OpenSSH private key format`_ |---| Specification for OpenSSH's private key format
--   `Ed25519 curve`_ |---| Twisted Edwards Curve 2\*\*255-19
--   `Curve25519 curve`_ |---| Montgomery Curve 2\*\*255-19
+-   `draft-miller-secsh-umac-01`_
+    |---| UMAC in the SSH Transport Layer Protocol
+-   `draft-miller-secsh-compression-delayed-00`_
+    |---| Delayed compression until after authentication
+-   `OpenSSH PROTOCOL`_
+    |---| Various OpenSSH extensions to the SSH protocol
+-   `OpenSSH private key format`_
+    |---| Specification for OpenSSH's private key format
+-   `ChaCha20-Poly1305`_
+    |---| The ``chacha20-poly1305@openssh.com`` authenticated encryption cipher
+-   `Ed25519 curve`_
+    |---| Twisted Edwards Curve 2\*\*255-19
+-   `Curve25519 curve`_
+    |---| Montgomery Curve 2\*\*255-19
 
 The rest of this section describes precisely which algorithms and features
 are supported.
@@ -325,6 +333,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ..  _`OpenSSH private key format`:
     http://cvsweb.openbsd.org/cgi-bin/cvsweb/src/usr.bin/ssh/PROTOCOL.key?rev=HEAD
+
+..  _`ChaCha20-Poly1305`:
+    http://cvsweb.openbsd.org/cgi-bin/cvsweb/src/usr.bin/ssh/PROTOCOL.chacha20poly1305?rev=HEAD
 
 ..  _`Ed25519 curve`:
     http://ed25519.cr.yp.to/software.html
