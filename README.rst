@@ -96,22 +96,23 @@ Compatibility
 pssht supports the mechanisms and algorithms defined in the following
 documents for compatibility with other Secure Shell implementations:
 
--   `RFC 4250`_ |---| SSH Protocol Assigned Numbers
--   `RFC 4251`_ |---| SSH Protocol Architecture
--   `RFC 4252`_ |---| SSH Authentication Protocol
--   `RFC 4253`_ |---| SSH Transport Layer Protocol
--   `RFC 4254`_ |---| SSH Connection Protocol
--   `RFC 4344`_ |---| SSH Transport Layer Encryption Modes
--   `RFC 4345`_ |---| Improved Arcfour Modes for the SSH Transport Layer Protocol
--   `RFC 4462`_ |---| SSH Public Key File Format
--   `RFC 5647`_ |---| AES Galois Counter Mode for the SSH Transport Layer Protocol
--   `RFC 5656`_ |---| Elliptic Curve Algorithm Integration in SSH
--   `RFC 6668`_ |---| SHA-2 Data Integrity Algorithms
+-   :rfc:`4250` |---| SSH Protocol Assigned Numbers
+-   :rfc:`4251` |---| SSH Protocol Architecture
+-   :rfc:`4252` |---| SSH Authentication Protocol
+-   :rfc:`4253` |---| SSH Transport Layer Protocol
+-   :rfc:`4254` |---| SSH Connection Protocol
+-   :rfc:`4344` |---| SSH Transport Layer Encryption Modes
+-   :rfc:`4345` |---| Improved Arcfour Modes for the SSH Transport Layer Protocol
+-   :rfc:`4462` |---| SSH Public Key File Format
+-   :rfc:`5647` |---| AES Galois Counter Mode for the SSH Transport Layer Protocol
+-   :rfc:`5656` |---| Elliptic Curve Algorithm Integration in SSH
+-   :rfc:`6668` |---| SHA-2 Data Integrity Algorithms
 -   `draft-miller-secsh-umac-01`_ |---| UMAC in the SSH Transport Layer Protocol
 -   `draft-miller-secsh-compression-delayed-00`_ |---| Delayed compression until after authentication
 -   `OpenSSH PROTOCOL`_ |---| Various OpenSSH extensions to the SSH protocol
 -   `OpenSSH private key format`_ |---| Specification for OpenSSH's private key format
 -   `Ed25519 curve`_ |---| Twisted Edwards Curve 2\*\*255-19
+-   `Curve25519 curve`_ |---| Montgomery Curve 2\*\*255-19
 
 The rest of this section describes precisely which algorithms and features
 are supported.
@@ -139,6 +140,7 @@ Key exchange methods
 
 The following key exchange methods are supported:
 
+-   ``curve25519-sha256@libssh.org``
 -   ``diffie-hellman-group1-sha1``
 -   ``diffie-hellman-group14-sha1``
 -   ``ecdh-sha2-nistp256``
@@ -297,39 +299,6 @@ IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-..  _`RFC 4250`:
-    https://tools.ietf.org/html/rfc4250
-
-..  _`RFC 4251`:
-    https://tools.ietf.org/html/rfc4251
-
-..  _`RFC 4252`:
-    https://tools.ietf.org/html/rfc4252
-
-..  _`RFC 4253`:
-    https://tools.ietf.org/html/rfc4253
-
-..  _`RFC 4254`:
-    https://tools.ietf.org/html/rfc4254
-
-..  _`RFC 4344`:
-    https://tools.ietf.org/html/rfc4344
-
-..  _`RFC 4345`:
-    https://tools.ietf.org/html/rfc4345
-
-..  _`RFC 4462`:
-    https://tools.ietf.org/html/rfc4462
-
-..  _`RFC 5657`:
-    https://tools.ietf.org/html/rfc5657
-
-..  _`RFC 5656`:
-    https://tools.ietf.org/html/rfc5656
-
-..  _`RFC 6668`:
-    https://tools.ietf.org/html/rfc6668
-
 ..  _`draft-miller-secsh-umac-01`:
     https://tools.ietf.org/html/draft-miller-secsh-umac-01
 
@@ -344,6 +313,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ..  _`Ed25519 curve`:
     http://ed25519.cr.yp.to/software.html
+
+..  _`Curve25519 curve`:
+    http://git.libssh.org/projects/libssh.git/plain/doc/curve25519-sha256@libssh.org.txt
 
 ..  |---| unicode:: U+02014 .. em dash
     :trim:
