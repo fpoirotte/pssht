@@ -12,12 +12,12 @@
 namespace fpoirotte\Pssht\PublicKey\SSH;
 
 /**
- * Public key based on the Edwards-curve Digital Signature Algorithm (EdDSA),
- * using Curve25519.
+ * Public key algorithm based on EdDSA (Edwards-curve
+ * Digital Signature Algorithm) using curve "Ed25519".
  *
  * \see
  *      http://ed25519.cr.yp.to/ed25519-20110926.pdf for more information
- *      about the algorithm.
+ *      about this algorithm.
  * \see
  *      http://cvsweb.openbsd.org/cgi-bin/cvsweb/src/usr.bin/ssh/PROTOCOL.key?rev=1.1
  *      for the specification of OpenSSH's private key format.
@@ -224,14 +224,14 @@ class ED25519 implements \fpoirotte\Pssht\PublicKeyInterface, \fpoirotte\Pssht\A
 
     protected static function decodepoint($s)
     {
-        $params = \fpoirotte\Pssht\PublicKey\SSH\ED25519\Params::getInstance();
+        $curve = \fpoirotte\Pssht\ED25519::getInstance();
         $y = gmp_and(
             gmp_init(bin2hex(strrev($s)), 16),
             gmp_sub(gmp_pow(2, 255), 1)
         );
-        $x = $params->xrecover($y);
+        $x = $curve->xrecover($y);
         if (gmp_cmp(gmp_and($x, 1), (ord(substr($s, -1)) >> 7) & 1)) {
-            $x = gmp_sub($params->q, $x);
+            $x = gmp_sub($curve->q, $x);
         }
         $P = array($x, $y);
         if (!static::isOnCurve($P)) {
@@ -242,23 +242,23 @@ class ED25519 implements \fpoirotte\Pssht\PublicKeyInterface, \fpoirotte\Pssht\A
 
     protected static function isOnCurve($P)
     {
-        $params = \fpoirotte\Pssht\PublicKey\SSH\ED25519\Params::getInstance();
+        $curve = \fpoirotte\Pssht\ED25519::getInstance();
         list($x, $y) = $P;
         $x2 = gmp_mul($x, $x);
         $y2 = gmp_mul($y, $y);
         $t = gmp_mod(
             gmp_sub(
                 gmp_sub(gmp_add(gmp_neg($x2), $y2), 1),
-                gmp_mul($params->d, gmp_mul($x2, $y2))
+                gmp_mul($curve->d, gmp_mul($x2, $y2))
             ),
-            $params->q
+            $curve->q
         );
         return !gmp_cmp($t, 0);
     }
 
     public function sign($message)
     {
-        $params = \fpoirotte\Pssht\PublicKey\SSH\ED25519\Params::getInstance();
+        $curve = \fpoirotte\Pssht\ED25519::getInstance();
         $h = hash('sha512', $this->sk, true);
         $a = gmp_add(
             gmp_pow(2, 256-2),
@@ -268,7 +268,7 @@ class ED25519 implements \fpoirotte\Pssht\PublicKeyInterface, \fpoirotte\Pssht\A
             )
         );
         $r = static::Hint(substr($h, 32) . $message);
-        $R = $params->scalarmult($params->B, $r);
+        $R = $curve->scalarmult($curve->B, $r);
         $t = static::encodepoint($R) . $this->pk . $message;
         $S = gmp_mod(
             gmp_add(
@@ -278,14 +278,14 @@ class ED25519 implements \fpoirotte\Pssht\PublicKeyInterface, \fpoirotte\Pssht\A
                     $a
                 )
             ),
-            $params->l
+            $curve->l
         );
         return static::encodepoint($R) . static::encodeint($S);
     }
 
     public function check($message, $signature)
     {
-        $params = \fpoirotte\Pssht\PublicKey\SSH\ED25519\Params::getInstance();
+        $curve = \fpoirotte\Pssht\ED25519::getInstance();
         if (strlen($signature) !== 64) {
             throw new \InvalidArgumentException();
         }
@@ -301,8 +301,8 @@ class ED25519 implements \fpoirotte\Pssht\PublicKeyInterface, \fpoirotte\Pssht\A
         }
         $S = static::decodeint(substr($signature, 32, 64));
         $h = static::Hint(static::encodepoint($R) . $this->pk . $message);
-        $res1 = $params->scalarmult($params->B, $S);
-        $res2 = $params->edwards($R, $params->scalarmult($A, $h));
+        $res1 = $curve->scalarmult($curve->B, $S);
+        $res2 = $curve->edwards($R, $curve->scalarmult($A, $h));
         return (!gmp_cmp($res1[0], $res2[0]) &&
                 !gmp_cmp($res1[1], $res2[1]));
     }

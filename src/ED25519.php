@@ -9,12 +9,16 @@
 * file that was distributed with this source code.
 */
 
-namespace fpoirotte\Pssht\PublicKey\SSH\ED25519;
+namespace fpoirotte\Pssht;
 
 /**
- * Parameters for Ed25519.
+ * Definition for the elliptic curve "Ed25519".
+ *
+ * \see
+ *      http://ed25519.cr.yp.to/ed25519-20110926.pdf for more information
+ *      about this curve.
  */
-class Params
+class ED25519
 {
     protected static $instance = null;
 
