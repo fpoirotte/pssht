@@ -1,7 +1,7 @@
 pssht
 =====
 
-pssht is a library that provides an SSH server that can be embedded
+pssht is a PHP library that provides an SSH server that can be embedded
 in other applications.
 
 What we're aiming for:
@@ -42,11 +42,12 @@ audits to integrate with your PHP code, we recommend that you look into
 the `OpenSSH project <http://www.openssh.com/>`_.
 
 If you still aren't convinced that you shouldn't use this code in production,
-see `this reddit page <http://www.reddit.com/r/lolphp/comments/1yvm6v/php_can_do_anything_what_about_some_ssh_mtgox>`_
+see `this reddit page
+<http://www.reddit.com/r/lolphp/comments/1yvm6v/php_can_do_anything_what_about_some_ssh_mtgox>`_
 which relates part of the story of a project similar to pssht by MtGox's CEO.
 
 In no event shall the authors of pssht be liable for anything that happens
-while using this library. See also the `license`_ for the full disclaimer.
+while using this library. Please read the `license`_ for the full disclaimer.
 
 
 Installation & Usage
@@ -88,7 +89,7 @@ Configuration
 pssht uses the Dependency Injection component from the Symfony2 framework
 for its configuration. Have a look at the default `pssht.xml
 <https://github.com/fpoirotte/pssht/blob/master/pssht.xml>`_
-for ways to configure pssht.
+configuration file for ways to customize pssht.
 
 
 Compatibility
