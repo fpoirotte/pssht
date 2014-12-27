@@ -6,16 +6,16 @@ in other applications.
 
 What we're aiming for:
 
-*   Clean code (eg. PSR-2 & PSR-4 compliance, tests, etc.)
+*   Clean code (eg. PSR-2 & PSR-4 compliance, tests, ...)
 *   Extensibility
-*   Compatibility with as much SSH clients as possible, but mainly
+*   Interoperability with as much SSH clients as possible, but mainly
     with the OpenSSH client
 
 What we're not specifically aiming for, but still interested in:
 
-*   Completeness (like support for TCP port forwarding, TUN/TAP tunneling,
-    the scp/sftp subsystems, etc.)
-*   Strong security (peer reviews, security audits, etc.)
+*   Completeness (support for TCP port forwarding, TUN/TAP tunneling,
+    the scp/sftp subsystems, ...)
+*   Strong security (peer reviews, security audits, ...)
 
 
 Disclaimer
