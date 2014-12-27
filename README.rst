@@ -120,13 +120,13 @@ are supported.
 
 **TL;DR** here's a feature chart for comparison with OpenSSH:
 
-    |[ ]| Services (2 in pssht; ? in OpenSSH)
-    |[ ]| Authentication methods (4 in pssht; ? in OpenSSH)
-    |[ ]| Key exchange methods (6 in pssht; 8 in OpenSSH)
-    |[x]| Encryption algorithms (34 in pssht; 16 in OpenSSH) [#null]_
-    |[x]| MAC algorithms (20 in pssht; 19 in OpenSSH) [#null]_
-    |[ ]| Public key algorithms (6 in pssht; 14 in OpenSSH)
-    |[x]| Compression algorithms (2 in pssht; 2 in OpenSSH) [#null]_
+-   |[ ]| Services (2 in pssht; ? in OpenSSH)
+-   |[ ]| Authentication methods (4 in pssht; ? in OpenSSH)
+-   |[ ]| Key exchange methods (6 in pssht; 8 in OpenSSH)
+-   |[x]| Encryption algorithms (34 in pssht; 16 in OpenSSH) [#null]_
+-   |[x]| MAC algorithms (20 in pssht; 19 in OpenSSH) [#null]_
+-   |[ ]| Public key algorithms (6 in pssht; 14 in OpenSSH)
+-   |[x]| Compression algorithms (2 in pssht; 2 in OpenSSH) [#null]_
 
 ..  [#null] The "none" algorithm has been excluded from those counts.
 
