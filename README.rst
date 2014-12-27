@@ -8,7 +8,8 @@ What we're aiming for:
 
 *   Clean code (eg. PSR-2 & PSR-4 compliance, tests, etc.)
 *   Extensibility
-*   Compatibility with as much SSH clients as possible
+*   Compatibility with as much SSH clients as possible, but mainly
+    with the OpenSSH client
 
 What we're not specifically aiming for, but still interested in:
 
@@ -117,6 +118,18 @@ documents for compatibility with other Secure Shell implementations:
 The rest of this section describes precisely which algorithms and features
 are supported.
 
+**TL;DR** here's a feature chart for comparison with OpenSSH:
+
+    |[ ]| Services (2 in pssht; ? in OpenSSH)
+    |[ ]| Authentication methods (4 in pssht; ? in OpenSSH)
+    |[ ]| Key exchange methods (6 in pssht; 8 in OpenSSH)
+    |[x]| Encryption algorithms (34 in pssht; 16 in OpenSSH) [#null]_
+    |[x]| MAC algorithms (20 in pssht; 19 in OpenSSH) [#null]_
+    |[ ]| Public key algorithms (6 in pssht; 14 in OpenSSH)
+    |[x]| Compression algorithms (2 in pssht; 2 in OpenSSH) [#null]_
+
+..  [#null] The "none" algorithm has been excluded from those counts.
+
 Services
 ~~~~~~~~
 
@@ -147,9 +160,11 @@ The following key exchange methods are supported:
 -   ``ecdh-sha2-nistp384``
 -   ``ecdh-sha2-nistp521``
 
-The PHP ``hash`` extension must be installed for the ``ecdsa-sha2-*``
-family of algorithms to work properly. Also, elliptic curve points
-encoded using point compression are **not** accepted or generated.
+The PHP ``hash`` extension must be installed for
+``curve25519-sha256@libssh.org`` and the ``ecdsa-sha2-*`` family
+of algorithms to work properly.
+Also, elliptic curve points encoded using point compression
+are **not** accepted or generated.
 
 
 Encryption algorithms
@@ -203,6 +218,7 @@ The following MAC algorithms are supported:
 -   ``hmac-md5-96``
 -   ``hmac-md5-96-etm@openssh.com``
 -   ``hmac-ripemd160``
+-   ``hmac-ripemd160@openssh.com`` (as an alias for ``hmac-ripemd160``)
 -   ``hmac-ripemd160-etm@openssh.com``
 -   ``hmac-sha1``
 -   ``hmac-sha1-etm@openssh.com``
@@ -214,7 +230,6 @@ The following MAC algorithms are supported:
 -   ``hmac-sha2-512-etm@openssh.com``
 -   ``none``
 -   ``ripemd160`` (as an alias for ``hmac-ripemd160``)
--   ``ripemd160@openssh.com`` (as an alias for ``hmac-ripemd160``)
 -   ``umac-64@openssh.com``
 -   ``umac-64-etm@openssh.com``
 -   ``umac-128@openssh.com``
@@ -317,6 +332,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ..  _`Curve25519 curve`:
     http://git.libssh.org/projects/libssh.git/plain/doc/curve25519-sha256@libssh.org.txt
 
-..  |---| unicode:: U+02014 .. em dash
+..  |[ ]| unicode:: U+2610 .. ballot box
+..  |[x]| unicode:: U+2611 .. ballot box with check
+..  |---| unicode:: U+2014 .. em dash
     :trim:
 
