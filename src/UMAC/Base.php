@@ -92,7 +92,7 @@ abstract class Base
         $pad = $this->PDF($k, $nonce);
         $tag = gmp_xor(gmp_init(bin2hex($pad), 16), gmp_init(bin2hex($hashed), 16));
         $tag = gmp_strval($tag, 16);
-        $tag = pack('H*', str_pad($tag, ((strlen($tag) + 1) >> 1) << 1, '0', STR_PAD_LEFT));
+        $tag = pack('H*', str_pad($tag, $this->taglen << 1, '0', STR_PAD_LEFT));
         return $tag;
     }
 
@@ -151,7 +151,7 @@ abstract class Base
         $m_t    = call_user_func_array('pack', $v);
         $k_i    = str_split(substr($k, 0, strlen($m_t)), 4);
         $nh     = gmp_strval($this->NH($k_i, $m_t, $len), 16);
-        $y .= pack('H*', str_pad($nh, (count($ms) + 1) << 4, '0', STR_PAD_LEFT));
+        $y     .= pack('H*', str_pad($nh, 16, '0', STR_PAD_LEFT));
         return $y;
     }
 
