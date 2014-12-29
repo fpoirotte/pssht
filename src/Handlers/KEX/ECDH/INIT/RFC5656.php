@@ -9,12 +9,12 @@
 * file that was distributed with this source code.
 */
 
-namespace fpoirotte\Pssht\Handlers\KEX\ECDH;
+namespace fpoirotte\Pssht\Handlers\KEX\ECDH\INIT;
 
 /**
  * Handler for SSH_MSG_KEX_ECDH_INIT messages.
  */
-class INIT extends \fpoirotte\Pssht\Handlers\KEXDH\INIT
+class RFC5656 extends \fpoirotte\Pssht\Handlers\KEXDH\INIT
 {
     protected function createResponse(
         \fpoirotte\Pssht\Wire\Decoder $decoder,
@@ -30,7 +30,7 @@ class INIT extends \fpoirotte\Pssht\Handlers\KEXDH\INIT
         $message    = $cls::unserialize($decoder);
         $curve      = \fpoirotte\Pssht\ECC\Curve::getCurve($curveName);
 
-        return new \fpoirotte\Pssht\Messages\KEX\ECDH\REPLY(
+        return new \fpoirotte\Pssht\Messages\KEX\ECDH\REPLY\RFC5656(
             $curve,
             $message,
             $context['serverKeys'][$hostAlgo],

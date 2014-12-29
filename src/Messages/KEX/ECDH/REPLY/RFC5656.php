@@ -9,12 +9,12 @@
 * file that was distributed with this source code.
 */
 
-namespace fpoirotte\Pssht\Messages\KEX\ECDH;
+namespace fpoirotte\Pssht\Messages\KEX\ECDH\REPLY;
 
 /**
- * SSH_MSG_KEXDH_REPLY message (RFC 4253).
+ * SSH_MSG_KEX_ECDH_REPLY message (RFC 5656).
  */
-class REPLY implements \fpoirotte\Pssht\MessageInterface
+class RFC5656 implements \fpoirotte\Pssht\MessageInterface
 {
     /// Exchange hash.
     protected $H;
@@ -53,7 +53,10 @@ class REPLY implements \fpoirotte\Pssht\MessageInterface
     /**
      * Construct a new SSH_MSG_KEXDH_REPLY message.
      *
-     *  \param fpoirotte::Pssht::Messages::KEX::ECDH::INIT $kexDHInit
+     *  \param fpoirotte::Pssht::ECC::Curve $curve
+     *      Elliptic curve in use.
+     *
+     *  \param fpoirotte::Pssht::Messages::KEX::ECDH::INIT::RFC5656 $kexDHInit
      *      Client's contribution to the Diffie-Hellman Key Exchange.
      *
      *  \param fpoirotte::Pssht::PublicKeyInterface $key
@@ -79,7 +82,7 @@ class REPLY implements \fpoirotte\Pssht\MessageInterface
      */
     public function __construct(
         \fpoirotte\Pssht\ECC\Curve $curve,
-        \fpoirotte\Pssht\Messages\KEX\ECDH\INIT $kexDHInit,
+        \fpoirotte\Pssht\Messages\KEX\ECDH\INIT\RFC5656 $kexDHInit,
         \fpoirotte\Pssht\PublicKeyInterface $key,
         \fpoirotte\Pssht\EncryptionInterface $encryptionAlgo,
         \fpoirotte\Pssht\KEXInterface $kexAlgo,

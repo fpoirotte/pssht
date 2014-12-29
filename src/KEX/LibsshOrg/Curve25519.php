@@ -9,28 +9,30 @@
 * file that was distributed with this source code.
 */
 
-namespace fpoirotte\Pssht\KEX\ECDH;
+namespace fpoirotte\Pssht\KEX\LibsshOrg;
 
 /**
  * Abstract class for Elliptic Curve Diffie-Hellman
- * key exchange as defined in RFC 5656.
+ * key exchange using Curve25519 and SHA-256.
  */
-abstract class Base implements
-    \fpoirotte\Pssht\KEXInterface,
-    \fpoirotte\Pssht\AvailabilityInterface,
-    \fpoirotte\Pssht\KEX\ECDH\BaseInterface
+class Curve25519 implements \fpoirotte\Pssht\KEXInterface
 {
     public static function addHandlers(\fpoirotte\Pssht\Transport $transport)
     {
         $transport->setHandler(
-            \fpoirotte\Pssht\Messages\KEX\ECDH\INIT\RFC5656::getMessageId(),
-            new \fpoirotte\Pssht\Handlers\KEX\ECDH\INIT\RFC5656()
+            \fpoirotte\Pssht\Messages\KEX\ECDH\INIT\Curve25519::getMessageId(),
+            new \fpoirotte\Pssht\Handlers\KEX\ECDH\INIT\Curve25519()
         );
+    }
+
+    public static function getName()
+    {
+        return 'curve25519-sha256@libssh.org';
     }
 
     public function hash($data)
     {
-        return hash(static::getHashName(), $data, true);
+        return hash('sha256', $data, true);
     }
 
     public static function isAvailable()
@@ -38,6 +40,6 @@ abstract class Base implements
         if (!function_exists('hash_algos') || !function_exists('hash')) {
             return false;
         }
-        return in_array(static::getHashName(), hash_algos(), true);
+        return in_array('sha256', hash_algos(), true);
     }
 }

@@ -49,6 +49,7 @@ class NEWKEYS implements \fpoirotte\Pssht\HandlerInterface
 
         $shared = gmp_strval($context['DH']->getSharedSecret(), 16);
         $shared = str_pad($shared, ((strlen($shared) + 1) >> 1) << 1, '0', STR_PAD_LEFT);
+        $logging->debug('Key exchange: %s', array($context['kexAlgo']));
         $logging->debug(
             'Shared secret: %s',
             array(wordwrap($shared, 16, ' ', true))

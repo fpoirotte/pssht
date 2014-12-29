@@ -9,12 +9,12 @@
 * file that was distributed with this source code.
 */
 
-namespace fpoirotte\Pssht\Messages\KEX\ECDH;
+namespace fpoirotte\Pssht\Messages\KEX\ECDH\INIT;
 
 /**
  * SSH_MSG_KEX_ECDH_INIT message (RFC 5656).
  */
-abstract class INIT implements \fpoirotte\Pssht\MessageInterface
+abstract class RFC5656 implements \fpoirotte\Pssht\MessageInterface
 {
     /// Client's ephemeral public key as an EC Point.
     protected $Q;
@@ -39,7 +39,7 @@ abstract class INIT implements \fpoirotte\Pssht\MessageInterface
 
     public function serialize(\fpoirotte\Pssht\Wire\Encoder $encoder)
     {
-        $encoder->encodeString(\fpoirotte\Pssht\ECC\Point::serialize(static::getCurve()));
+        $encoder->encodeString($this->Q->serialize(static::getCurve()));
         return $this;
     }
 

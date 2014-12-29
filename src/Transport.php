@@ -748,14 +748,18 @@ class Transport
 
         // Read the rest of the message.
         if ($this->inMAC instanceof \fpoirotte\Pssht\MAC\OpensshCom\EtM\EtMInterface) {
+            // Only the main payload remains.
             $toRead = $packetLength;
         } elseif ($this->decryptor instanceof \fpoirotte\Pssht\AEADInterface) {
+            // packet length (authenticated data)
+            // + encrypted payload
+            // + authentication tag (AT)
             $toRead = 4 + $packetLength + $this->decryptor->getSize();
         } else {
             $toRead =
-                // Remove what we already read.
                 // Note: we must account for the "packet length" field
-                // not being included in $packetLength itself.
+                // not being included in $packetLength itself and for
+                // the $blockSize bytes we have already read.
                 4 - $blockSize +
 
                 // Rest of the encrypted data.
