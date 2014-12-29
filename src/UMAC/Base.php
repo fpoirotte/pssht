@@ -151,7 +151,7 @@ abstract class Base
         $m_t    = call_user_func_array('pack', $v);
         $k_i    = str_split(substr($k, 0, strlen($m_t)), 4);
         $nh     = gmp_strval($this->NH($k_i, $m_t, $len), 16);
-        $y .= pack('H*', str_pad($nh, ((strlen($nh) + 1) >> 1) << 1, '0', STR_PAD_LEFT));
+        $y .= pack('H*', str_pad($nh, (count($ms) + 1) << 4, '0', STR_PAD_LEFT));
         return $y;
     }
 
@@ -271,7 +271,7 @@ abstract class Base
             $k_i = gmp_mod(gmp_init(bin2hex(substr($k1, $i << 3, 8)), 16), $prime36);
             $y = gmp_add($y, gmp_mul($m_i, $k_i));
         }
-        $y = gmp_mod(gmp_mod($y, $prime36), gmp_pow(2, 32));
+        $y = gmp_and(gmp_mod($y, $prime36), '0xFFFFFFFF');
         $y = gmp_xor($y, gmp_init(bin2hex($k2), 16));
         $y = pack('H*', str_pad(gmp_strval($y, 16), 8, '0', STR_PAD_LEFT));
         return $y;
