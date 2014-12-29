@@ -6,8 +6,10 @@
         -   "ecdsa-sha2-nistp256-cert-v01@openssh.com",
         -   "ecdsa-sha2-nistp384-cert-v01@openssh.com" and
         -   "ecdsa-sha2-nistp521-cert-v01@openssh.com"
+    -   Certificate keys
+        http://cvsweb.openbsd.org/cgi-bin/cvsweb/src/usr.bin/ssh/PROTOCOL.certkeys?rev=HEAD
     -   Channel write close extension "eow@openssh.com"
-    -   disallow additional sessions extension "no-more-sessions@openssh.com"
+    -   "no-more-sessions@openssh.com" extension to disallow additional sessions
 
 -   Take a closer look at
     http://books.google.fr/books?id=9FSaScltd-kC&printsec=frontcover&
