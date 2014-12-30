@@ -2,14 +2,24 @@
 <project name="pssht" description="Same as 'phing all'" default="all">
     <property name="qa.coverage.force" value="false"/>
 
-    <!-- XRL does not use Erebot's bootstrap. -->
+    <!-- pssht uses a custom PHPUnit bootstrap script. -->
     <property name="subfile.phpunit" value="phing/phpunit.xml"/>
+
+    <!-- pssht uses a custom stub. -->
+    <property name="phar.stub" value="bin/pssht"/>
 
     <!-- Custom copyright. -->
     <property name="doc_enduser.copyright" value="${doc_enduser.year}, François Poirotte"/>
 
     <fileset dir="." id="phar.files">
         <include name="src/**/*.php"/>
+        <include name="pssht.xml"/>
+        <include name="vendor/autoload.php"/>
+        <include name="vendor/composer/*.php"/>
+        <include name="vendor/erebot/plop/**/*.php"/>
+        <include name="vendor/symfony/dependency-injection/**/*.php"/>
+        <include name="vendor/symfony/config/**/*.php"/>
+        <include name="vendor/symfony/filesystem/**/*.php"/>
     </fileset>
 
     <fileset dir="src/" id="sources">
