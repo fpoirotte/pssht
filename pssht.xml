@@ -150,13 +150,13 @@
             <call method="addLogger">
                 <argument type="service">
                     <service class="\Plop\Logger">
-                        <argument type="constant">NULL</argument>
-                        <argument type="constant">NULL</argument>
-                        <argument type="constant">NULL</argument>
+                        <argument type="constant">null</argument>
+                        <argument type="constant">null</argument>
+                        <argument type="constant">null</argument>
                         <argument type="service">
                             <service class="\Plop\HandlersCollection">
                                 <call method="offsetSet">
-                                    <argument type="constant">NULL</argument>
+                                    <argument type="constant">null</argument>
                                     <argument type="service">
                                         <service class="\Plop\Handler\Stream">
                                             <argument type="constant">STDERR</argument>
