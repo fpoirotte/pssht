@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "erebot/plop",
-            "version": "0.5.1",
+            "version": "0.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Erebot/Plop.git",
-                "reference": "0a5d9e3012c6fd575f53f0a937286580cdc8cfec"
+                "reference": "67b1d2927517f7cf09e650c13e0af0b423c05f4a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Erebot/Plop/zipball/0a5d9e3012c6fd575f53f0a937286580cdc8cfec",
-                "reference": "0a5d9e3012c6fd575f53f0a937286580cdc8cfec",
+                "url": "https://api.github.com/repos/Erebot/Plop/zipball/67b1d2927517f7cf09e650c13e0af0b423c05f4a",
+                "reference": "67b1d2927517f7cf09e650c13e0af0b423c05f4a",
                 "shasum": ""
             },
             "require": {
@@ -67,7 +67,7 @@
                 "log",
                 "logging"
             ],
-            "time": "2014-12-25 19:06:37"
+            "time": "2014-12-28 18:42:31"
         },
         {
             "name": "symfony/config",
