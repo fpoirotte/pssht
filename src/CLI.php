@@ -94,22 +94,17 @@ function main()
                 continue;
             }
 
-            $data = fread($socket, 8192);
+            $data   = fread($socket, 8192);
+            $peer   = stream_socket_get_name($socket, true);
+            $close  = false;
             if ($data === '') {
-                $peer   = stream_socket_get_name($socket, true);
                 $id     = array_search($socket, $sockets['clients'], true);
                 $logging->info(
-                    '#%(id)d Client disconnected from %(peer)s',
+                    '#%(id)d Client disconnected from %(peer)s (socket closed)',
                     array('id' => $id, 'peer' => $peer)
                 );
-                fclose($socket);
-                unset($sockets['clients'][$id]);
-                unset($clients[$id]);
-                continue;
-            }
-
-            if ($data !== false) {
-                $peer   = stream_socket_get_name($socket, true);
+                $close = true;
+            } elseif ($data !== false) {
                 $length = strlen($data);
                 $id     = array_search($socket, $sockets['clients'], true);
                 $clients[$id]->getDecoder()->getBuffer()->push($data);
@@ -123,20 +118,33 @@ function main()
 
                 // Process messages in the buffer.
                 try {
+                    $close = true;
                     while ($clients[$id]->readMessage()) {
                         // Each message gets processed by readMessage().
                     }
+                    // Never reached when an exception
+                    // is raised by readMessage().
+                    $close = false;
                 } catch (\fpoirotte\Pssht\Messages\DISCONNECT $e) {
-                    $peer   = stream_socket_get_name($socket, true);
                     $logging->info(
-                        '#%(id)d Client disconnected from %(peer)s',
+                        '#%(id)d Client disconnected from %(peer)s ' .
+                        '(DISCONNECT message received)',
                         array('id' => $id, 'peer' => $peer)
                     );
-                    fclose($socket);
-                    unset($sockets['clients'][$id]);
-                    unset($clients[$id]);
-                    continue;
+                } catch (\Exception $e) {
+                    $logging->exception(
+                        '#%(id)d Client disconnected from %(peer)s ' .
+                        'due to exception',
+                        $e,
+                        array('id' => $id, 'peer' => $peer)
+                    );
                 }
+            }
+
+            if ($close) {
+                fclose($socket);
+                unset($sockets['clients'][$id]);
+                unset($clients[$id]);
             }
         }
 
