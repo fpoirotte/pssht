@@ -225,16 +225,16 @@
     "packages-dev": [
         {
             "name": "erebot/buildenv",
-            "version": "1.2.7",
+            "version": "1.2.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Erebot/Erebot_Buildenv.git",
-                "reference": "701ddb49f6c3f1f71e40b4356ec25d5dbfd487c9"
+                "reference": "b16fc3a30bf2ebdf0a962d5e6af06e220a76ced5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Erebot/Erebot_Buildenv/zipball/701ddb49f6c3f1f71e40b4356ec25d5dbfd487c9",
-                "reference": "701ddb49f6c3f1f71e40b4356ec25d5dbfd487c9",
+                "url": "https://api.github.com/repos/Erebot/Erebot_Buildenv/zipball/b16fc3a30bf2ebdf0a962d5e6af06e220a76ced5",
+                "reference": "b16fc3a30bf2ebdf0a962d5e6af06e220a76ced5",
                 "shasum": ""
             },
             "require": {
@@ -270,7 +270,7 @@
             "keywords": [
                 "Erebot"
             ],
-            "time": "2014-12-06 23:45:08"
+            "time": "2014-12-30 11:49:48"
         },
         {
             "name": "pdepend/pdepend",
