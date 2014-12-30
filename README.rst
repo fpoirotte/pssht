@@ -129,7 +129,7 @@ are supported.
 
 **TL;DR** here's a feature chart for comparison with OpenSSH:
 
--   |[ ]| Services (2 in pssht; ? in OpenSSH)
+-   |[x]| Services (2 in pssht; 2 in OpenSSH)
 -   |[ ]| Authentication methods (4 in pssht; ? in OpenSSH)
 -   |[ ]| Key exchange methods (6 in pssht; 8 in OpenSSH)
 -   |[x]| Encryption algorithms (34 in pssht; 16 in OpenSSH) [#null]_
