@@ -20,10 +20,16 @@ function escape($data)
 
 function main()
 {
+    $home = getenv('HOME');
+    if (extension_loaded('posix')) {
+        $user = posix_getpwuid(posix_geteuid());
+        $home = $user['dir'];
+    }
+
     // DIC
     $container  = new ContainerBuilder();
     $container->setParameter('CWD', getcwd());
-    $container->setParameter('HOME', getenv('HOME'));
+    $container->setParameter('HOME', $home);
     $container->setParameter('pssht.base_dir', dirname(__DIR__));
 
     $loader     = new XmlFileLoader($container, new FileLocator(getcwd()));
