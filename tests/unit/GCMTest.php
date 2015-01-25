@@ -29,6 +29,8 @@ class GCMTest extends \PHPUnit_Framework_TestCase
 
     public function vectors()
     {
+        /// @TODO vectors from http://www.ieee802.org/1/files/public/docs2011/bn-randall-test-vectors-0511-v1.pdf
+
         // K, P, A, IV, C, T
         return array(
             // Test cases from The Galois/Counter Mode of Operation (GCM)
