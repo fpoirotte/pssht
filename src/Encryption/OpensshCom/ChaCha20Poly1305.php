@@ -16,13 +16,11 @@ namespace fpoirotte\Pssht\Encryption\OpensshCom;
  */
 class ChaCha20Poly1305 implements \fpoirotte\Pssht\AEADInterface
 {
-    protected $header;
-    protected $main;
+    protected $aead;
 
     public function __construct($iv, $key)
     {
-        $this->main = new \fpoirotte\Pssht\ChaCha20(substr($key, 0, 32));
-        $this->header = new \fpoirotte\Pssht\ChaCha20(substr($key, 32));
+        $this->aead = new \fpoirotte\Pssht\AEAD\ChaCha20Poly1305($key);
     }
 
     public static function getName()
@@ -55,30 +53,21 @@ class ChaCha20Poly1305 implements \fpoirotte\Pssht\AEADInterface
         $len        = substr($data, 0, 4);
         $plain      = (string) substr($data, 4);
         $iv         = pack('N*', 0, $seqno);
-        $polyKey    = $this->main->encrypt(str_repeat("\x00", 32), $iv, 0);
-        $poly       = new \fpoirotte\Pssht\Poly1305($polyKey);
-        $aad        = $this->header->encrypt($len, $iv, 0);
-        $res        = $this->main->encrypt($plain, $iv, 1);
-        return $aad . $res . $poly->mac($aad . $res);
+        return $this->aead->ae($iv, $plain, $len);
     }
 
     public function decrypt($seqno, $data)
     {
-        $iv         = pack('N*', 0, $seqno);
-        $aad        = substr($data, 0, 4);
-        $len        = $this->header->decrypt($aad, $iv, 0);
+        $iv = pack('N*', 0, $seqno);
         if (strlen($data) === 4) {
-            return $len;
+            return $this->aead->ad($iv, null, $data, null);
         }
 
-        $cipher     = (string) substr($data, 4, -static::getSize());
-        $tag        = substr($data, -static::getSize());
-        $polyKey    = $this->main->encrypt(str_repeat("\x00", 32), $iv, 0);
-        $poly       = new \fpoirotte\Pssht\Poly1305($polyKey);
-        if ($poly->mac($aad . $cipher) !== $tag) {
-            return null;
-        }
-        $res        = $this->main->decrypt($cipher, $iv, 1);
-        return $res;
+        return $this->aead->ad(
+            $iv,
+            (string) substr($data, 4, -static::getSize()),  // Cipher
+            substr($data, 0, 4),                            // AD (length)
+            substr($data, -static::getSize())               // Tag
+        );
     }
 }

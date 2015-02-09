@@ -22,7 +22,7 @@ class AES128GCM implements \fpoirotte\Pssht\AEADInterface
     public function __construct($iv, $key)
     {
         $this->iv = gmp_init(bin2hex($iv), 16);
-        $this->gcm = new \fpoirotte\Pssht\GCM(
+        $this->gcm = new \fpoirotte\Pssht\AEAD\GCM(
             MCRYPT_RIJNDAEL_128,
             $key,
             128

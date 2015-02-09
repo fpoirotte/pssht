@@ -9,7 +9,7 @@
 * file that was distributed with this source code.
 */
 
-namespace fpoirotte\Pssht;
+namespace fpoirotte\Pssht\AEAD;
 
 /**
  * Galois/Counter Mode (GCM) and GMAC implementation
