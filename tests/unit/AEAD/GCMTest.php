@@ -1,6 +1,6 @@
 <?php
 
-namespace fpoirotte\Pssht\Tests;
+namespace fpoirotte\Pssht\Tests\AEAD;
 
 /**
  * Test point addition for various NIST curves
@@ -18,7 +18,7 @@ class GCMTest extends \PHPUnit_Framework_TestCase
     public function getGCM($key)
     {
         if (!isset(self::$cache[$key])) {
-            self::$cache[$key] = new \fpoirotte\Pssht\GCM(
+            self::$cache[$key] = new \fpoirotte\Pssht\AEAD\GCM(
                 MCRYPT_RIJNDAEL_128,
                 pack('H*', $key),
                 128
@@ -325,16 +325,14 @@ class GCMTest extends \PHPUnit_Framework_TestCase
      */
     public function testGCM($K, $P, $A, $IV, $C, $T)
     {
+        $IV = pack('H*', $IV);
+        $A  = pack('H*', $A);
         $gcm = $this->getGCM($K);
-        list($outC, $outT) = $gcm->ae(
-            pack('H*', $IV),
-            pack('H*', $P),
-            pack('H*', $A)
-        );
+        list($outC, $outT) = $gcm->ae($IV, pack('H*', $P), $A);
         $this->assertSame($C, bin2hex($outC));
         $this->assertSame($T, bin2hex($outT));
 
-        $outP = $gcm->ad(pack('H*', $IV), $outC, pack('H*', $A), $outT);
+        $outP = $gcm->ad($IV, $outC, $A, $outT);
         $this->assertSame($P, bin2hex($outP));
     }
 }
