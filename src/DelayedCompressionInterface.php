@@ -13,9 +13,12 @@ namespace fpoirotte\Pssht;
 
 /**
  * Interface for delayed compression.
+ *
+ * When used, compression is delayed until
+ * a successful user authentication occurs.
  */
 interface DelayedCompressionInterface extends CompressionInterface
 {
-    /// Sets a flag indicating that user authentication success.
+    /// Sets a flag indicating user authentication success.
     public function setAuthenticated();
 }
