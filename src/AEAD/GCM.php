@@ -42,14 +42,17 @@ class GCM
             bin2hex(mcrypt_generic($this->cipher, str_repeat("\x00", 16))),
             16
         );
+        $H  = str_pad(gmp_strval($H, 2), 128, '0', STR_PAD_LEFT);
+        $R  = gmp_init('E1000000000000000000000000000000', 16);
+
         $this->table = array();
         for ($i = 0; $i < 16; $i++) {
             $this->table[$i] = array();
-            $pow = gmp_pow(2, 8 * $i);
             for ($j = 0; $j < 256; $j++) {
                 $this->table[$i][$j] = static::multiply(
                     $H,
-                    gmp_mul(gmp_init($j, 10), $pow)
+                    gmp_init(dechex($j) . str_repeat("00", $i), 16),
+                    $R
                 );
             }
         }
@@ -61,17 +64,16 @@ class GCM
         mcrypt_generic_deinit($this->cipher);
     }
 
-    protected static function multiply($X, $Y)
+    protected static function multiply($X, $Y, $R)
     {
-        $R = gmp_init('E1000000000000000000000000000000', 16);
         $V = $Y;
-
         $Z = gmp_init(0);
-        for ($i = 0; $i <= 127; $i++) {
+        for ($i = 0; $i < 128; $i++) {
             // Compute Z_n+1
-            if (gmp_testbit($X, 127 - $i)) {
+            if ($X[$i]) {
                 $Z = gmp_xor($Z, $V);
             }
+
             // Compute V_n+1
             $odd    = gmp_testbit($V, 0);
             $V      = gmp_div_q($V, 2);
