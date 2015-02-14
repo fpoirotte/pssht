@@ -49,11 +49,22 @@ class GCM
         for ($i = 0; $i < 16; $i++) {
             $this->table[$i] = array();
             for ($j = 0; $j < 256; $j++) {
-                $this->table[$i][$j] = static::multiply(
-                    $H,
-                    gmp_init(dechex($j) . str_repeat("00", $i), 16),
-                    $R
-                );
+                $V = gmp_init(dechex($j) . str_repeat("00", $i), 16);
+                $Z = gmp_init(0);
+                for ($k = 0; $k < 128; $k++) {
+                    // Compute Z_n+1
+                    if ($H[$k]) {
+                        $Z = gmp_xor($Z, $V);
+                    }
+
+                    // Compute V_n+1
+                    $odd    = gmp_testbit($V, 0);
+                    $V      = gmp_div_q($V, 2);
+                    if ($odd) {
+                        $V = gmp_xor($V, $R);
+                    }
+                }
+                $this->table[$i][$j] = $Z;
             }
         }
         $logging->debug('Done pre-computing GCM table');
@@ -62,26 +73,6 @@ class GCM
     public function __destruct()
     {
         mcrypt_generic_deinit($this->cipher);
-    }
-
-    protected static function multiply($X, $Y, $R)
-    {
-        $V = $Y;
-        $Z = gmp_init(0);
-        for ($i = 0; $i < 128; $i++) {
-            // Compute Z_n+1
-            if ($X[$i]) {
-                $Z = gmp_xor($Z, $V);
-            }
-
-            // Compute V_n+1
-            $odd    = gmp_testbit($V, 0);
-            $V      = gmp_div_q($V, 2);
-            if ($odd) {
-                $V = gmp_xor($V, $R);
-            }
-        }
-        return $Z;
     }
 
     protected function lookup($val)
