@@ -69,9 +69,11 @@ class INIT implements \fpoirotte\Pssht\HandlerInterface
         $kexAlgo    = new $kexAlgo();
         $message    = \fpoirotte\Pssht\Messages\KEXDH\INIT::unserialize($decoder);
 
-        if (!$message->getQ()->isValid()) {
+	/*
+        if (!$message->getE()->isValid()) {
             throw new \InvalidArgumentException();
         }
+	*/
 
         return new \fpoirotte\Pssht\Messages\KEXDH\REPLY(
             $message,
