@@ -123,10 +123,10 @@
             <argument>%server_keys%</argument>
             <argument type="service" id="authMethods"/>
 
-            <!-- Encoder -->
+            <!-- Encoder: use the default encoder. -->
             <argument type="constant">null</argument>
 
-            <!-- Decoder -->
+            <!-- Decoder: use the default decoder. -->
             <argument type="constant">null</argument>
 
             <argument>%rekeying.size%</argument>
@@ -230,7 +230,7 @@
                             <service class="\fpoirotte\Pssht\Authentication\HostBased">
                                 <argument type="service">
                                     <service public="false"
-                                        factory-service="authPublicKeysLoader"
+                                        factory-service="authHostBasedLoader"
                                         factory-method="getStore"/>
                                 </argument>
                             </service>
