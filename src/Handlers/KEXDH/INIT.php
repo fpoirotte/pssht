@@ -69,9 +69,16 @@ class INIT implements \fpoirotte\Pssht\HandlerInterface
         $kexAlgo    = new $kexAlgo();
         $message    = \fpoirotte\Pssht\Messages\KEXDH\INIT::unserialize($decoder);
 
+/*
+        // @TODO: we ought to check whether the given public key is valid.
+        //
+        // Unfortunately, the current API is broken as getQ() only exists
+        // for ECDH. Also, even though the regular DH has a getE() method,
+        // it returns raw GMP resources/objects which are unusable here.
         if (!$message->getQ()->isValid()) {
             throw new \InvalidArgumentException();
         }
+*/
 
         return new \fpoirotte\Pssht\Messages\KEXDH\REPLY(
             $message,
