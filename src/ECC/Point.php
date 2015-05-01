@@ -141,7 +141,7 @@ class Point implements \ArrayAccess
         $xQ = $Q->coordinates['x'];
         $yQ = $Q->coordinates['y'];
 
-        if ($P == $Q) {
+        if (!gmp_cmp($xP, $xQ) && !gmp_cmp($yP, $yQ)) {
             $alphanum = gmp_add(gmp_mul('3', gmp_pow($xP, '2')), $curve->getA());
             $alphaden = gmp_mul('2', $yP);
         } else {
