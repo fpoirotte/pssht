@@ -64,7 +64,7 @@ class GCM
                         $V = gmp_xor($V, $R);
                     }
                 }
-                $this->table[$i][$j] = $Z;
+                $this->table[$i][$j] = pack('H*', str_pad(gmp_strval($Z, 16), 32, 0, STR_PAD_LEFT));
             }
         }
         $logging->debug('Done pre-computing GCM table');
@@ -73,16 +73,6 @@ class GCM
     public function __destruct()
     {
         mcrypt_generic_deinit($this->cipher);
-    }
-
-    protected function lookup($val)
-    {
-        $res = 0;
-        for ($i = 0; $i < 16; $i++) {
-            $res = gmp_xor($res, $this->table[$i][gmp_intval(gmp_and($val, 255))]);
-            $val = gmp_div_q($val, 256);
-        }
-        return $res;
     }
 
     public static function inc($X, $n)
@@ -103,11 +93,18 @@ class GCM
             throw new \InvalidArgumentException();
         }
 
-        $Y  = gmp_init(0);
+        // Inline lookup.
+        $Y = "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
+        $Y2 = $Y;
         for ($i = 0; $i < $m; $i++) {
-            $Y = $this->lookup(gmp_xor($Y, gmp_init(bin2hex($Xn[$i]), 16)));
+            $res = $Y2;
+            $val = $Y ^ $Xn[$i];
+            for ($j = 0; $j < 16; $j++) {
+                $res = $res ^ $this->table[$j][ord($val[15 - $j])];
+            }
+            $Y = $res;
         }
-        return pack('H*', str_pad(gmp_strval($Y, 16), 32, '0', STR_PAD_LEFT));
+        return $Y;
     }
 
     protected function gctr($ICB, $X)
