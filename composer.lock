@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "ad265d517ae182fbb34ffa66b52226de",
+    "hash": "abe5a7a6becdda1aa95973ba76a754ba",
     "packages": [
         {
             "name": "erebot/plop",
