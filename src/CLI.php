@@ -21,15 +21,18 @@ function escape($data)
 function main()
 {
     $home = getenv('HOME');
+    $user = getenv('USER');
     if (extension_loaded('posix')) {
-        $user = posix_getpwuid(posix_geteuid());
-        $home = $user['dir'];
+        $entry = posix_getpwuid(posix_geteuid());
+        $home = $entry['dir'];
+        $user = $entry['name'];
     }
 
     // DIC
     $container  = new ContainerBuilder();
     $container->setParameter('CWD', getcwd());
     $container->setParameter('HOME', $home);
+    $container->setParameter('USER', $user);
     $container->setParameter('pssht.base_dir', dirname(__DIR__));
 
     $loader     = new XmlFileLoader($container, new FileLocator(getcwd()));

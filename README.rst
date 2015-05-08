@@ -50,46 +50,150 @@ In no event shall the authors of pssht be liable for anything that happens
 while using this library. Please read the `license`_ for the full disclaimer.
 
 
-Installation & Usage
---------------------
+Installation
+------------
 
-Download the `composer.phar <https://getcomposer.org/composer.phar>`_
-executable or use the installer.
+The requirements for pssht are quite basic:
+
+*   PHP 5.3.3 or later with the following PHP extensions enabled:
+
+    *   OpenSSL
+    *   mcrypt
+    *   gmp
+    *   pcre
+    *   Sockets
+    *   SPL
+
+*   Some external packages (they will automatically be installed
+    when installing pssht):
+
+    *   ``erebot/plop`` for logging
+    *   ``symfony/config`` for configuration handling
+    *   ``symfony/dependency-injection`` for dependency injection
+    *   ``symfony/filesystem`` (dependency for ``symfony/config``)
+
+Moreover, you may be interested in enable the following PHP extensions
+to get additional features:
+
+*   HTTP: adds support for zlib-compression
+*   hash: adds support for more encryption and message authentication code
+    algorithms
+
+First things first, download the `composer.phar
+<https://getcomposer.org/composer.phar>`_ executable or use the installer:
 
 ..  sourcecode:: console
 
     $ curl -sS https://getcomposer.org/installer | php
 
-Create a ``composer.json`` that requires pssht.
+Now, you can either install pssht:
+
+*   As a basic SSH server for evaluation purposes (standalone).
+
+*   As a library/framework in your own project (embedded) to create
+    a custom SSH server.
+
+Standalone installation
+~~~~~~~~~~~~~~~~~~~~~~~
+
+To install pssht as a standalone SSH server, clone this repository
+and then run Composer on it:
+
+..  sourcecode:: console
+
+    $ git clone https://github.com/fpoirotte/pssht.git
+    $ cd pssht
+    $ php /path/to/composer.phar update --no-dev
+
+Embedded installation
+~~~~~~~~~~~~~~~~~~~~~
+
+To install pssht as an embedded library in your application,
+create or update a ``composer.json`` file in your project's
+root directory with a requirement on pssht.
+
+For example, for a new empty project, your ``composer.json`` file
+would look somewhat like this:
 
 ..  sourcecode:: json
 
     {
         "require": {
-            "fpoirotte/pssht": "dev-master"
+            "fpoirotte/pssht": "*"
         }
     }
 
-Run Composer.
+Run Composer:
 
 ..  sourcecode:: console
 
-    $ php composer.phar install
+    $ php /path/to/composer.phar install --no-dev
 
-Run the server.
+Finally, copy ``pssht.xml`` to your project's root directory:
 
 ..  sourcecode:: console
 
-    $ php bin/pssht
+    $ cp -a vendor/fpoirotte/pssht/pssht.xml ./
+
+
+Basic usage
+-----------
+
+Start the server:
+
+..  sourcecode:: console
+
+    $ php bin/pssht         # for standalone installations
+    $                       # ...or...
+    $ php vendor/bin/pssht  # for embedded installations
+
+..  note::
+
+    When run like that, pssht will just act as a basic echo server,
+    responding with the exact same data that was sent to it.
+
+pssht will display various debugging messages while initializing.
+When ready, you will see something like this in the console:
+
+..  sourcecode::
+
+    [Fri, 08 May 2015 20:23:21 +0200] INFO: Listening for new connections on 0.0.0.0:22222
+
+You can now connect to the server with the same user that was used to start
+pssht by using your regular SSH client (eg. OpenSSH/PuTTy).
+For example, using the OpenSSH client and assuming pssht was run by ``clicky``:
+
+..  sourcecode:: console
+
+    $ ssh -T -p 22222 clicky@localhost
+    Hello world!
+    clicky@localhost's password: pssht
+
+The default ``pssht.xml`` configuration file automatically loads
+the public keys stored in ``~/.ssh/authorized_keys``.
+You can thus connect with the matching private key.
+It will also accept password-based authentication using "pssht"
+as the password.
+
+..  note::
+
+    The ``-T`` option is used to disable pseudo-tty allocation as it is
+    not yet supported (see #21). Without it, OpenSSH displays a warning
+    in the console (``PTY allocation request failed on channel 0``).
 
 
 Configuration
 -------------
 
-pssht uses the Dependency Injection component from the Symfony2 framework
-for its configuration. Have a look at the default `pssht.xml
+pssht uses the `Dependency Injection component
+<http://symfony.com/doc/current/components/dependency_injection/>`_
+from the Symfony2 framework for its configuration.
+
+Have a look at the default `pssht.xml
 <https://github.com/fpoirotte/pssht/blob/master/pssht.xml>`_
 configuration file for ways to customize pssht.
+The file contains numerous comments and the options
+should thus be very straightforward.
 
 
 Compatibility
@@ -127,7 +231,7 @@ documents for compatibility with other Secure Shell implementations:
 The rest of this section describes precisely which algorithms and features
 are supported.
 
-**TL;DR** here's a feature chart for comparison with OpenSSH:
+**TL;DR** here's a feature chart for comparison with OpenSSH 6.7p1:
 
 -   |[x]| Services (2 in pssht; 2 in OpenSSH)
 -   |[ ]| Authentication methods (4 in pssht; ? in OpenSSH)
@@ -321,6 +425,30 @@ FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
 COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
 IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+Changelog
+---------
+
+v0.1.1
+~~~~~~
+
+*   [#28] Temporarily fix Diffie–Hellman key exchange by disabling
+    public key validation for Elliptic Curve Diffie–Hellman.
+    This code will be revisited later on as it currently represents
+    a possible security threat when ECDH is used.
+
+*   Improve this README (installation instruction, changelog).
+
+*   Change the default ``pssht.xml`` so that it accepts connections
+    from the same user as the one starting the server
+    (prior to this change, it used an hardcoded username).
+
+
+v0.1.0
+~~~~~~
+
+*   Initial release with lots of features already.
 
 
 ..  _`draft-miller-secsh-umac-01`:
