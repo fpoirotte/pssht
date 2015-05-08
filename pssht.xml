@@ -8,10 +8,18 @@
         <!--
             String or collection of strings specifying the addresses/ports
             the server should listen on, in the form "address:port".
+            If 0 is used as the port, a random port will be selected
+            automatically.
+
             Use brackets for IPv6 addresses (eg. "[::1]:0").
-            If 0 is used as the port, a random port will be selected.
+            Define a collection to listen on multiple addresses/ports:
+
+            <parameter key="listen" type="collection">
+                <parameter>[::1]:0</parameter>
+                <parameter>0.0.0.0:0</parameter>
+            </parameter>
         -->
-        <parameter key="listen">[::]:22222</parameter>
+        <parameter key="listen">0.0.0.0:22222</parameter>
 
         <!--
             Application to run after a connection has been accepted.
@@ -70,30 +78,38 @@
 
         <!-- AUTHENTICATION SETTINGS -->
 
-        <!-- Allows user "clicky" to log in with password "pssht". -->
+        <!--
+            Allows the user running pssht to log in
+            using the password "pssht".
+        -->
         <parameter key="auth.passwords" type="collection">
-            <parameter key="clicky">pssht</parameter>
+            <parameter key="%USER%">pssht</parameter>
         </parameter>
 
         <!--
-            Allows user "clicky" to log in using one of the public keys
-            authorized to access the account the server was started under.
+            Allows the user running pssht to log in
+            using one of his/her authorized SSH public keys.
         -->
         <parameter key="auth.pubkeys" type="collection">
-            <parameter key="clicky" type="collection">
+            <parameter key="%USER%" type="collection">
                 <parameter>%HOME%/.ssh/authorized_keys</parameter>
             </parameter>
         </parameter>
 
         <!--
-            Allows user "clicky" to log in using the server's public key.
+            Allows the user running pssht to log in
+            using the server's public key.
+
             Note:   this configuration does not really make sense,
                     but shows just how easy it is to configure the server
                     for varying needs.
         -->
         <parameter key="auth.hostbased" type="collection">
-            <parameter key="clicky" type="collection">
-                <parameter></parameter>
+            <parameter key="%USER%" type="collection">
+                <parameter>/etc/ssh/ssh_host_dsa_key.pub</parameter>
+                <parameter>/etc/ssh/ssh_host_rsa_key.pub</parameter>
+                <parameter>/etc/ssh/ssh_host_ecdsa_key.pub</parameter>
+                <parameter>/etc/ssh/ssh_host_ed25519_key.pub</parameter>
             </parameter>
         </parameter>
 
