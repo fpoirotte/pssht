@@ -1,6 +1,6 @@
 <?php
 
-namespace fpoirotte\Pssht\Tests\ECC;
+namespace fpoirotte\Pssht\Tests\Unit\ECC;
 
 /**
  * Test point addition for various NIST curves
