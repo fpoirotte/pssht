@@ -51,6 +51,6 @@ if (!strncasecmp(substr(__FILE__, -5), '.phar', 5)) {
 
 // Load CLI.
 class_exists('\\fpoirotte\\Pssht\\CLI');
-die(main());
+die(main(isset($_SERVER['argv'][1]) ? $_SERVER['argv'][1] : 'pssht.xml'));
 
 __HALT_COMPILER();
