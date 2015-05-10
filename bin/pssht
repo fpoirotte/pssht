@@ -16,7 +16,6 @@ if (version_compare(phpversion(), '5.3.3', '<')) {
 }
 
 $extensions = array(
-    'phar',
     'spl',
     'openssl',
     'mcrypt',
@@ -37,6 +36,11 @@ require_once(
 );
 
 if (!strncasecmp(substr(__FILE__, -5), '.phar', 5)) {
+    if (!extension_loaded('phar')) {
+        echo "Extension phar is required" . PHP_EOL;
+        exit -1;
+    }
+
     try {
         Phar::mapPhar();
     } catch (Exception $e) {

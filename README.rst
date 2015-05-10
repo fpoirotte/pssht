@@ -63,6 +63,8 @@ The requirements for pssht are quite basic:
     *   pcre
     *   Sockets
     *   SPL
+    *   ctype
+    *   DOM
 
 *   Some external packages (they will automatically be installed
     when installing pssht):
@@ -72,12 +74,13 @@ The requirements for pssht are quite basic:
     *   ``symfony/dependency-injection`` for dependency injection
     *   ``symfony/filesystem`` (dependency for ``symfony/config``)
 
-Moreover, you may be interested in enable the following PHP extensions
+Moreover, you may be interested in enabling the following PHP extensions
 to get additional features:
 
 *   HTTP: adds support for zlib-compression
 *   hash: adds support for more encryption and message authentication code
     algorithms
+*   posix: improves detection of the current user
 
 First things first, download the `composer.phar
 <https://getcomposer.org/composer.phar>`_ executable or use the installer:
