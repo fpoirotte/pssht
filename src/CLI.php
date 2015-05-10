@@ -45,6 +45,7 @@ function main($confFile = 'pssht.xml')
     }
     $container->get('logging', ContainerInterface::NULL_ON_INVALID_REFERENCE);
     $logging    = \Plop\Plop::getInstance();
+    $logging->info("pssht is starting (PID %d)", array(getmypid()));
 
     // Elliptic curves
     \fpoirotte\Pssht\ECC\Curve::initialize();
@@ -188,6 +189,12 @@ function main($confFile = 'pssht.xml')
                 $data   = substr($data, $written);
                 $clients[$id]->updateWriteStats($written);
                 $size  -= $written;
+            }
+
+            if (!$clients[$id]->isConnected()) {
+                fclose($socket);
+                unset($sockets['clients'][$id]);
+                unset($clients[$id]);
             }
         }
     }
