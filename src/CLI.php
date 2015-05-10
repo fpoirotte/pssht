@@ -18,7 +18,7 @@ function escape($data)
     return addcslashes($data, "\x00..\x1F\x7F..\xFF");
 }
 
-function main()
+function main($confFile = 'pssht.xml')
 {
     $home = getenv('HOME');
     $user = getenv('USER');
@@ -36,9 +36,16 @@ function main()
     $container->setParameter('pssht.base_dir', dirname(__DIR__));
 
     $loader     = new XmlFileLoader($container, new FileLocator(getcwd()));
-    $loader->load('pssht.xml');
+    try {
+        $loader->load($confFile);
+    } catch (\InvalidArgumentException $e) {
+        $logging = \Plop\Plop::getInstance();
+        $logging->error($e->getMessage());
+        exit(1);
+    }
     $container->get('logging', ContainerInterface::NULL_ON_INVALID_REFERENCE);
     $logging    = \Plop\Plop::getInstance();
+    $logging->info("pssht is starting (PID %d)", array(getmypid()));
 
     // Elliptic curves
     \fpoirotte\Pssht\ECC\Curve::initialize();
@@ -182,6 +189,12 @@ function main()
                 $data   = substr($data, $written);
                 $clients[$id]->updateWriteStats($written);
                 $size  -= $written;
+            }
+
+            if (!$clients[$id]->isConnected()) {
+                fclose($socket);
+                unset($sockets['clients'][$id]);
+                unset($clients[$id]);
             }
         }
     }

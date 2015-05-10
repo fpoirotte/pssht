@@ -64,6 +64,7 @@
                 <parameter key="passphrase"/>
             </parameter>
 
+            <!-- @FIXME: The following keys do not work yet. -->
 <!--            <parameter key="ecdsa-sha2-nistp384" type="collection">-->
 <!--                <parameter key="file">file://%pssht.base_dir%/tests/data/plaintext/ecdsa/384</parameter>-->
 <!--                <parameter key="passphrase"/>-->
@@ -71,6 +72,11 @@
 
 <!--            <parameter key="ecdsa-sha2-nistp521" type="collection">-->
 <!--                <parameter key="file">file://%pssht.base_dir%/tests/data/plaintext/ecdsa/521</parameter>-->
+<!--                <parameter key="passphrase"/>-->
+<!--            </parameter>-->
+
+<!--            <parameter key="ssh-ed25519" type="collection">-->
+<!--                <parameter key="file">file://%pssht.base_dir%/tests/data/plaintext/ed25519/256</parameter>-->
 <!--                <parameter key="passphrase"/>-->
 <!--            </parameter>-->
         </parameter>

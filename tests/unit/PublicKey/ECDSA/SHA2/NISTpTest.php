@@ -1,6 +1,6 @@
 <?php
 
-namespace fpoirotte\Pssht\Tests\PublicKey\ECDSA\SHA2;
+namespace fpoirotte\Pssht\Tests\Unit\PublicKey\ECDSA\SHA2;
 
 /**
  * Test ECDSA implementation using the test vectors

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "abe5a7a6becdda1aa95973ba76a754ba",
+    "hash": "72799073429a8c69a3ce4826d9b99b72",
     "packages": [
         {
             "name": "erebot/plop",
@@ -1246,9 +1246,15 @@
     "prefer-lowest": false,
     "platform": {
         "php": ">=5.3.3",
+        "ext-spl": "*",
+        "ext-ctype": "*",
+        "ext-dom": "*",
         "ext-openssl": "*",
         "ext-mcrypt": "*",
         "ext-gmp": "*"
     },
-    "platform-dev": []
+    "platform-dev": {
+        "ext-hash": "*",
+        "ext-posix": "*"
+    }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace fpoirotte\Pssht\Tests;
+namespace fpoirotte\Pssht\Tests\Unit;
 
 /**
  * Test vectors for ChaCha20.

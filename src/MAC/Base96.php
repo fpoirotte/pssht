@@ -44,7 +44,7 @@ abstract class Base96 implements
         return substr(
             $this->subhash->compute($seqno, $data),
             0,
-            $this->getSize() >> 3
+            $this->getSize()
         );
     }
 

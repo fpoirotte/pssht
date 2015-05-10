@@ -1,6 +1,6 @@
 <?php
 
-namespace fpoirotte\Pssht\Tests\AEAD;
+namespace fpoirotte\Pssht\Tests\Unit\AEAD;
 
 /**
  * Test point addition for various NIST curves

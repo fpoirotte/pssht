@@ -1,6 +1,6 @@
 <?php
 
-namespace fpoirotte\Pssht\Tests\PublicKey;
+namespace fpoirotte\Pssht\Tests\Unit\PublicKey;
 
 class ED25519TestHelper extends \fpoirotte\Pssht\PublicKey\SSH\ED25519
 {

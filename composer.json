@@ -20,6 +20,9 @@
     },
     "require": {
         "php": ">=5.3.3",
+        "ext-spl": "*",
+        "ext-ctype": "*",
+        "ext-dom": "*",
         "ext-openssl": "*",
         "ext-mcrypt": "*",
         "ext-gmp": "*",
@@ -28,6 +31,8 @@
         "erebot/plop": "~0.5"
     },
     "require-dev": {
+        "ext-hash": "*",
+        "ext-posix": "*",
         "phing/phing": "*",
         "phpmd/phpmd": "*",
         "sebastian/phpcpd": "*",
