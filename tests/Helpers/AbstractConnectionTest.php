@@ -23,7 +23,7 @@ abstract class AbstractConnectionTest extends \PHPUnit_Framework_TestCase
             // PHP_BINARY is only defined on PHP 5.4+.
             self::$phpBinary = PHP_BINARY;
         } else {
-            self::$phpBinary = findBinary('php', true, PHP_BINDIR);
+            self::$phpBinary = findBinary('php', true, array(PHP_BINDIR));
         }
         if (self::$phpBinary === null) {
             throw new \Exception('Could not locate PHP binary');
@@ -32,7 +32,14 @@ abstract class AbstractConnectionTest extends \PHPUnit_Framework_TestCase
 
     private function startServer()
     {
-        $options = '-n ' .
+        $null = strncasecmp(PHP_OS, 'Win', 3) ? '/dev/null' : 'NUL';
+        $options =
+            // Do not use the configuration file (php.ini).
+            // For HHVM, we make it use "/dev/null" or equivalent
+            // as its configuration file because the "-n" option
+            // does not exist.
+            (defined('HHVM_VERSION') ? '-c ' . $null : '-n') .
+            ' ' .
             '-d detect_unicode=0 ' .
             '-d date.timezone=UTC ' .
             '-d ' . escapeshellarg('extension_dir=' . PHP_EXTENSION_DIR);
@@ -155,7 +162,7 @@ abstract class AbstractConnectionTest extends \PHPUnit_Framework_TestCase
             // - OpenSSH's      "ssh"
             // - PuTTY's        "plink"
             // - TortoiseGit's  "tortoiseplink"
-            if (($binary = findBinary('ssh2')) !== null) {
+            if (($binary = findBinary('ssh')) !== null) {
                 $cls = '\\fpoirotte\\Pssht\\Tests\\Helpers\\SshClient\\OpenSSH';
             } elseif (($binary = findBinary('plink')) !== null ||
                       ($binary = findBinary('tortoiseplink')) !== null) {
