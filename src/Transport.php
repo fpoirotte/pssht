@@ -64,6 +64,9 @@ class Transport
     protected $rekeyingBytes;
     protected $rekeyingTime;
 
+    /// Whether this client is still connected or not.
+    protected $connected;
+
 
     /**
      * Construct a new SSH transport layer.
@@ -134,6 +137,7 @@ class Transport
             $keys[$keyType] = $cls::loadPrivate($params['file'], $passphrase);
         }
 
+        $this->connected    = false;
         $this->address      = null;
         $this->appFactory   = null;
         $this->banner       = null;
@@ -220,7 +224,8 @@ class Transport
             throw new \RuntimeException();
         }
 
-        $this->address = $address;
+        $this->address      = $address;
+        $this->connected    = true;
         return $this;
     }
 
@@ -284,6 +289,11 @@ class Transport
             $kexinit = new \fpoirotte\Pssht\Handlers\InitialState();
             $kexinit->handleKEXINIT($this, $this->context);
         }
+    }
+
+    public function isConnected()
+    {
+        return $this->connected;
     }
 
     /**
@@ -686,6 +696,11 @@ class Transport
                 'padding' => $padSize,
             )
         );
+
+        if ($message instanceof \fpoirotte\Pssht\Messages\DISCONNECT) {
+            $this->connected = false;
+        }
+
         return $this;
     }
 
