@@ -21,7 +21,7 @@ class Arcfour256 extends \fpoirotte\Pssht\Encryption\Base
     {
         parent::__construct($iv, $key);
         // See section 4 of RFC 4345 for the rationale.
-        $this->encrypt(str_repeat(' ', 1536));
+        $this->encrypt(0, str_repeat(' ', 1536));
     }
 
     public static function getAlgorithm()
