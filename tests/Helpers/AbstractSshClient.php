@@ -4,6 +4,7 @@ namespace fpoirotte\Pssht\Tests\Helpers;
 
 abstract class AbstractSshClient
 {
+    protected $phpBinary;
     protected $binary;
     protected $home;
     protected $oldEnvironment;
@@ -24,7 +25,7 @@ abstract class AbstractSshClient
     protected $agent;
     protected $shellOrCommand;
 
-    public function __construct($binary, $host, $login = null, $port = 22)
+    public function __construct($phpBinary, $binary, $host, $login = null, $port = 22)
     {
         if ($login === null) {
             $login = getenv('USER');
@@ -32,6 +33,10 @@ abstract class AbstractSshClient
                 $entry = posix_getpwuid(posix_geteuid());
                 $login = $entry['name'];
             }
+        }
+
+        if (!is_string($phpBinary)) {
+            throw new \InvalidArgumentException('Bad PHP binary');
         }
 
         if (!is_string($binary)) {
@@ -52,6 +57,7 @@ abstract class AbstractSshClient
             );
         }
 
+        $this->phpBinary        = $phpBinary;
         $this->binary           = $binary;
         $this->home             = null;
         $this->host             = $host;
@@ -70,6 +76,17 @@ abstract class AbstractSshClient
         $this->agent            = false;
         $this->shellOrCommand   = true;
         $this->oldEnvironment   = array();
+    }
+
+    public function getPhpBinary()
+    {
+        return $this->phpBinary;
+    }
+
+    public function setPhpBinary($phpBinary)
+    {
+        $this->phpBinary = $phpBinary;
+        return $this;
     }
 
     public function getBinary()

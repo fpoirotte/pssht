@@ -15,7 +15,10 @@ class Putty extends \fpoirotte\Pssht\Tests\Helpers\AbstractSshClient
     public function __toString()
     {
         $args = array(
-            'setsid', '-w',
+            $this->phpBinary,
+            dirname(dirname(__DIR__)) .
+            DIRECTORY_SEPARATOR . 'data' .
+            DIRECTORY_SEPARATOR . 'setsid.php',
             $this->binary,
             '-ssh',
             '-batch',

@@ -174,7 +174,13 @@ abstract class AbstractConnectionTest extends \PHPUnit_Framework_TestCase
             return $this->markTestSkipped('No usable SSH client found');
         }
 
-        $this->sshClient = new $cls($binary, 'localhost', null, self::$serverPort);
+        $this->sshClient = new $cls(
+            self::$phpBinary,
+            $binary,
+            'localhost',
+            null,
+            self::$serverPort
+        );
         $this->sshClient->setHome($this->fakeHome);
 
         // PuTTY stores its configuration in the registry on Windows,

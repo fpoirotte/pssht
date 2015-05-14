@@ -4,14 +4,15 @@ namespace fpoirotte\Pssht\Tests\Helpers\SshClient;
 
 class Openssh extends \fpoirotte\Pssht\Tests\Helpers\AbstractSshClient
 {
-    private static $phpBinary;
-
     public function __toString()
     {
         $null = strncasecmp(PHP_OS, 'Win', 3) ? '/dev/null' : 'NUL';
 
         $args = array(
-            'setsid', '-w',
+            $this->phpBinary,
+            dirname(dirname(__DIR__)) .
+            DIRECTORY_SEPARATOR . 'data' .
+            DIRECTORY_SEPARATOR . 'setsid.php',
             $this->binary,
             '-F', $null,                                // No config. file
             '-p', $this->port,                          // Port
