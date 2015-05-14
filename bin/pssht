@@ -48,9 +48,23 @@ if (!strncasecmp(substr(__FILE__, -5), '.phar', 5)) {
         echo $e->getMessage() . PHP_EOL;
         exit -1;
     }
-    $base = 'phar://' . __FILE__;
+    $phar       = new Phar(__FILE__);
+    $metadata   = $phar->getMetadata();
+    define(
+        'PSSHT_VERSION',
+        isset($metadata['version']) ? $metadata['version'] : 'devel'
+    );
 } else {
-    $base = dirname(__DIR__);
+    $path       = dirname(__DIR__) .
+        DIRECTORY_SEPARATOR . 'vendor' .
+        DIRECTORY_SEPARATOR . 'erebot' .
+        DIRECTORY_SEPARATOR . 'buildenv' .
+        DIRECTORY_SEPARATOR . 'get_version.php';
+    $version    = 'devel';
+    if (file_exists($path)) {
+        $version = @exec("php " . escapeshellarg($path)) or 'devel';
+    }
+    define('PSSHT_VERSION', $version);
 }
 
 // Load CLI.
