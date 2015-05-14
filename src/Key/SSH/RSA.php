@@ -19,9 +19,6 @@ class RSA implements \fpoirotte\Pssht\KeyInterface
     /// DER header for RSA.
     const DER_HEADER = "\x30\x21\x30\x09\x06\x05\x2b\x0e\x03\x02\x1a\x05\x00\x04\x14";
 
-    /// Size of the key in bits.
-    protected $bits;
-
     /// Modulus.
     protected $n;
 
@@ -33,9 +30,6 @@ class RSA implements \fpoirotte\Pssht\KeyInterface
 
     /**
      * Construct a new public/private RSA key.
-     *
-     *  \param int $bits
-     *      Key size in bits.
      *
      *  \param resource $n
      *      GMP resource representing the modulus to use
@@ -50,9 +44,8 @@ class RSA implements \fpoirotte\Pssht\KeyInterface
      *      loaded, meaning that signature generation will be
      *      unavailable.
      */
-    protected function __construct($bits, $n, $e, $d = null)
+    public function __construct($n, $e, $d = null)
     {
-        $this->bits = $bits;
         $this->n    = $n;
         $this->e    = $e;
         $this->d    = $d;
@@ -74,7 +67,6 @@ class RSA implements \fpoirotte\Pssht\KeyInterface
             throw new \InvalidArgumentException();
         }
         return new static(
-            $details['bits'],
             gmp_init(bin2hex($details['rsa']['n']), 16),
             gmp_init(bin2hex($details['rsa']['e']), 16),
             gmp_init(bin2hex($details['rsa']['d']), 16)
@@ -91,17 +83,12 @@ class RSA implements \fpoirotte\Pssht\KeyInterface
         }
 
         $e          = $decoder->decodeMpint();
-        $decoder2   = new \fpoirotte\Pssht\Wire\Decoder(clone $decoder->getBuffer());
         $n          = $decoder->decodeMpint();
-        $raw        = $decoder2->decodeString();
-        if ($raw[0] === "\x00") {
-            $raw = (string) substr($raw, 1);
-        }
 
         if (!isset($e, $n)) {
             throw new \InvalidArgumentException();
         }
-        return new static(strlen($raw) << 3, $n, $e);
+        return new static($n, $e);
     }
 
     public static function getName()
@@ -122,10 +109,11 @@ class RSA implements \fpoirotte\Pssht\KeyInterface
             throw new \RuntimeException();
         }
 
+        $bits   = strlen(gmp_strval($this->n, 2));
         $H      = sha1($message, true);
         $T      = self::DER_HEADER . $H;
         $tLen   = strlen($T);
-        $emLen  = ($this->bits + 7) >> 3;
+        $emLen  = ($bits + 7) >> 3;
         if ($emLen < $tLen + 11) {
              throw new \RuntimeException();
         }
@@ -146,7 +134,8 @@ class RSA implements \fpoirotte\Pssht\KeyInterface
     public function check($message, $signature)
     {
         // Decode given signature.
-        $emLen = ($this->bits + 7) >> 3;
+        $bits   = strlen(gmp_strval($this->n, 2));
+        $emLen  = ($bits + 7) >> 3;
         if (strlen($signature) !== $emLen) {
             throw new \InvalidArgumentException();
         }

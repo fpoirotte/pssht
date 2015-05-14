@@ -45,7 +45,7 @@ class ED25519 implements \fpoirotte\Pssht\KeyInterface, \fpoirotte\Pssht\Availab
      *      loaded, meaning that signature generation will be
      *      unavailable.
      */
-    protected function __construct($pk, $sk = null)
+    public function __construct($pk, $sk = null)
     {
         if (strlen($pk) !== 32 || strlen($sk) !== 32) {
             throw new \InvalidArgumentException();

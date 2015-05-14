@@ -57,7 +57,7 @@ class DSS implements \fpoirotte\Pssht\KeyInterface
      *      loaded, meaning that signature generation will be
      *      unavailable.
      */
-    protected function __construct($p, $q, $g, $y, $x = null)
+    public function __construct($p, $q, $g, $y, $x = null)
     {
         $this->p = $p;
         $this->q = $q;
