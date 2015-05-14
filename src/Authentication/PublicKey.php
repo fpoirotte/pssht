@@ -83,11 +83,13 @@ class PublicKey implements AuthenticationInterface
         $cls        = $algos->getClass('Key', $message->getAlgorithm());
         if ($cls === null || !$this->store->exists($message->getUserName(), $message->getKey())) {
             $logging->info(
-                'Rejected public key connection from remote host "%(reverse)s" ' .
-                'to "%(luser)s" (unsupported key)',
+                'Rejected public key connection from remote host ' .
+                '"%(reverse)s" (%(address)s) to "%(luser)s": ' .
+                'unsupported key',
                 array(
                     'luser' => escape($message->getUserName()),
                     'reverse' => $reverse,
+                    'address' => $transport->getAddress(),
                 )
             );
             return self::AUTH_REJECT;
@@ -106,23 +108,27 @@ class PublicKey implements AuthenticationInterface
 
         if ($key->check($encoder->getBuffer()->get(0), $message->getSignature())) {
             $logging->info(
-                'Accepted public key connection from remote host "%(reverse)s" ' .
-                'to "%(luser)s" (using "%(algorithm)s" algorithm)',
+                'Accepted public key connection from remote host '.
+                '"%(reverse)s" (%(address)s) to "%(luser)s" ' .
+                '(using "%(algorithm)s" algorithm)',
                 array(
                     'luser' => escape($message->getUserName()),
                     'reverse' => $reverse,
                     'algorithm' => escape($message->getAlgorithm()),
+                    'address' => $transport->getAddress(),
                 )
             );
             return self::AUTH_ACCEPT;
         }
 
         $logging->info(
-            'Rejected public key connection from remote host "%(reverse)s" ' .
-            'to "%(luser)s" (invalid signature)',
+            'Rejected public key connection from remote host ' .
+            '"%(reverse)s" (%(address)s) to "%(luser)s": '.
+            'invalid signature',
             array(
                 'luser' => escape($message->getUserName()),
                 'reverse' => $reverse,
+                'address' => $transport->getAddress(),
             )
         );
         return self::AUTH_REJECT;

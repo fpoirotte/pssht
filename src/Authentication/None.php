@@ -47,6 +47,18 @@ class None implements AuthenticationInterface
             throw new \InvalidArgumentException();
         }
 
+        $logging    = \Plop\Plop::getInstance();
+        $reverse    = gethostbyaddr($transport->getAddress());
+        $logging->info(
+            'Rejected anonymous connection from remote host ' .
+            '"%(reverse)s" (%(address)s) to "%(luser)s": ' .
+            'anonymous login is not permitted',
+            array(
+                'luser' => escape($message->getUserName()),
+                'reverse' => $reverse,
+                'address' => $transport->getAddress(),
+            )
+        );
         return self::AUTH_REJECT;
     }
 }
