@@ -62,24 +62,32 @@ class HostBased implements AuthenticationInterface
         $reverse        = gethostbyaddr($transport->getAddress());
         $untrustedHost  = rtrim($message->getHostname(), '.');
         $algos          = \fpoirotte\Pssht\Algorithms::factory();
-        $cls            = $algos->getClass('PublicKey', $message->getAlgorithm());
+        $cls            = $algos->getClass('Key', $message->getAlgorithm());
 
         if ($cls === null || !$this->store->exists($message->getUserName(), $message->getKey())) {
             $logging->info(
-                'Rejected host based connection from %(ruser)s@%(rhost)s ' .
-                '(%(ruser)s@%(reverse)s) to "%(luser)s" '.
+                'Rejected host based connection from "%(ruser)s@%(rhost)s" ' .
+                '(%(ruser)s@%(reverse)s [%(address)s]) to "%(luser)s" '.
                 '(unsupported key)',
                 array(
                     'ruser' => escape($message->getRemoteUser()),
                     'luser' => escape($message->getUserName()),
                     'rhost' => escape($untrustedHost),
                     'reverse' => $reverse,
+                    'address' => $transport->getAddress(),
                 )
             );
             return self::AUTH_REMOVE;
         }
 
-        $key        = $cls::loadPublic(base64_encode($message->getKey()));
+        $decoder    = new \fpoirotte\Pssht\Wire\Decoder();
+        $decoder->getBuffer()->push($message->getKey());
+        if ($decoder->decodeString() !== $message->getAlgorithm()) {
+            // The key is not of the type claimed.
+            return self::AUTH_REJECT;
+        }
+        $key        = $cls::unserialize($decoder);
+
         $encoder    = new \fpoirotte\Pssht\Wire\Encoder();
         $encoder->encodeString($context['DH']->getExchangeHash());
         $encoder->encodeBytes(chr(\fpoirotte\Pssht\Messages\USERAUTH\REQUEST\Base::getMessageId()));
@@ -93,13 +101,15 @@ class HostBased implements AuthenticationInterface
 
         if (!$key->check($encoder->getBuffer()->get(0), $message->getSignature())) {
             $logging->warn(
-                'Rejected host based connection from %(ruser)s@%(rhost)s ' .
-                '(%(ruser)s@%(reverse)s) to "%(luser)s" (invalid signature)',
+                'Rejected host based connection from "%(ruser)s@%(rhost)s" ' .
+                '(%(ruser)s@%(reverse)s [%(address)s]) to "%(luser)s" ' .
+                '(invalid signature)',
                 array(
                     'ruser' => escape($message->getRemoteUser()),
                     'luser' => escape($message->getUserName()),
                     'rhost' => escape($untrustedHost),
                     'reverse' => $reverse,
+                    'address' => $transport->getAddress(),
                 )
             );
             return self::AUTH_REJECT;
@@ -119,28 +129,30 @@ class HostBased implements AuthenticationInterface
 
         if ($message->getUserName() !== $message->getRemoteUser()) {
             $logging->warning(
-                'Rejected host based connection from %(ruser)s@%(rhost)s ' .
-                '(%(ruser)s@%(reverse)s): remote user does not match '.
-                'local user (%(luser)s)',
+                'Rejected host based connection from "%(ruser)s@%(rhost)s" ' .
+                '(%(ruser)s@%(reverse)s [%(address)s]): ' .
+                'remote user does not match local user (%(luser)s)',
                 array(
                     'ruser' => escape($message->getRemoteUser()),
                     'luser' => escape($message->getUserName()),
                     'rhost' => escape($untrustedHost),
                     'reverse' => $reverse,
+                    'address' => $transport->getAddress(),
                 )
             );
             return self::AUTH_REMOVE;
         }
 
         $logging->info(
-            'Accepted host based connection ' .
-            'from "%(ruser)s@%(rhost)s" (%(ruser)s@%(reverse)s) ' .
-            'to "%(luser)s" (using "%(algorithm)s" algorithm)',
+            'Accepted host based connection from "%(ruser)s@%(rhost)s" ' .
+            '(%(ruser)s@%(reverse)s [%(address)s]) to "%(luser)s" ' .
+            '(using "%(algorithm)s" algorithm)',
             array(
                 'ruser' => escape($message->getRemoteUser()),
                 'luser' => escape($message->getUserName()),
                 'rhost' => escape($untrustedHost),
                 'reverse' => $reverse,
+                'address' => $transport->getAddress(),
                 'algorithm' => escape($message->getAlgorithm()),
             )
         );

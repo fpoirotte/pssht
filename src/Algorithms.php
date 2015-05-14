@@ -33,7 +33,7 @@ class Algorithms
         $this->interfaces = array(
             'MAC'           => '\\fpoirotte\\Pssht\\MACInterface',
             'Compression'   => '\\fpoirotte\\Pssht\\CompressionInterface',
-            'PublicKey'     => '\\fpoirotte\\Pssht\\PublicKeyInterface',
+            'Key'           => '\\fpoirotte\\Pssht\\KeyInterface',
             'KEX'           => '\\fpoirotte\\Pssht\\KEXInterface',
             'Encryption'    => '\\fpoirotte\\Pssht\\EncryptionInterface',
         );
@@ -41,7 +41,7 @@ class Algorithms
         $this->algos = array(
             'MAC'           => array(),
             'Compression'   => array(),
-            'PublicKey'     => array(),
+            'Key'           => array(),
             'KEX'           => array(),
             'Encryption'    => array(),
         );
@@ -395,7 +395,7 @@ class Algorithms
             'diffie-hellman-group14-sha1',
             'diffie-hellman-group1-sha1',
 
-            // PublicKey
+            // Public Key
             'ecdsa-sha2-nistp256-cert-v01@openssh.com',
             'ecdsa-sha2-nistp384-cert-v01@openssh.com',
             'ecdsa-sha2-nistp521-cert-v01@openssh.com',

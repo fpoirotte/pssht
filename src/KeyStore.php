@@ -30,13 +30,13 @@ class KeyStore
     /**
      * Return the identifier for a key.
      *
-     *  \param fpoirotte::Pssht::PublicKeyInterface $key
+     *  \param fpoirotte::Pssht::KeyInterface $key
      *      Public or private key.
      *
      *  \retval string
      *      SSH identifier for the key.
      */
-    protected function getIdentifier(\fpoirotte\Pssht\PublicKeyInterface $key)
+    protected function getIdentifier(\fpoirotte\Pssht\KeyInterface $key)
     {
         $encoder = new \fpoirotte\Pssht\Wire\Encoder();
         $key->serialize($encoder);
@@ -49,10 +49,10 @@ class KeyStore
      *  \param string $user
      *      User the key belongs to.
      *
-     *  \param fpoirotte::Pssht::PublicKeyInterface $key
+     *  \param fpoirotte::Pssht::KeyInterface $key
      *      Public/private key to add.
      */
-    public function add($user, \fpoirotte\Pssht\PublicKeyInterface $key)
+    public function add($user, \fpoirotte\Pssht\KeyInterface $key)
     {
         if (!is_string($user)) {
             throw new \InvalidArgumentException();
@@ -67,10 +67,10 @@ class KeyStore
      *  \param string $user
      *      User the key belongs to.
      *
-     *  \param fpoirotte::Pssht::PublicKeyInterface $key
+     *  \param fpoirotte::Pssht::KeyInterface $key
      *      Public/private key to remove.
      */
-    public function remove($user, \fpoirotte\Pssht\PublicKeyInterface $key)
+    public function remove($user, \fpoirotte\Pssht\KeyInterface $key)
     {
         if (!is_string($user)) {
             throw new \InvalidArgumentException();
@@ -109,7 +109,7 @@ class KeyStore
      *  \param string $user
      *      User for which the key is tested.
      *
-     *  \param string|fpoirotte::Pssht::PublicKeyInterface $key
+     *  \param string|fpoirotte::Pssht::KeyInterface $key
      *      Key to test.
      *
      *  \retval bool
@@ -122,7 +122,7 @@ class KeyStore
             throw new \InvalidArgumentException();
         }
 
-        if ($key instanceof \fpoirotte\Pssht\PublicKeyInterface) {
+        if ($key instanceof \fpoirotte\Pssht\KeyInterface) {
             $key = $this->getIdentifier($key);
         }
         if (!is_string($key)) {

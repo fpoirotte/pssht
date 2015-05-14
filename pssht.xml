@@ -45,7 +45,7 @@
         <parameter key="banner">Hello world!&#10;</parameter>
 
         <!--
-            Server's private keys (PEM-encoded).
+            Server's private keys (in OpenSSH format, ie. PEM-encoded).
             You may provide several keys here, one per supported key type.
         -->
         <parameter key="server_keys" type="collection">
@@ -75,10 +75,10 @@
 <!--                <parameter key="passphrase"/>-->
 <!--            </parameter>-->
 
-<!--            <parameter key="ssh-ed25519" type="collection">-->
-<!--                <parameter key="file">file://%pssht.base_dir%/tests/data/plaintext/ed25519/256</parameter>-->
-<!--                <parameter key="passphrase"/>-->
-<!--            </parameter>-->
+            <parameter key="ssh-ed25519" type="collection">
+                <parameter key="file">file://%pssht.base_dir%/tests/data/plaintext/ed25519/256</parameter>
+                <parameter key="passphrase"/>
+            </parameter>
         </parameter>
 
 
@@ -168,7 +168,8 @@
         <!-- End of "client" service. -->
 
         <!-- The "logging" service is used to log messages. -->
-        <service id="logging" factory-class="\Plop\Plop" factory-method="getInstance">
+        <service id="logging">
+            <factory class="\Plop\Plop" method="getInstance"/>
             <call method="addLogger">
                 <argument type="service">
                     <service class="\Plop\Logger">
@@ -235,9 +236,12 @@
                         <argument type="service">
                             <service class="\fpoirotte\Pssht\Authentication\PublicKey">
                                 <argument type="service">
-                                    <service public="false"
-                                        factory-service="authPublicKeysLoader"
-                                        factory-method="getStore"/>
+                                    <service public="false">
+                                        <factory
+                                            service="authPublicKeysLoader"
+                                            method="getStore"
+                                        />
+                                    </service>
                                 </argument>
                             </service>
                         </argument>
@@ -251,9 +255,12 @@
                         <argument type="service">
                             <service class="\fpoirotte\Pssht\Authentication\HostBased">
                                 <argument type="service">
-                                    <service public="false"
-                                        factory-service="authHostBasedLoader"
-                                        factory-method="getStore"/>
+                                    <service public="false">
+                                        <factory
+                                            service="authHostBasedLoader"
+                                            method="getStore"
+                                        />
+                                    </service>
                                 </argument>
                             </service>
                         </argument>

@@ -51,7 +51,7 @@ class PublicKey implements AuthenticationInterface
         }
 
         $algos = \fpoirotte\Pssht\Algorithms::factory();
-        if ($algos->getClass('PublicKey', $message->getAlgorithm()) !== null &&
+        if ($algos->getClass('Key', $message->getAlgorithm()) !== null &&
             $this->store->exists($message->getUserName(), $message->getKey())) {
             $response = new \fpoirotte\Pssht\Messages\USERAUTH\PK\OK(
                 $message->getAlgorithm(),
@@ -80,20 +80,29 @@ class PublicKey implements AuthenticationInterface
         $logging    = \Plop\Plop::getInstance();
         $reverse    = gethostbyaddr($transport->getAddress());
         $algos      = \fpoirotte\Pssht\Algorithms::factory();
-        $cls        = $algos->getClass('PublicKey', $message->getAlgorithm());
+        $cls        = $algos->getClass('Key', $message->getAlgorithm());
         if ($cls === null || !$this->store->exists($message->getUserName(), $message->getKey())) {
             $logging->info(
-                'Rejected public key connection from remote host "%(reverse)s" ' .
-                'to "%(luser)s" (unsupported key)',
+                'Rejected public key connection from remote host ' .
+                '"%(reverse)s" (%(address)s) to "%(luser)s": ' .
+                'unsupported key',
                 array(
                     'luser' => escape($message->getUserName()),
                     'reverse' => $reverse,
+                    'address' => $transport->getAddress(),
                 )
             );
             return self::AUTH_REJECT;
         }
 
-        $key        = $cls::loadPublic(base64_encode($message->getKey()));
+        $decoder    = new \fpoirotte\Pssht\Wire\Decoder();
+        $decoder->getBuffer()->push($message->getKey());
+        if ($decoder->decodeString() !== $message->getAlgorithm()) {
+            // The key is not of the type claimed.
+            return self::AUTH_REJECT;
+        }
+        $key        = $cls::unserialize($decoder);
+
         $encoder    = new \fpoirotte\Pssht\Wire\Encoder();
         $encoder->encodeString($context['DH']->getExchangeHash());
         $encoder->encodeBytes(chr(\fpoirotte\Pssht\Messages\USERAUTH\REQUEST\Base::getMessageId()));
@@ -106,23 +115,27 @@ class PublicKey implements AuthenticationInterface
 
         if ($key->check($encoder->getBuffer()->get(0), $message->getSignature())) {
             $logging->info(
-                'Accepted public key connection from remote host "%(reverse)s" ' .
-                'to "%(luser)s" (using "%(algorithm)s" algorithm)',
+                'Accepted public key connection from remote host '.
+                '"%(reverse)s" (%(address)s) to "%(luser)s" ' .
+                '(using "%(algorithm)s" algorithm)',
                 array(
                     'luser' => escape($message->getUserName()),
                     'reverse' => $reverse,
                     'algorithm' => escape($message->getAlgorithm()),
+                    'address' => $transport->getAddress(),
                 )
             );
             return self::AUTH_ACCEPT;
         }
 
         $logging->info(
-            'Rejected public key connection from remote host "%(reverse)s" ' .
-            'to "%(luser)s" (invalid signature)',
+            'Rejected public key connection from remote host ' .
+            '"%(reverse)s" (%(address)s) to "%(luser)s": '.
+            'invalid signature',
             array(
                 'luser' => escape($message->getUserName()),
                 'reverse' => $reverse,
+                'address' => $transport->getAddress(),
             )
         );
         return self::AUTH_REJECT;

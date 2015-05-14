@@ -65,10 +65,11 @@ class Password implements AuthenticationInterface
         if (isset($this->credentials[$message->getUserName()]) &&
             $message->getPassword() === $this->credentials[$message->getUserName()]) {
             $logging->info(
-                'Accepted password connection from ' .
-                'remote host "%(reverse)s" to "%(luser)s"',
+                'Accepted password based connection from remote host ' .
+                '"%(reverse)s" (%(address)s) to "%(luser)s"',
                 array(
                     'reverse' => $reverse,
+                    'address' => $transport->getAddress(),
                     'luser' => escape($message->getUserName())
                 )
             );
@@ -76,11 +77,12 @@ class Password implements AuthenticationInterface
         }
 
         $logging->info(
-            'Rejected password connection from ' .
-            'remote host "%(reverse)s" to "%(luser)s" ' .
-            '(invalid credentials)',
+            'Rejected password based connection from remote host ' .
+            '"%(reverse)s" (%(address)s) to "%(luser)s": ' .
+            'invalid credentials',
             array(
                 'reverse' => $reverse,
+                'address' => $transport->getAddress(),
                 'luser' => escape($message->getUserName())
             )
         );

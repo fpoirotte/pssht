@@ -86,8 +86,9 @@ abstract class AbstractConnectionTest extends \PHPUnit_Framework_TestCase
             throw new \Exception("Could not read the server's PID");
         }
         $init   = rtrim($init);
-        $msg    = 'pssht is starting';
-        if (strncmp($init, $msg, strlen($msg) - 1)) {
+        $msg    = 'LOG: pssht ';
+        if (strncmp($init, $msg, strlen($msg) - 1) ||
+            !strpos($init, 'is starting')) {
             throw new \Exception(
                 'Unexpected content: ' .
                 addcslashes($init, "\x00..\x1F\x7F..\xFF")
@@ -105,7 +106,7 @@ abstract class AbstractConnectionTest extends \PHPUnit_Framework_TestCase
             throw new \Exception("Could not read the server's port");
         }
         $init   = rtrim($init);
-        $msg    = 'Listening for new connections on ';
+        $msg    = 'LOG: Listening for new connections on ';
         if (strncmp($init, $msg, strlen($msg) - 1)) {
             throw new \Exception(
                 'Unexpected content: ' .
@@ -140,8 +141,7 @@ abstract class AbstractConnectionTest extends \PHPUnit_Framework_TestCase
         if ($this->fakeHome === null) {
             $this->fakeHome = dirname(__DIR__) .
                 DIRECTORY_SEPARATOR . 'data' .
-                DIRECTORY_SEPARATOR . 'known_hosts' .
-                DIRECTORY_SEPARATOR . 'rsa';
+                DIRECTORY_SEPARATOR . 'known_hosts';
         }
 
         self::locateBinaries();
@@ -163,10 +163,10 @@ abstract class AbstractConnectionTest extends \PHPUnit_Framework_TestCase
             // - PuTTY's        "plink"
             // - TortoiseGit's  "tortoiseplink"
             if (($binary = findBinary('ssh')) !== null) {
-                $cls = '\\fpoirotte\\Pssht\\Tests\\Helpers\\SshClient\\OpenSSH';
+                $cls = '\\fpoirotte\\Pssht\\Tests\\Helpers\\SshClient\\Openssh';
             } elseif (($binary = findBinary('plink')) !== null ||
                       ($binary = findBinary('tortoiseplink')) !== null) {
-                $cls = '\\fpoirotte\\Pssht\\Tests\\Helpers\\SshClient\\PuTTY';
+                $cls = '\\fpoirotte\\Pssht\\Tests\\Helpers\\SshClient\\Putty';
             }
         }
 
@@ -200,7 +200,34 @@ abstract class AbstractConnectionTest extends \PHPUnit_Framework_TestCase
     {
         if (self::$serverPID !== null) {
             // Just kill the damn thing already!
-            posix_kill(self::$serverPID, defined('SIGTERM') ? SIGTERM : 15);
+            posix_kill(self::$serverPID, defined('SIGINT') ? SIGINT : 15);
+
+            // Keep track of whetever the subprocess outputs,
+            // but throw it away unless an error occurred.
+            $error      = false;
+            $logging    = \Plop\Plop::getInstance();
+            while (true) {
+                $output = fgets(self::$serverProcess, 1024);
+                if ($output === false) {
+                    break;
+                }
+
+                if (strncmp($output, 'LOG: ', 5)) {
+                    $error = true;
+                }
+                $logging->debug('Test server: ' . rtrim($output));
+            }
+
+            if (!$error) {
+                @unlink(PSSHT_TESTS_LOG);
+            } else {
+                fprintf(
+                    STDERR,
+                    "\n!!! Errors detected! See %s for the logs !!!\n",
+                    PSSHT_TESTS_LOG
+                );
+            }
+
             pclose(self::$serverProcess);
             self::$serverPID = null;
         }

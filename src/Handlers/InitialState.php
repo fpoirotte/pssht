@@ -53,7 +53,7 @@ class InitialState implements \fpoirotte\Pssht\HandlerInterface
 
         // Server key
         $serverHostKeyAlgos = array_intersect(
-            $algos->getAlgorithms('PublicKey'),
+            $algos->getAlgorithms('Key'),
             array_keys($context['serverKeys'])
         );
         if (!count($serverHostKeyAlgos)) {

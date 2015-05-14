@@ -31,8 +31,10 @@
         "erebot/plop": "~0.5"
     },
     "require-dev": {
+        "ext-http": "*",
         "ext-hash": "*",
         "ext-posix": "*",
+        "ext-pcntl": "*",
         "phing/phing": "*",
         "phpmd/phpmd": "*",
         "sebastian/phpcpd": "*",
@@ -43,7 +45,8 @@
     "suggest": {
         "ext-http": "Add zlib-compression support (~1.0)",
         "ext-hash": "Add support for various additional algorithms",
-        "ext-posix": "Improve detection of user running pssht"
+        "ext-posix": "Improve detection of user running pssht",
+        "ext-pcntl": "Handle signals gracefully"
     },
     "autoload": {
         "psr-4": {
@@ -53,7 +56,7 @@
     "bin": ["bin/pssht"],
     "extra": {
         "branch-alias": {
-            "dev-master": "1.0.x-dev"
+            "dev-develop": "1.0.x-dev"
         }
     }
 }

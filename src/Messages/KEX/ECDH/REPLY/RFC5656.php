@@ -59,7 +59,7 @@ class RFC5656 implements \fpoirotte\Pssht\MessageInterface
      *  \param fpoirotte::Pssht::Messages::KEX::ECDH::INIT::RFC5656 $kexDHInit
      *      Client's contribution to the Diffie-Hellman Key Exchange.
      *
-     *  \param fpoirotte::Pssht::PublicKeyInterface $key
+     *  \param fpoirotte::Pssht::KeyInterface $key
      *      Server's public key.
      *
      *  \param fpoirotte::Pssht::EncryptionInterface $encryptionAlgo
@@ -83,7 +83,7 @@ class RFC5656 implements \fpoirotte\Pssht\MessageInterface
     public function __construct(
         \fpoirotte\Pssht\ECC\Curve $curve,
         \fpoirotte\Pssht\Messages\KEX\ECDH\INIT\RFC5656 $kexDHInit,
-        \fpoirotte\Pssht\PublicKeyInterface $key,
+        \fpoirotte\Pssht\KeyInterface $key,
         \fpoirotte\Pssht\EncryptionInterface $encryptionAlgo,
         \fpoirotte\Pssht\KEXInterface $kexAlgo,
         \fpoirotte\Pssht\Messages\KEXINIT $serverKEX,
@@ -108,7 +108,7 @@ class RFC5656 implements \fpoirotte\Pssht\MessageInterface
 
         /// @FIXME this is not optimal...
         $algorithms = \fpoirotte\Pssht\Algorithms::factory();
-        $cls        = $algorithms->getClass('PublicKey', 'ecdsa-sha2-' . $curve->getName());
+        $cls        = $algorithms->getClass('Key', 'ecdsa-sha2-' . $curve->getName());
         $clientPK   = new $cls($Q_C);
         if (!$clientPK->isValid()) {
             throw new \InvalidArgumentException();

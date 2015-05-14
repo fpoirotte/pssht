@@ -47,7 +47,9 @@ abstract class AbstractSshClient
         }
 
         if (!is_int($port)) {
-            throw new \InvalidArgumentException('Bad port');
+            throw new \InvalidArgumentException(
+                'Bad port: ' . print_r($port, true)
+            );
         }
 
         $this->binary           = $binary;
@@ -70,100 +72,100 @@ abstract class AbstractSshClient
         $this->oldEnvironment   = array();
     }
 
-    final public function getBinary()
+    public function getBinary()
     {
         return $this->binary;
     }
 
-    final public function setBinary($binary)
+    public function setBinary($binary)
     {
         $this->binary = $binary;
         return $this;
     }
 
-    final public function getHome()
+    public function getHome()
     {
         return $this->home;
     }
 
-    final public function setHome($home)
+    public function setHome($home)
     {
         $this->home = $home;
         return $this;
     }
 
-    final public function getLogin()
+    public function getLogin()
     {
         return $this->login;
     }
 
-    final public function setLogin($login)
+    public function setLogin($login)
     {
         $this->login = $login;
         return $this;
     }
 
-    final public function getHost()
+    public function getHost()
     {
         return $this->host;
     }
 
-    final public function setHost($host)
+    public function setHost($host)
     {
         $this->host = $host;
         return $this;
     }
 
-    final public function getCommand()
+    public function getCommand()
     {
         return $this->command;
     }
 
-    final public function setCommand(array $command)
+    public function setCommand(array $command)
     {
         $this->command = $command;
         return $this;
     }
 
-    final public function getCipher()
+    public function getCipher()
     {
         return $this->cipher;
     }
 
-    final public function setCipher($cipher)
+    public function setCipher($cipher)
     {
         $this->cipher = $cipher;
         return $this;
     }
 
-    final public function getMAC()
+    public function getMAC()
     {
         return $this->mac;
     }
 
-    final public function setMAC($mac)
+    public function setMAC($mac)
     {
         $this->mac = $mac;
         return $this;
     }
 
-    final public function compresses()
+    public function compresses()
     {
         return $this->compression;
     }
 
-    final public function compress($enable = true)
+    public function compress($enable = true)
     {
         $this->compression = $enable;
         return $this;
     }
 
-    final public function getIdentity()
+    public function getIdentity()
     {
         return $this->identity;
     }
 
-    final public function setIdentity($identity, $passphrase = '')
+    public function setIdentity($identity, $passphrase = '')
     {
         $this->identity     = $identity;
         $this->passphrase   = $passphrase;
@@ -171,63 +173,63 @@ abstract class AbstractSshClient
         return $this;
     }
 
-    final public function setPassword($password)
+    public function setPassword($password)
     {
         $this->password = $password;
         $this->identity = null;
         return $this;
     }
 
-    final public function forwardsX11()
+    public function forwardsX11()
     {
         return $this->X11Forwarding;
     }
 
-    final public function forwardX11($enable = true)
+    public function forwardX11($enable = true)
     {
         $this->X11Forwarding = $enable;
         return $this;
     }
 
-    final public function forwardsAgent()
+    public function forwardsAgent()
     {
         return $this->agentForwarding;
     }
 
-    final public function forwardAgent($enable = true)
+    public function forwardAgent($enable = true)
     {
         $this->agentForwarding = $enable;
         return $this;
     }
 
-    final public function allocatesPTY()
+    public function allocatesPTY()
     {
         return $this->ptyAllocation;
     }
 
-    final public function allocatePTY($enable = true)
+    public function allocatePTY($enable = true)
     {
         $this->ptyAllocation = $enable;
         return $this;
     }
 
-    final public function usesAgent()
+    public function usesAgent()
     {
         return $this->agent;
     }
 
-    final public function useAgent($enable = true)
+    public function useAgent($enable = true)
     {
         $this->agent = $enable;
         return $this;
     }
 
-    final public function usesShellOrCommand()
+    public function usesShellOrCommand()
     {
         return $this->shellOrCommand;
     }
 
-    final public function useShellOrCommand($enable = false)
+    public function useShellOrCommand($enable = false)
     {
         $this->shellOrCommand = $enable;
         if (!$enable) {
@@ -259,8 +261,10 @@ abstract class AbstractSshClient
 
             if ($value === null) {
                 putenv($key);
+                unset($_ENV[$key]);
             } else {
                 putenv("$key=$value");
+                $_ENV[$key] = (string) $value;
             }
         }
     }
@@ -272,16 +276,40 @@ abstract class AbstractSshClient
         $command    = 'ERROR';
         $e          = null;
 
+        $logging    = \Plop\Plop::getInstance();;
+        $_ENV       = array();
+        $keep       = array(
+            'PATH', 'Path', 'USER', 'TERM', 'SHELL',
+            'PWD', 'LANG', 'LANGUAGE', 'LC_ALL'
+        );
+
         try {
             // Prepare the context (environment variables, files, etc.).
             $this->oldEnvironment = array();
+            foreach ($_SERVER as $key => $value) {
+                if (is_string($value)) {
+                    if (!in_array($key, $keep)) {
+                        $this->setEnvironment(array($key => null));
+                    } else {
+                        $this->setEnvironment(array($key => $value));
+                    }
+                }
+            }
             $this->patchContext();
+
+            // Execute the command.
             $command = (string) $this;
+            $logging->debug('Executing: %s', array($command));
+            $logging->debug('Environment: %s', array(var_export($_ENV, true)));
             $process = exec($command, $output, $exitCode);
+            $logging->debug(
+                "Exit code: %(code)d - Output:\n%(output)s",
+                array('code' => $exitCode, 'output' => var_export($output, true))
+            );
         } catch (\Exception $e) {
         }
 
-        // Poor man's "finally".
+        // Poor man's "finally" to restore context.
         $oldEnvironment = $this->oldEnvironment;
         $this->setEnvironment($oldEnvironment);
         $this->oldEnvironment = $oldEnvironment;
