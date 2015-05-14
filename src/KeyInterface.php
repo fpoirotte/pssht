@@ -14,36 +14,8 @@ namespace fpoirotte\Pssht;
 /**
  * Interface for a public key algorithm.
  */
-interface PublicKeyInterface extends AlgorithmInterface
+interface KeyInterface extends AlgorithmInterface
 {
-    /**
-     * Initialize a new private key.
-     *
-     *  \param string $pem
-     *      Either a private key encoded in PEM format
-     *      or a path to a key encoded in PEM format
-     *      using the syntax: "file:///path/to/key.pem".
-     *
-     *  \param string $passphrase
-     *      (optional) Passphrase for the private key.
-     *
-     *  \retval PublicKeyInterface
-     *      Private key as loaded from the data/file.
-     */
-    public static function loadPrivate($pem, $passphrase = '');
-
-    /**
-     * Initialize a new public key.
-     *
-     *  \param string $b64
-     *      Base64-encoded representation
-     *      of the public key to load.
-     *
-     *  \retval PublicKeyInterface
-     *      Public key as loaded from the data.
-     */
-    public static function loadPublic($b64);
-
     /**
      * Serialize a key.
      *

@@ -54,7 +54,7 @@ class Curve25519 implements \fpoirotte\Pssht\MessageInterface
      *  \param fpoirotte::Pssht::Messages::KEX::ECDH::INIT::Curve25519 $kexDHInit
      *      Client's contribution to the Diffie-Hellman Key Exchange.
      *
-     *  \param fpoirotte::Pssht::PublicKeyInterface $key
+     *  \param fpoirotte::Pssht::KeyInterface $key
      *      Server's public key.
      *
      *  \param fpoirotte::Pssht::EncryptionInterface $encryptionAlgo
@@ -77,7 +77,7 @@ class Curve25519 implements \fpoirotte\Pssht\MessageInterface
      */
     public function __construct(
         \fpoirotte\Pssht\Messages\KEX\ECDH\INIT\Curve25519 $kexDHInit,
-        \fpoirotte\Pssht\PublicKeyInterface $key,
+        \fpoirotte\Pssht\KeyInterface $key,
         \fpoirotte\Pssht\EncryptionInterface $encryptionAlgo,
         \fpoirotte\Pssht\KEXInterface $kexAlgo,
         \fpoirotte\Pssht\Messages\KEXINIT $serverKEX,

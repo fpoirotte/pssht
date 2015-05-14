@@ -9,7 +9,7 @@
 * file that was distributed with this source code.
 */
 
-namespace fpoirotte\Pssht\PublicKey\SSH;
+namespace fpoirotte\Pssht\Key\SSH;
 
 /**
  * Public key algorithm based on EdDSA (Edwards-curve
@@ -22,7 +22,7 @@ namespace fpoirotte\Pssht\PublicKey\SSH;
  *      http://cvsweb.openbsd.org/cgi-bin/cvsweb/src/usr.bin/ssh/PROTOCOL.key?rev=1.1
  *      for the specification of OpenSSH's private key format.
  */
-class ED25519 implements \fpoirotte\Pssht\PublicKeyInterface, \fpoirotte\Pssht\AvailabilityInterface
+class ED25519 implements \fpoirotte\Pssht\KeyInterface, \fpoirotte\Pssht\AvailabilityInterface
 {
     const AUTH_MAGIC = "openssh-key-v1\x00";
 
@@ -102,7 +102,7 @@ class ED25519 implements \fpoirotte\Pssht\PublicKeyInterface, \fpoirotte\Pssht\A
         $kdfname    = $decoder->decodeString();
         $kdfoptions = $decoder->decodeString();
         $numKeys    = $decoder->decodeUint32();
-        $publicKey  = array();
+        $Key  = array();
 
         // Block malicious inputs
         if ($numKeys <= 0 || $numKeys >= 0x80000000) {
@@ -118,7 +118,7 @@ class ED25519 implements \fpoirotte\Pssht\PublicKeyInterface, \fpoirotte\Pssht\A
                 continue;
             }
 
-            $publicKey[$i] = $tmp->decodeString();
+            $Key[$i] = $tmp->decodeString();
         }
 
         $tmp = new \fpoirotte\Pssht\Wire\Decoder();
@@ -147,11 +147,11 @@ class ED25519 implements \fpoirotte\Pssht\PublicKeyInterface, \fpoirotte\Pssht\A
         // Should we also ensure that a correct padding
         // has been applied?
 
-        $pk = reset($publicKey);
-        if (!isset($secretKey[key($publicKey)])) {
+        $pk = reset($Key);
+        if (!isset($secretKey[key($Key)])) {
             throw new \InvalidArgumentException();
         }
-        $sk = $secretKey[key($publicKey)];
+        $sk = $secretKey[key($Key)];
 
         return new static($pk, $sk);
     }

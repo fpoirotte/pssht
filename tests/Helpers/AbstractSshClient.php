@@ -47,7 +47,9 @@ abstract class AbstractSshClient
         }
 
         if (!is_int($port)) {
-            throw new \InvalidArgumentException('Bad port');
+            throw new \InvalidArgumentException(
+                'Bad port: ' . print_r($port, true)
+            );
         }
 
         $this->binary           = $binary;

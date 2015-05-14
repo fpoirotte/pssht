@@ -9,15 +9,15 @@
 * file that was distributed with this source code.
 */
 
-namespace fpoirotte\Pssht\PublicKey\ECDSA\SHA2;
+namespace fpoirotte\Pssht\Key\ECDSA\SHA2;
 
 /**
  * Abstract class for a Public key using the Elliptic Curve
  * Digital Signature Algorithm (ECDSA).
  */
 abstract class Base implements
-    \fpoirotte\Pssht\PublicKeyInterface,
-    \fpoirotte\Pssht\PublicKey\ECDSA\SHA2\BaseInterface
+    \fpoirotte\Pssht\KeyInterface,
+    \fpoirotte\Pssht\Key\ECDSA\SHA2\BaseInterface
 {
     /// Public key.
     protected $Q;

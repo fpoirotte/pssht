@@ -124,7 +124,7 @@ class Transport
         $algos  = \fpoirotte\Pssht\Algorithms::factory();
         $keys   = array();
         foreach ($serverKeys as $keyType => $params) {
-            $cls = $algos->getClass('PublicKey', $keyType);
+            $cls = $algos->getClass('Key', $keyType);
             if ($cls === null) {
                 throw new \InvalidArgumentException();
             }

@@ -75,7 +75,7 @@ class File
             $max    = count($fields);
             for ($i = 0; $i < $max; $i++) {
                 if (in_array($fields[$i], $types, true)) {
-                    $cls = $algos->getClass('PublicKey', $fields[$i]);
+                    $cls = $algos->getClass('Key', $fields[$i]);
                     $this->store->add($user, $cls::loadPublic($fields[$i+1]));
                     break;
                 }

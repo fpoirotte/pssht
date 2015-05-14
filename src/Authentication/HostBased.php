@@ -62,7 +62,7 @@ class HostBased implements AuthenticationInterface
         $reverse        = gethostbyaddr($transport->getAddress());
         $untrustedHost  = rtrim($message->getHostname(), '.');
         $algos          = \fpoirotte\Pssht\Algorithms::factory();
-        $cls            = $algos->getClass('PublicKey', $message->getAlgorithm());
+        $cls            = $algos->getClass('Key', $message->getAlgorithm());
 
         if ($cls === null || !$this->store->exists($message->getUserName(), $message->getKey())) {
             $logging->info(

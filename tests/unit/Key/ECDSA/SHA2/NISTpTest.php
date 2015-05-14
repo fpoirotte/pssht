@@ -1,6 +1,6 @@
 <?php
 
-namespace fpoirotte\Pssht\Tests\Unit\PublicKey\ECDSA\SHA2;
+namespace fpoirotte\Pssht\Tests\Unit\Key\ECDSA\SHA2;
 
 /**
  * Test ECDSA implementation using the test vectors
@@ -15,7 +15,7 @@ class NISTpTest extends \PHPUnit_Framework_TestCase
 
     public function testNISTp256()
     {
-        $key = new \fpoirotte\Pssht\PublicKey\ECDSA\SHA2\NISTp256(
+        $key = new \fpoirotte\Pssht\Key\ECDSA\SHA2\NISTp256(
             new \fpoirotte\Pssht\ECC\Point(
                 gmp_init('2442A5CC0ECD015FA3CA31DC8E2BBC70BF42D60CBCA20085E0822CB04235E970', 16),
                 gmp_init('6FC98BD7E50211A4A27102FA3549DF79EBCB4BF246B80945CDDFE7D509BBFD7D', 16)
@@ -40,7 +40,7 @@ class NISTpTest extends \PHPUnit_Framework_TestCase
 
     public function testNISTp384()
     {
-        $key = new \fpoirotte\Pssht\PublicKey\ECDSA\SHA2\NISTp384(
+        $key = new \fpoirotte\Pssht\Key\ECDSA\SHA2\NISTp384(
             new \fpoirotte\Pssht\ECC\Point(
                 gmp_init('96281BF8DD5E0525CA049C048D345D3082968D10FEDF5C5ACA0C64E6465A97EA5CE10C9DFEC21797415710721F437922', 16),
                 gmp_init('447688BA94708EB6E2E4D59F6AB6D7EDFF9301D249FE49C33096655F5D502FAD3D383B91C5E7EDAA2B714CC99D5743CA', 16)
@@ -65,7 +65,7 @@ class NISTpTest extends \PHPUnit_Framework_TestCase
 
     public function testNISTp521()
     {
-        $key = new \fpoirotte\Pssht\PublicKey\ECDSA\SHA2\NISTp521(
+        $key = new \fpoirotte\Pssht\Key\ECDSA\SHA2\NISTp521(
             new \fpoirotte\Pssht\ECC\Point(
                 gmp_init('0151518F1AF0F563517EDD5485190DF95A4BF57B5CBA4CF2A9A3F6474725A35F7AFE0A6DDEB8BEDBCD6A197E592D40188901CECD650699C9B5E456AEA5ADD19052A8', 16),
                 gmp_init('006F3B142EA1BFFF7E2837AD44C9E4FF6D2D34C73184BBAD90026DD5E6E85317D9DF45CAD7803C6C20035B2F3FF63AFF4E1BA64D1C077577DA3F4286C58F0AEAE643', 16)

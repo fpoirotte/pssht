@@ -51,7 +51,7 @@ class PublicKey implements AuthenticationInterface
         }
 
         $algos = \fpoirotte\Pssht\Algorithms::factory();
-        if ($algos->getClass('PublicKey', $message->getAlgorithm()) !== null &&
+        if ($algos->getClass('Key', $message->getAlgorithm()) !== null &&
             $this->store->exists($message->getUserName(), $message->getKey())) {
             $response = new \fpoirotte\Pssht\Messages\USERAUTH\PK\OK(
                 $message->getAlgorithm(),
@@ -80,7 +80,7 @@ class PublicKey implements AuthenticationInterface
         $logging    = \Plop\Plop::getInstance();
         $reverse    = gethostbyaddr($transport->getAddress());
         $algos      = \fpoirotte\Pssht\Algorithms::factory();
-        $cls        = $algos->getClass('PublicKey', $message->getAlgorithm());
+        $cls        = $algos->getClass('Key', $message->getAlgorithm());
         if ($cls === null || !$this->store->exists($message->getUserName(), $message->getKey())) {
             $logging->info(
                 'Rejected public key connection from remote host "%(reverse)s" ' .

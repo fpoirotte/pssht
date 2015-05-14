@@ -1,8 +1,8 @@
 <?php
 
-namespace fpoirotte\Pssht\Tests\Unit\PublicKey;
+namespace fpoirotte\Pssht\Tests\Unit\Key;
 
-class ED25519TestHelper extends \fpoirotte\Pssht\PublicKey\SSH\ED25519
+class ED25519TestHelper extends \fpoirotte\Pssht\Key\SSH\ED25519
 {
     public function __construct($sk, $pk)
     {

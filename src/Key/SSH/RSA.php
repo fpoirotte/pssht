@@ -9,12 +9,12 @@
 * file that was distributed with this source code.
 */
 
-namespace fpoirotte\Pssht\PublicKey\SSH;
+namespace fpoirotte\Pssht\Key\SSH;
 
 /**
  * Public key using the RSA algorithm.
  */
-class RSA implements \fpoirotte\Pssht\PublicKeyInterface
+class RSA implements \fpoirotte\Pssht\KeyInterface
 {
     /// DER header for RSA.
     const DER_HEADER = "\x30\x21\x30\x09\x06\x05\x2b\x0e\x03\x02\x1a\x05\x00\x04\x14";
