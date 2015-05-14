@@ -11,6 +11,7 @@ class Openssh extends \fpoirotte\Pssht\Tests\Helpers\AbstractSshClient
         $null = strncasecmp(PHP_OS, 'Win', 3) ? '/dev/null' : 'NUL';
 
         $args = array(
+            'setsid', '-w',
             $this->binary,
             '-F', $null,                                // No config. file
             '-p', $this->port,                          // Port
@@ -59,8 +60,6 @@ class Openssh extends \fpoirotte\Pssht\Tests\Helpers\AbstractSshClient
 
         // Build final command with redirections.
         $command = implode(' ', $realArgs) . ' < ' . $null;
-        $logging = \Plop\Plop::getInstance();
-        $logging->debug('Running command: %s', array($command));
         return $command;
     }
 
@@ -95,15 +94,16 @@ class Openssh extends \fpoirotte\Pssht\Tests\Helpers\AbstractSshClient
 
         // Abuses SSH_ASKPASS to feed passwords directly into OpenSSH.
         // See http://andre.frimberger.de/index.php/linux/reading-ssh-password-from-stdin-the-openssh-5-6p1-compatible-way/
-        posix_setsid();
         $this->setEnvironment(
             array(
                 'DISPLAY' => '0.0.0.0:0',
-                'SSH_ASKPASS' => 'echo ' . escapeshellarg(
+                'SSH_ASKPASS_PASSWORD' =>
                     $this->identity === null
                         ? $this->password
-                        : $this->passphrase
-                ),
+                        : $this->passphrase,
+                'SSH_ASKPASS' => dirname(dirname(__DIR__)) .
+                    DIRECTORY_SEPARATOR . 'data' .
+                    DIRECTORY_SEPARATOR . 'askpass.sh',
             )
         );
     }

@@ -261,8 +261,10 @@ abstract class AbstractSshClient
 
             if ($value === null) {
                 putenv($key);
+                unset($_ENV[$key]);
             } else {
                 putenv("$key=$value");
+                $_ENV[$key] = (string) $value;
             }
         }
     }
@@ -274,22 +276,40 @@ abstract class AbstractSshClient
         $command    = 'ERROR';
         $e          = null;
 
-        $logging = \Plop\Plop::getInstance();;
+        $logging    = \Plop\Plop::getInstance();;
+        $_ENV       = array();
+        $keep       = array(
+            'PATH', 'Path', 'USER', 'TERM', 'SHELL',
+            'PWD', 'LANG', 'LANGUAGE', 'LC_ALL'
+        );
+
         try {
             // Prepare the context (environment variables, files, etc.).
             $this->oldEnvironment = array();
+            foreach ($_SERVER as $key => $value) {
+                if (is_string($value)) {
+                    if (!in_array($key, $keep)) {
+                        $this->setEnvironment(array($key => null));
+                    } else {
+                        $this->setEnvironment(array($key => $value));
+                    }
+                }
+            }
             $this->patchContext();
+
+            // Execute the command.
             $command = (string) $this;
-            $logging->debug('Executing: %(command)s', array($command));
+            $logging->debug('Executing: %s', array($command));
+            $logging->debug('Environment: %s', array(var_export($_ENV, true)));
             $process = exec($command, $output, $exitCode);
             $logging->debug(
-                "Exit code: %(code)d - Output:\n%(output)d",
-                array('code' => $exitCode, 'output' => $output)
+                "Exit code: %(code)d - Output:\n%(output)s",
+                array('code' => $exitCode, 'output' => var_export($output, true))
             );
         } catch (\Exception $e) {
         }
 
-        // Poor man's "finally".
+        // Poor man's "finally" to restore context.
         $oldEnvironment = $this->oldEnvironment;
         $this->setEnvironment($oldEnvironment);
         $this->oldEnvironment = $oldEnvironment;

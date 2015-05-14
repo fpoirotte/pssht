@@ -28,8 +28,22 @@
         <!--
             Disable password & host based authentication.
             Only public key authentication using any of the test keys
-            will be accepted (see the main pssht.xml file).
+            will be accepted.
         -->
+        <parameter key="auth.pubkeys" type="collection">
+            <parameter key="%USER%" type="collection">
+                <parameter>file://%pssht.base_dir%/tests/data/plaintext/dsa/1024.pub</parameter>
+                <parameter>file://%pssht.base_dir%/tests/data/plaintext/rsa/1024.pub</parameter>
+                <parameter>file://%pssht.base_dir%/tests/data/plaintext/rsa/2048.pub</parameter>
+                <parameter>file://%pssht.base_dir%/tests/data/plaintext/rsa/4096.pub</parameter>
+                <parameter>file://%pssht.base_dir%/tests/data/plaintext/rsa/8192.pub</parameter>
+                <parameter>file://%pssht.base_dir%/tests/data/plaintext/rsa/16384.pub</parameter>
+                <parameter>file://%pssht.base_dir%/tests/data/plaintext/ecdsa/256.pub</parameter>
+                <parameter>file://%pssht.base_dir%/tests/data/plaintext/ecdsa/384.pub</parameter>
+                <parameter>file://%pssht.base_dir%/tests/data/plaintext/ecdsa/521.pub</parameter>
+                <parameter>file://%pssht.base_dir%/tests/data/plaintext/ed25519/256.pub</parameter>
+            </parameter>
+        </parameter>
         <parameter key="auth.passwords" type="collection"/>
         <parameter key="auth.hostbased" type="collection"/>
     </parameters>
@@ -56,7 +70,7 @@
                                             <call method="setFormatter">
                                                 <argument type="service">
                                                     <service class="\Plop\Formatter">
-                                                        <argument>%%(message)s</argument>
+                                                        <argument>LOG: %%(message)s</argument>
                                                         <argument></argument>
                                                     </service>
                                                 </argument>
