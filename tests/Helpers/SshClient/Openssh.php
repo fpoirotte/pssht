@@ -2,7 +2,7 @@
 
 namespace fpoirotte\Pssht\Tests\Helpers\SshClient;
 
-class OpenSSH extends \fpoirotte\Pssht\Tests\Helpers\AbstractSshClient
+class Openssh extends \fpoirotte\Pssht\Tests\Helpers\AbstractSshClient
 {
     private static $phpBinary;
 

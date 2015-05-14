@@ -26,14 +26,10 @@
         <parameter key="banner"/>
 
         <!--
-            Accept only connections from the user that started pssht,
-            using a test RSA public key.
+            Disable password & host based authentication.
+            Only public key authentication using any of the test keys
+            will be accepted (see the main pssht.xml file).
         -->
-        <parameter key="auth.pubkeys" type="collection">
-            <parameter key="%USER%" type="collection">
-                <parameter>%pssht.base_dir%/tests/data/plaintext/rsa/4096.pub</parameter>
-            </parameter>
-        </parameter>
         <parameter key="auth.passwords" type="collection"/>
         <parameter key="auth.hostbased" type="collection"/>
     </parameters>

@@ -2,8 +2,16 @@
 
 namespace fpoirotte\Pssht\Tests\Helpers\SshClient;
 
-class PuTTY extends \fpoirotte\Pssht\Tests\Helpers\AbstractSshClient
+class Putty extends \fpoirotte\Pssht\Tests\Helpers\AbstractSshClient
 {
+    public function setIdentity($identity, $passphrase = '')
+    {
+        if (file_exists($identity . '.ppk')) {
+            $identity .= '.ppk';
+        }
+        return parent::setIdentity($identity, $passphrase);
+    }
+
     public function __toString()
     {
         $args = array(

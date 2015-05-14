@@ -45,7 +45,10 @@ function main($confFile = 'pssht.xml')
     }
     $container->get('logging', ContainerInterface::NULL_ON_INVALID_REFERENCE);
     $logging    = \Plop\Plop::getInstance();
-    $logging->info("pssht is starting (PID %d)", array(getmypid()));
+    $logging->info(
+        "pssht %s is starting (PID %d)",
+        array(PSSHT_VERSION, getmypid())
+    );
 
     // Elliptic curves
     \fpoirotte\Pssht\ECC\Curve::initialize();

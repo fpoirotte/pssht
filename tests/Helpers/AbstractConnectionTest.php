@@ -86,8 +86,9 @@ abstract class AbstractConnectionTest extends \PHPUnit_Framework_TestCase
             throw new \Exception("Could not read the server's PID");
         }
         $init   = rtrim($init);
-        $msg    = 'pssht is starting';
-        if (strncmp($init, $msg, strlen($msg) - 1)) {
+        $msg    = 'pssht ';
+        if (strncmp($init, $msg, strlen($msg) - 1) ||
+            !strpos($init, 'is starting')) {
             throw new \Exception(
                 'Unexpected content: ' .
                 addcslashes($init, "\x00..\x1F\x7F..\xFF")
@@ -163,10 +164,10 @@ abstract class AbstractConnectionTest extends \PHPUnit_Framework_TestCase
             // - PuTTY's        "plink"
             // - TortoiseGit's  "tortoiseplink"
             if (($binary = findBinary('ssh')) !== null) {
-                $cls = '\\fpoirotte\\Pssht\\Tests\\Helpers\\SshClient\\OpenSSH';
+                $cls = '\\fpoirotte\\Pssht\\Tests\\Helpers\\SshClient\\Openssh';
             } elseif (($binary = findBinary('plink')) !== null ||
                       ($binary = findBinary('tortoiseplink')) !== null) {
-                $cls = '\\fpoirotte\\Pssht\\Tests\\Helpers\\SshClient\\PuTTY';
+                $cls = '\\fpoirotte\\Pssht\\Tests\\Helpers\\SshClient\\Putty';
             }
         }
 

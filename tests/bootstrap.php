@@ -18,14 +18,14 @@ require(
     __DIR__ .
     DIRECTORY_SEPARATOR . 'Helpers' .
     DIRECTORY_SEPARATOR . 'SshClient' .
-    DIRECTORY_SEPARATOR . 'OpenSSH.php'
+    DIRECTORY_SEPARATOR . 'Openssh.php'
 );
 
 require(
     __DIR__ .
     DIRECTORY_SEPARATOR . 'Helpers' .
     DIRECTORY_SEPARATOR . 'SshClient' .
-    DIRECTORY_SEPARATOR . 'PuTTY.php'
+    DIRECTORY_SEPARATOR . 'Putty.php'
 );
 
 require(
