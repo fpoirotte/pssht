@@ -11,6 +11,9 @@
 
 namespace fpoirotte\Pssht\KeyStoreLoader;
 
+use fpoirotte\Pssht\KeyLoader\Openssh;
+use fpoirotte\Pssht\KeyLoader\Putty;
+
 /**
  * Public keys loader from a file.
  */
@@ -61,27 +64,43 @@ class File
             throw new \InvalidArgumentException();
         }
 
-        $algos = \fpoirotte\Pssht\Algorithms::factory();
-        $types = array(
-            'ssh-dss',
-            'ssh-rsa',
-#            'ecdsa-sha2-nistp256',
-#            'ecdsa-sha2-nistp384',
-#            'ecdsa-sha2-nistp521',
-        );
+        $logging    = \Plop\Plop::getInstance();
 
-        foreach (file($file) as $line) {
-            $fields = explode(' ', preg_replace('/\\s+/', ' ', trim($line)));
-            $max    = count($fields);
-            for ($i = 0; $i < $max; $i++) {
-                if (in_array($fields[$i], $types, true)) {
-                    $cls = $algos->getClass('Key', $fields[$i]);
-                    $this->store->add($user, $cls::loadPublic($fields[$i+1]));
-                    break;
-                }
-            }
+        $lines      = file($file);
+        if ($lines === false) {
+            $logging->debug(
+                'Ignoring unreadable file "%(file)s"',
+                array(
+                    'user' => $user,
+                    'file' => $file,
+                )
+            );
+            return $this;
         }
 
+        $count = 0;
+        try {
+            $this->store->add($user, Putty::loadPublic(implode('', $lines)));
+            $count++;
+        } catch (\InvalidArgumentException $e) {
+            foreach ($lines as $line) {
+                // Ignore empty lines and lines
+                // starting with '#' (comments).
+                if (trim($line) === '' || $line[0] === '#') {
+                    continue;
+                }
+                $this->store->add($user, Openssh::loadPublic(rtrim($line)));
+                $count++;
+            }
+        }
+        $logging->debug(
+            'Imported %(count)d identities for "%(user)s" from "%(file)s"',
+            array(
+                'count' => $count,
+                'user' => $user,
+                'file' => $file,
+            )
+        );
         return $this;
     }
 

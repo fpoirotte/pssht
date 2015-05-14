@@ -27,6 +27,8 @@ interface KeyInterface extends AlgorithmInterface
      */
     public function serialize(\fpoirotte\Pssht\Wire\Encoder $encoder);
 
+    public static function unserialize(\fpoirotte\Pssht\Wire\Decoder $decoder, $private = null);
+
     /**
      * Sign a message using the key.
      *

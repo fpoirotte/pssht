@@ -24,8 +24,6 @@ namespace fpoirotte\Pssht\Key\SSH;
  */
 class ED25519 implements \fpoirotte\Pssht\KeyInterface, \fpoirotte\Pssht\AvailabilityInterface
 {
-    const AUTH_MAGIC = "openssh-key-v1\x00";
-
     /// Public key.
     protected $pk;
 
@@ -47,129 +45,11 @@ class ED25519 implements \fpoirotte\Pssht\KeyInterface, \fpoirotte\Pssht\Availab
      */
     public function __construct($pk, $sk = null)
     {
-        if (strlen($pk) !== 32 || strlen($sk) !== 32) {
+        if (strlen($pk) !== 32 || ($sk !== null && strlen($sk) !== 32)) {
             throw new \InvalidArgumentException();
         }
         $this->pk = $pk;
         $this->sk = $sk;
-    }
-
-    /// \see http://cvsweb.openbsd.org/cgi-bin/cvsweb/src/usr.bin/ssh/PROTOCOL.key?rev=1.1
-    public static function loadPrivate($pem, $passphrase = '')
-    {
-        if (!is_string($pem)) {
-            throw new \InvalidArgumentException();
-        }
-
-        if (!is_string($passphrase)) {
-            throw new \InvalidArgumentException();
-        }
-
-        /// @FIXME support passphrase-protected EdDSA private keys.
-        if ($passphrase !== '') {
-            throw new \RuntimeException();
-        }
-
-        if (strncmp($pem, 'file://', 7) === 0) {
-            $key = file_get_contents(substr($pem, 7));
-        } else {
-            $key = $pem;
-        }
-
-        $header = '-----BEGIN OPENSSH PRIVATE KEY-----';
-        $footer = '-----END OPENSSH PRIVATE KEY-----';
-        if (strncmp($key, $header, strlen($header)) !== 0) {
-            throw new \InvalidArgumentException();
-        } elseif (substr($key, -strlen($footer)) !== $footer) {
-            throw new \InvalidArgumentException();
-        }
-        $key = base64_decode(substr($key, strlen($header), -strlen($footer)));
-
-        if (strncmp($key, static::AUTH_MAGIC, strlen(static::AUTH_MAGIC))) {
-            throw new \InvalidArgumentException();
-        }
-
-        $decoder = new \fpoirotte\Pssht\Wire\Decoder();
-        $decoder->getBuffer()->push(substr($key, strlen(static::AUTH_MAGIC)));
-
-        $ciphername = $decoder->decodeString();
-
-        /// @FIXME support encrypted private keys
-        if ($ciphername !== 'none') {
-            throw new \InvalidArgumentException();
-        }
-
-        $kdfname    = $decoder->decodeString();
-        $kdfoptions = $decoder->decodeString();
-        $numKeys    = $decoder->decodeUint32();
-        $Key  = array();
-
-        // Block malicious inputs
-        if ($numKeys <= 0 || $numKeys >= 0x80000000) {
-            throw new \InvalidArgumentException();
-        }
-
-        for ($i = 0; $i < $numKeys; $i++) {
-            $tmp = new \fpoirotte\Pssht\Wire\Decoder();
-            $tmp->getBuffer()->push($decoder->decodeString());
-
-            // Reject unknown key identifiers
-            if ($tmp->decodeString() !== static::getName()) {
-                continue;
-            }
-
-            $Key[$i] = $tmp->decodeString();
-        }
-
-        $tmp = new \fpoirotte\Pssht\Wire\Decoder();
-        $tmp->getBuffer()->push($decoder->decodeString());
-
-        // Both "checkint" fields must have the same value.
-        if ($tmp->decodeUint32() !== $tmp->decodeUint32()) {
-            throw new \InvalidArgumentException();
-        }
-
-        // Reject unknown identifiers.
-        if ($tmp->decodeString() !== static::getName()) {
-            throw new \InvalidArgumentException();
-        }
-
-        // Discard public key blob (duplicate).
-        $tmp->decodeString();
-
-        $secretKey = array();
-        for ($i = 0; $i < $numKeys; $i++) {
-            $secretKey[$i] = $tmp->decodeString();
-            // Discard comment field.
-            $tmp->decodeString();
-        }
-
-        // Should we also ensure that a correct padding
-        // has been applied?
-
-        $pk = reset($Key);
-        if (!isset($secretKey[key($Key)])) {
-            throw new \InvalidArgumentException();
-        }
-        $sk = $secretKey[key($Key)];
-
-        return new static($pk, $sk);
-    }
-
-    public static function loadPublic($b64)
-    {
-        $decoder = new \fpoirotte\Pssht\Wire\Decoder();
-        $decoder->getBuffer()->push(base64_decode($b64));
-        $type       = $decoder->decodeString();
-        if ($type !== static::getName()) {
-            throw new \InvalidArgumentException();
-        }
-
-        $pk = $decoder->decodeString();
-        if ($pk === null) {
-            throw new \InvalidArgumentException();
-        }
-        return new static(gmp_init(bin2hex($pk), 16));
     }
 
     public static function getName()
@@ -183,6 +63,16 @@ class ED25519 implements \fpoirotte\Pssht\KeyInterface, \fpoirotte\Pssht\Availab
         $pk = pack('H*', str_pad(gmp_strval($this->pk, 16), 64, '0', STR_PAD_LEFT));
         $encoder->encodeString($pk);
     }
+
+    public static function unserialize(\fpoirotte\Pssht\Wire\Decoder $decoder, $private = null)
+    {
+        $pk = $decoder->decodeString();
+        if ($pk === null) {
+            throw new \InvalidArgumentException();
+        }
+        return new static($pk, $private);
+    }
+
 
     public static function isAvailable()
     {
@@ -258,6 +148,10 @@ class ED25519 implements \fpoirotte\Pssht\KeyInterface, \fpoirotte\Pssht\Availab
 
     public function sign($message)
     {
+        if ($this->sk === null) {
+            throw new \RuntimeException();
+        }
+
         $curve = \fpoirotte\Pssht\ED25519::getInstance();
         $h = hash('sha512', $this->sk, true);
         $a = gmp_add(

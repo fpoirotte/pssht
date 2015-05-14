@@ -66,49 +66,6 @@ class DSS implements \fpoirotte\Pssht\KeyInterface
         $this->x = $x;
     }
 
-    public static function loadPrivate($pem, $passphrase = '')
-    {
-        if (!is_string($pem)) {
-            throw new \InvalidArgumentException();
-        }
-
-        if (!is_string($passphrase)) {
-            throw new \InvalidArgumentException();
-        }
-
-        $key        = openssl_pkey_get_private($pem, $passphrase);
-        $details    = openssl_pkey_get_details($key);
-        if ($details['type'] !== OPENSSL_KEYTYPE_DSA) {
-            throw new \InvalidArgumentException();
-        }
-        return new static(
-            gmp_init(bin2hex($details['dsa']['p']), 16),
-            gmp_init(bin2hex($details['dsa']['q']), 16),
-            gmp_init(bin2hex($details['dsa']['g']), 16),
-            gmp_init(bin2hex($details['dsa']['pub_key']), 16),
-            gmp_init(bin2hex($details['dsa']['priv_key']), 16)
-        );
-    }
-
-    public static function loadPublic($b64)
-    {
-        $decoder = new \fpoirotte\Pssht\Wire\Decoder();
-        $decoder->getBuffer()->push(base64_decode($b64));
-        $type       = $decoder->decodeString();
-        if ($type !== static::getName()) {
-            throw new \InvalidArgumentException();
-        }
-
-        $p = $decoder->decodeMpint();
-        $q = $decoder->decodeMpint();
-        $g = $decoder->decodeMpint();
-        $y = $decoder->decodeMpint();
-        if (!isset($p, $q, $g, $y)) {
-            throw new \InvalidArgumentException();
-        }
-        return new static($p, $q, $g, $y);
-    }
-
     public static function getName()
     {
         return 'ssh-dss';
@@ -121,6 +78,18 @@ class DSS implements \fpoirotte\Pssht\KeyInterface
         $encoder->encodeMpint($this->q);
         $encoder->encodeMpint($this->g);
         $encoder->encodeMpint($this->y);
+    }
+
+    public static function unserialize(\fpoirotte\Pssht\Wire\Decoder $decoder, $private = null)
+    {
+        $p = $decoder->decodeMpint();
+        $q = $decoder->decodeMpint();
+        $g = $decoder->decodeMpint();
+        $y = $decoder->decodeMpint();
+        if (!isset($p, $q, $g, $y)) {
+            throw new \InvalidArgumentException();
+        }
+        return new static($p, $q, $g, $y, $private);
     }
 
     public function sign($message)

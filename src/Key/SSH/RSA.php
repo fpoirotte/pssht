@@ -51,46 +51,6 @@ class RSA implements \fpoirotte\Pssht\KeyInterface
         $this->d    = $d;
     }
 
-    public static function loadPrivate($pem, $passphrase = '')
-    {
-        if (!is_string($pem)) {
-            throw new \InvalidArgumentException();
-        }
-
-        if (!is_string($passphrase)) {
-            throw new \InvalidArgumentException();
-        }
-
-        $key        = openssl_pkey_get_private($pem, $passphrase);
-        $details    = openssl_pkey_get_details($key);
-        if ($details['type'] !== OPENSSL_KEYTYPE_RSA) {
-            throw new \InvalidArgumentException();
-        }
-        return new static(
-            gmp_init(bin2hex($details['rsa']['n']), 16),
-            gmp_init(bin2hex($details['rsa']['e']), 16),
-            gmp_init(bin2hex($details['rsa']['d']), 16)
-        );
-    }
-
-    public static function loadPublic($b64)
-    {
-        $decoder = new \fpoirotte\Pssht\Wire\Decoder();
-        $decoder->getBuffer()->push(base64_decode($b64));
-        $type       = $decoder->decodeString();
-        if ($type !== static::getName()) {
-            throw new \InvalidArgumentException();
-        }
-
-        $e          = $decoder->decodeMpint();
-        $n          = $decoder->decodeMpint();
-
-        if (!isset($e, $n)) {
-            throw new \InvalidArgumentException();
-        }
-        return new static($n, $e);
-    }
-
     public static function getName()
     {
         return 'ssh-rsa';
@@ -101,6 +61,17 @@ class RSA implements \fpoirotte\Pssht\KeyInterface
         $encoder->encodeString(self::getName());
         $encoder->encodeMpint($this->e);
         $encoder->encodeMpint($this->n);
+    }
+
+    public static function unserialize(\fpoirotte\Pssht\Wire\Decoder $decoder, $private = null)
+    {
+        $e  = $decoder->decodeMpint();
+        $n  = $decoder->decodeMpint();
+
+        if (!isset($e, $n)) {
+            throw new \InvalidArgumentException();
+        }
+        return new static($n, $e, $private);
     }
 
     public function sign($message)

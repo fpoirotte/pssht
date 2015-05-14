@@ -95,7 +95,14 @@ class PublicKey implements AuthenticationInterface
             return self::AUTH_REJECT;
         }
 
-        $key        = $cls::loadPublic(base64_encode($message->getKey()));
+        $decoder    = new \fpoirotte\Pssht\Wire\Decoder();
+        $decoder->getBuffer()->push($message->getKey());
+        if ($decoder->decodeString() !== $message->getAlgorithm()) {
+            // The key is not of the type claimed.
+            return self::AUTH_REJECT;
+        }
+        $key        = $cls::unserialize($decoder);
+
         $encoder    = new \fpoirotte\Pssht\Wire\Encoder();
         $encoder->encodeString($context['DH']->getExchangeHash());
         $encoder->encodeBytes(chr(\fpoirotte\Pssht\Messages\USERAUTH\REQUEST\Base::getMessageId()));

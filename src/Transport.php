@@ -134,7 +134,10 @@ class Transport
                 $passphrase = $params['passphrase'];
             }
 
-            $keys[$keyType] = $cls::loadPrivate($params['file'], $passphrase);
+            $keys[$keyType] = \fpoirotte\Pssht\KeyLoader\OpenSSH::loadPrivate(
+                file_get_contents($params['file']),
+                $passphrase
+            );
         }
 
         $this->connected    = false;
@@ -191,7 +194,8 @@ class Transport
             256 => new \fpoirotte\Pssht\Handlers\InitialState(),
         );
 
-        $ident = "SSH-2.0-pssht_1.0.x_dev";
+        $ident = 'SSH-2.0-pssht_' .
+            str_replace(array(' ', '-'), '_', PSSHT_VERSION);
         $this->context['identity']['server'] = $ident;
         $this->context['serverKeys'] = $keys;
         $this->encoder->encodeBytes($ident . "\r\n");

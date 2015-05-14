@@ -48,95 +48,6 @@ abstract class Base implements
         $this->rng  = new \fpoirotte\Pssht\Random\OpenSSL();
     }
 
-    public static function loadPrivate($pem, $passphrase = '')
-    {
-        if (!is_string($pem)) {
-            throw new \InvalidArgumentException();
-        }
-
-        if (!is_string($passphrase)) {
-            throw new \InvalidArgumentException();
-        }
-
-        /// @FIXME support passphrase-protected ECDSA private keys.
-        if ($passphrase !== '') {
-            throw new \RuntimeException();
-        }
-
-        if (strncmp($pem, 'file://', 7) === 0) {
-            $key = file_get_contents(substr($pem, 7));
-        } else {
-            $key = $pem;
-        }
-
-        $curve  = \fpoirotte\Pssht\ECC\Curve::getCurve(static::getIdentifier());
-        $key    = str_replace(array("\r", "\n"), '', $key);
-        $header = '-----BEGIN EC PRIVATE KEY-----';
-        $footer = '-----END EC PRIVATE KEY-----';
-        if (strncmp($key, $header, strlen($header)) !== 0) {
-            throw new \InvalidArgumentException();
-        } elseif (substr($key, -strlen($footer)) !== $footer) {
-            throw new \InvalidArgumentException();
-        }
-        $key = base64_decode(substr($key, strlen($header), -strlen($footer)));
-
-        if ($key === false || strncmp($key, "\x30\x77\x02\x01\x01\x04", 6) !== 0) {
-            throw new \InvalidArgumentException();
-        }
-        $key = substr($key, 6);
-
-        $len        = ord($key[0]);
-        $privkey    = gmp_init(bin2hex(substr($key, 1, $len)), 16);
-        $key        = substr($key, $len + 1);
-
-        if ($key[0] !== "\xA0" || $key[2] !== "\x06") {
-            throw new \InvalidArgumentException();
-        }
-        $len        = ord($key[3]);
-        if ($len + 2 !== ord($key[1])) {
-            throw new \InvalidArgumentException();
-        }
-        $oid        = substr($key, 4, $len);
-        $key        = substr($key, $len + 4);
-
-        if ($key[0] !== "\xA1" || $key[2] !== "\x03") {
-            throw new \InvalidArgumentException();
-        }
-        $len        = ord($key[3]);
-        if ($len + 2 !== ord($key[1]) || strlen($key) !== $len + 4) {
-            throw new \InvalidArgumentException();
-        }
-        $pubkey     = \fpoirotte\Pssht\ECC\Point::unserialize(
-            $curve,
-            ltrim(substr($key, 4), "\x00")
-        );
-        $pubkey2    = $curve->getGenerator()->multiply($curve, $privkey);
-
-        if (gmp_strval($pubkey->x) !== gmp_strval($pubkey2->x) ||
-            gmp_strval($pubkey->y) !== gmp_strval($pubkey2->y)) {
-            throw new \InvalidArgumentException();
-        }
-
-        return new static($pubkey, $privkey);
-    }
-
-    public static function loadPublic($b64)
-    {
-        $decoder = new \fpoirotte\Pssht\Wire\Decoder();
-        $decoder->getBuffer()->push(base64_decode($b64));
-        if ($decoder->decodeString() !== static::getName()) {
-            throw new \InvalidArgumentException();
-        }
-        if ($decoder->decodeString() !== static::getIdentifier()) {
-            throw new \InvalidArgumentException();
-        }
-        $Q = \fpoirotte\Pssht\ECC\Point::unserialize(
-            \fpoirotte\Pssht\ECC\Curve::getCurve(static::getIdentifier()),
-            $decoder->decodeString()
-        );
-        return new static($Q);
-    }
-
     public static function getName()
     {
         return 'ecdsa-sha2-' . static::getIdentifier();
@@ -151,6 +62,18 @@ abstract class Base implements
                 \fpoirotte\Pssht\ECC\Curve::getCurve(static::getIdentifier())
             )
         );
+    }
+
+    public static function unserialize(\fpoirotte\Pssht\Wire\Decoder $decoder, $private = null)
+    {
+        if ($decoder->decodeString() !== static::getIdentifier()) {
+            throw new \InvalidArgumentException();
+        }
+        $Q = \fpoirotte\Pssht\ECC\Point::unserialize(
+            \fpoirotte\Pssht\ECC\Curve::getCurve(static::getIdentifier()),
+            $decoder->decodeString()
+        );
+        return new static($Q, $private);
     }
 
     public function sign($message, $raw_output = false)
