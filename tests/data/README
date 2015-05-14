@@ -14,7 +14,7 @@ These keys where generated using the following command:
 
 To convert them to PuTTY's Private Key format, use:
 
-    puttygen /path/to/key.pub -P -O private -o output_filename
+    puttygen /path/to/key -P -O private -o output_filename
 
 
 Notes:
