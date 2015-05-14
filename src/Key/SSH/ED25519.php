@@ -60,8 +60,7 @@ class ED25519 implements \fpoirotte\Pssht\KeyInterface, \fpoirotte\Pssht\Availab
     public function serialize(\fpoirotte\Pssht\Wire\Encoder $encoder)
     {
         $encoder->encodeString(self::getName());
-        $pk = pack('H*', str_pad(gmp_strval($this->pk, 16), 64, '0', STR_PAD_LEFT));
-        $encoder->encodeString($pk);
+        $encoder->encodeString($this->pk);
     }
 
     public static function unserialize(\fpoirotte\Pssht\Wire\Decoder $decoder, $private = null)
