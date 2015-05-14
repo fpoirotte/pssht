@@ -7,6 +7,7 @@
 * For the full copyright and license information, please view the LICENSE
 * file that was distributed with this source code.
 */
+declare(ticks=1);
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -18,8 +19,24 @@ function escape($data)
     return addcslashes($data, "\x00..\x1F\x7F..\xFF");
 }
 
+function signal_handler($signo)
+{
+    $logging = \Plop\Plop::getInstance();
+    $logging->info(
+        "Received signal #%d. Shutting down...",
+        array($signo)
+    );
+    exit(0);
+}
+
 function main($confFile = 'pssht.xml')
 {
+    $hasSignalDispatch = function_exists('pcntl_signal_dispatch');
+    if (extension_loaded('pcntl')) {
+        pcntl_signal(SIGTERM, 'signal_handler');
+        pcntl_signal(SIGINT, 'signal_handler');
+    }
+
     $home = getenv('HOME');
     $user = getenv('USER');
     if (extension_loaded('posix')) {
@@ -79,12 +96,16 @@ function main($confFile = 'pssht.xml')
             }
         }
 
-        if (@stream_select($read, $write, $except, null) === false) {
+        if (@stream_select($read, $write, $except, 2) === false) {
             $logging->error(
                 'Error while waiting for activity on sockets: %s',
                 array(socket_strerror(socket_last_error()))
             );
             continue;
+        }
+
+        if ($hasSignalDispatch) {
+            function_exists('pcntl_signal_dispatch');
         }
 
         foreach ($read as $socket) {
