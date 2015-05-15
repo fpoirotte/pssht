@@ -28,6 +28,8 @@ notifications:
 before_script:
     - composer self-update -n
     - composer install --dev -n
+    - /usr/bin/ssh -V || echo "SSH not found"
+    - (/usr/bin/plink -V; exit $(($?/2))) || echo "plink not found"
 
 script:
     - phpunit --coverage-clover clover.xml
