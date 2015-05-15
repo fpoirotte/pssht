@@ -32,8 +32,9 @@ abstract class AbstractConnectionTest extends \PHPUnit_Framework_TestCase
 
     private function startServer()
     {
-        $null = strncasecmp(PHP_OS, 'Win', 3) ? '/dev/null' : 'NUL';
-        $options =
+        $logging    = \Plop\Plop::getInstance();
+        $null       = strncasecmp(PHP_OS, 'Win', 3) ? '/dev/null' : 'NUL';
+        $options    =
             // Do not use the configuration file (php.ini).
             // For HHVM, we make it use "/dev/null" or equivalent
             // as its configuration file because the "-n" option
@@ -45,12 +46,18 @@ abstract class AbstractConnectionTest extends \PHPUnit_Framework_TestCase
             '-d ' . escapeshellarg('extension_dir=' . PHP_EXTENSION_DIR);
 
         $extensions = array(
-            'spl',
-            'openssl',
-            'mcrypt',
-            'gmp',
             'ctype',    // Required by symfony/config
             'dom',      // Required by symfony/config
+            'gmp',
+            'hash',
+            'http',
+            'mcrypt',
+            'openssl',
+            'pcntl',
+            'posix',
+            'reflection',
+            'sockets',
+            'spl',
         );
 
         // Load all necessary (shared) extensions.
@@ -73,12 +80,15 @@ abstract class AbstractConnectionTest extends \PHPUnit_Framework_TestCase
                 DIRECTORY_SEPARATOR . 'bin' .
                 DIRECTORY_SEPARATOR . 'pssht'
             ) . ' ' .
-            escapeshellarg($this->configFile) . ' 2>&1';
+            escapeshellarg($this->configFile) . ' < /dev/null 2>&1';
+
+        $logging->debug('Starting test server: %s', array($command));
         self::$serverProcess = popen($command, 'r');
         if (self::$serverProcess === false) {
             throw new \Exception('Could not start the test server using ' .
                                  'this command line: ' . $command);
         }
+        $logging->info('The test server is starting...');
 
         // Grab the server's PID.
         $init = fgets(self::$serverProcess, 1024);
@@ -99,6 +109,7 @@ abstract class AbstractConnectionTest extends \PHPUnit_Framework_TestCase
         if (self::$serverPID === 0) {
             throw new \Exception("Could not read the server's PID");
         }
+        $logging->info('Test server started (PID %d)', array(self::$serverPID));
 
         // Grab the port assigned to the server.
         $init = fgets(self::$serverProcess, 1024);
@@ -118,10 +129,10 @@ abstract class AbstractConnectionTest extends \PHPUnit_Framework_TestCase
         if (self::$serverPort === 0) {
             throw new \Exception("Could not read the server's port");
         }
-
-        $logging = \Plop\Plop::getInstance();
-        $logging->info('Test server running on port %d (PID %d)',
-                        array(self::$serverPort, self::$serverPID));
+        $logging->info(
+            'Test server listening on port %d',
+            array(self::$serverPort)
+        );
     }
 
     final public function setUp()

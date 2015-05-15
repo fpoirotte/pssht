@@ -37,5 +37,4 @@ require(
 $logging = \Plop\Plop::getInstance();
 $handlers = $logging->getLogger()->getHandlers();
 define('PSSHT_TESTS_LOG', tempnam(sys_get_temp_dir(), 'pssht-'));
-#$null = strncasecmp(PHP_OS, 'Win', 3) ? '/dev/null' : 'NUL';
-$handlers[0] = new \Plop\Handler\Stream(fopen(PSSHT_TESTS_LOG, 'w'));
+#$handlers[0] = new \Plop\Handler\Stream(fopen(PSSHT_TESTS_LOG, 'w'));
