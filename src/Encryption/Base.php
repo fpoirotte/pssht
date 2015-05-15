@@ -45,6 +45,10 @@ abstract class Base implements
 
     final public static function isAvailable()
     {
+        if (!extension_loaded('mcrypt')) {
+            return false;
+        }
+
         if (!defined(static::getAlgorithm())) {
             return false;
         }

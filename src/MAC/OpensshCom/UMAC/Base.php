@@ -11,7 +11,7 @@
 
 namespace fpoirotte\Pssht\MAC\OpensshCom\UMAC;
 
-abstract class Base implements \fpoirotte\Pssht\MACInterface
+abstract class Base implements \fpoirotte\Pssht\MACInterface, \fpoirotte\Pssht\AvailabilityInterface
 {
     protected $umac;
     protected $key;
@@ -22,5 +22,26 @@ abstract class Base implements \fpoirotte\Pssht\MACInterface
         $nonce      = $encoder->encodeUint64($seqno)->getBuffer()->get(0);
         $res        = $this->umac->umac($this->key, $data, $nonce);
         return $res;
+    }
+
+    final public static function isAvailable()
+    {
+        if (!extension_loaded('mcrypt')) {
+            return false;
+        }
+
+        if (!defined('MCRYPT_RIJNDAEL_128')) {
+            return false;
+        }
+        $res = @mcrypt_module_open(
+            MCRYPT_RIJNDAEL_128,
+            '',
+            'ecb',
+            ''
+        );
+        if ($res !== false) {
+            mcrypt_module_close($res);
+        }
+        return (bool) $res;
     }
 }
