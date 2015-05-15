@@ -11,9 +11,6 @@
 
 namespace fpoirotte\Pssht\Compression;
 
-use \HttpInflateStream;
-use \HttpDeflateStream;
-
 /**
  * ZLIB compression.
  */
@@ -21,6 +18,9 @@ class Zlib implements
     \fpoirotte\Pssht\CompressionInterface,
     \fpoirotte\Pssht\AvailabilityInterface
 {
+    static protected $deflateFactory;
+    static protected $inflateFactory;
+
     /// Compression/decompression stream.
     protected $stream;
 
@@ -29,14 +29,26 @@ class Zlib implements
 
     public function __construct($mode)
     {
+        if (self::$deflateFactory === null || self::$inflateFactory === null) {
+            throw new \RuntimeException('(De)Compression is not available');
+        }
+
         if ($mode == self::MODE_COMPRESS) {
-            $this->stream = HttpDeflateStream::factory(
-                HttpDeflateStream::TYPE_ZLIB |
-                HttpDeflateStream::LEVEL_DEF |
-                HttpDeflateStream::FLUSH_SYNC
-            );
+            list($cls, $method) = self::$deflateFactory;
+            $flags =
+                $cls::TYPE_ZLIB |
+                $cls::LEVEL_DEF |
+                $cls::FLUSH_SYNC;
         } else {
-            $this->stream = HttpInflateStream::factory();
+            list($cls, $method) = self::$inflateFactory;
+            $flags = 0;
+        }
+
+        $reflector = new \ReflectionMethod($cls, $method);
+        if ($reflector->isConstructor()) {
+            $this->stream = new $cls($flags);
+        } else {
+            $this->stream = $reflector->invoke(null, $flags);
         }
         $this->mode = $mode;
     }
@@ -48,8 +60,23 @@ class Zlib implements
 
     public static function isAvailable()
     {
-        return  class_exists('HttpDeflateStream') &&
-                class_exists('HttpInflateStream');
+        // PECL_HTTP v2.x uses classes in a dedicated namespace
+        // and a regular constructor.
+        if (class_exists('http\\Encoding\\Stream\\Deflate') &&
+            class_exists('\\http\\Encoding\\Stream\\Inflate')) {
+            self::$deflateFactory = array('\\http\\Encoding\\Stream\\Deflate', '__construct');
+            self::$inflateFactory = array('\\http\\Encoding\\Stream\\Inflate', '__construct');
+            return true;
+        }
+        // PECL_HTTP v1.x uses classes in the global scope
+        // and a static factory method.
+        if (class_exists('\\HttpDeflateStream') &&
+            class_exists('\\HttpInflateStream')) {
+            self::$deflateFactory = array('\\HttpDeflateStream', 'factory');
+            self::$inflateFactory = array('\\HttpInflateStream', 'factory');
+            return true;
+        }
+        return false;
     }
 
     public static function getName()

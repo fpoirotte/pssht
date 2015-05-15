@@ -14,7 +14,7 @@ namespace fpoirotte\Pssht\Encryption\OpensshCom;
 /**
  * AES-GCM with a 128-bit key.
  */
-class AES128GCM implements \fpoirotte\Pssht\AEADInterface
+class AES128GCM implements \fpoirotte\Pssht\AEADInterface, \fpoirotte\Pssht\AvailabilityInterface
 {
     protected $iv;
     protected $gcm;
@@ -77,5 +77,26 @@ class AES128GCM implements \fpoirotte\Pssht\AEADInterface
         $res        = $this->gcm->ad(pack('H*', $iv), $cipher, $len, $tag);
         $this->iv   = \fpoirotte\Pssht\AEAD\GCM::inc($this->iv, 64);
         return $res;
+    }
+
+    final public static function isAvailable()
+    {
+        if (!extension_loaded('mcrypt')) {
+            return false;
+        }
+
+        if (!defined('MCRYPT_RIJNDAEL_128')) {
+            return false;
+        }
+        $res = @mcrypt_module_open(
+            MCRYPT_RIJNDAEL_128,
+            '',
+            'ecb',
+            ''
+        );
+        if ($res !== false) {
+            mcrypt_module_close($res);
+        }
+        return (bool) $res;
     }
 }

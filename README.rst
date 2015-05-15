@@ -57,14 +57,36 @@ The requirements for pssht are quite basic:
 
 *   PHP 5.3.3 or later with the following PHP extensions enabled:
 
-    *   OpenSSL
-    *   mcrypt
-    *   gmp
-    *   pcre
-    *   Sockets
-    *   SPL
-    *   ctype
-    *   DOM
+    *   ``ctype``
+    *   ``DOM``
+    *   ``gmp``
+    *   ``OpenSSL``
+    *   ``Reflection``
+    *   ``Sockets``
+    *   ``SPL``
+
+    Moreover, certain additional PHP extensions may be used to add support
+    for more features:
+
+    *   ``hash``: adds support for a lot more algorithms than the default
+        (most message authentication code algorithms, support for ECDSA
+        and Ed25519 public keys, support for ECDH and Curve25519
+        key exchanges, support for PuTTY's Private Key format, etc.).
+
+    *   ``pecl_http``: adds support for zlib-compression.
+        Either version 1.x or 2.x may be used.
+        Version 2.x is preferred.
+
+    *   ``mcrypt``: adds support for most encryption algorithms.
+        In fact, all the encryption algorithms provided by pssht use this
+        extension, except for ``chacha20-poly1305@openssh.com``.
+        So, unless all your clients support ``chacha20-poly1305@openssh.com``
+        (ie. you only use recent enough versions of OpenSSH to connect),
+        you definitely want to install this extension.
+
+    *   ``pcntl``: adds signal handling (to stop pssht gracefully).
+
+    *   ``posix``: improves detection of the current user.
 
 *   Some external packages (they will automatically be installed
     when installing pssht):
@@ -74,13 +96,6 @@ The requirements for pssht are quite basic:
     *   ``symfony/dependency-injection`` for dependency injection
     *   ``symfony/filesystem`` (dependency for ``symfony/config``)
 
-Moreover, you may be interested in enabling the following PHP extensions
-to get additional features:
-
-*   HTTP: adds support for zlib-compression
-*   hash: adds support for more encryption and message authentication code
-    algorithms
-*   posix: improves detection of the current user
 
 First things first, download the `composer.phar
 <https://getcomposer.org/composer.phar>`_ executable or use the installer:

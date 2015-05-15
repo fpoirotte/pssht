@@ -16,10 +16,13 @@ if (version_compare(phpversion(), '5.3.3', '<')) {
 }
 
 $extensions = array(
-    'spl',
-    'openssl',
-    'mcrypt',
+    'ctype',
+    'DOM',
     'gmp',
+    'openssl',
+    'Reflection',
+    'sockets',
+    'spl',
 );
 
 foreach ($extensions as $ext) {

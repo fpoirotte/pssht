@@ -20,21 +20,23 @@
     },
     "require": {
         "php": ">=5.3.3",
-        "ext-spl": "*",
         "ext-ctype": "*",
         "ext-dom": "*",
-        "ext-openssl": "*",
-        "ext-mcrypt": "*",
         "ext-gmp": "*",
+        "ext-openssl": "*",
+        "ext-reflection": "*",
+        "ext-sockets": "*",
+        "ext-spl": "*",
         "symfony/dependency-injection": "*",
         "symfony/config": "*",
         "erebot/plop": "~0.5"
     },
     "require-dev": {
-        "ext-http": "*",
         "ext-hash": "*",
-        "ext-posix": "*",
+        "ext-http": "*",
+        "ext-mcrypt": "*",
         "ext-pcntl": "*",
+        "ext-posix": "*",
         "phing/phing": "*",
         "phpmd/phpmd": "*",
         "sebastian/phpcpd": "*",
@@ -43,10 +45,11 @@
         "erebot/buildenv": "~1.2.0"
     },
     "suggest": {
-        "ext-http": "Add zlib-compression support (~1.0)",
         "ext-hash": "Add support for various additional algorithms",
-        "ext-posix": "Improve detection of user running pssht",
-        "ext-pcntl": "Handle signals gracefully"
+        "ext-http": "Add zlib-compression support (>= 1.0)",
+        "ext-mcrypt": "Add support for most encryption algorithms",
+        "ext-pcntl": "Handle signals gracefully",
+        "ext-posix": "Improve detection of user running pssht"
     },
     "autoload": {
         "psr-4": {
