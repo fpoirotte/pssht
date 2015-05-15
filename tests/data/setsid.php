@@ -14,8 +14,5 @@ foreach ($_SERVER['argv'] as $index => $value) {
 }
 
 $exitCode   = 1;
-$output     = array();
-$res        = exec(implode(' ', $args), $output, $exitCode);
-
-echo implode('', $output);
+passthru(implode(' ', $args), $exitCode);
 exit($exitCode);
