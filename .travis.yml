@@ -27,7 +27,7 @@ notifications:
     irc: "irc.iiens.net#Clicky"
 
 before_script:
-    - pecl install pecl_http
+    - pecl install pecl_http < /dev/null
     - phpenv config-add tests/php.ini
     - composer self-update -n
     - composer install --dev -n
