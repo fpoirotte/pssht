@@ -41,6 +41,7 @@ abstract class AbstractConnectionTest extends \PHPUnit_Framework_TestCase
             // does not exist.
             (defined('HHVM_VERSION') ? '-c ' . $null : '-n') .
             ' ' .
+            '-d display_startup_errors=Off '.
             '-d detect_unicode=0 ' .
             '-d date.timezone=UTC ' .
             '-d ' . escapeshellarg('extension_dir=' . PHP_EXTENSION_DIR);
