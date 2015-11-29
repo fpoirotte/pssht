@@ -1,5 +1,15 @@
+.. : This file is part of pssht, an SSH server written in PHP.
+.. :
+.. : Copyright (c) 2014, François Poirotte. All rights reserved.
+.. : pssht is licensed under the The MIT License.
+.. :
+.. : For the full copyright and license information, please view the LICENSE
+.. : file that was distributed with this source code.
+
 pssht
 =====
+
+|travis-ci| |coveralls| |versioneye-updates| |hhvm| |readthedocs|
 
 pssht is a PHP library that provides an SSH server that can be embedded
 in other applications.
@@ -490,8 +500,36 @@ v0.1.0
 ..  _`Curve25519 curve`:
     http://git.libssh.org/projects/libssh.git/plain/doc/curve25519-sha256@libssh.org.txt
 
+..  : End of page.
+..  : The rest of this document are definitions for various macros.
+
+..  |travis-ci| image:: https://api.travis-ci.org/fpoirotte/pssht.png
+    :alt: unknown
+    :target: http://travis-ci.org/fpoirotte/pssht
+
+..  |coveralls| image:: https://coveralls.io/repos/fpoirotte/pssht/badge.svg?branch=develop&service=github
+    :alt: unknown
+    :target: https://coveralls.io/github/fpoirotte/pssht?branch=develop
+
+..  |versioneye-updates| image:: https://www.versioneye.com/php/fpoirotte:pssht/dev-develop/badge.png
+    :alt: unknown
+    :target: https://www.versioneye.com/php/fpoirotte:pssht/dev-develop
+
+..  |versioneye-refs| image:: https://www.versioneye.com/php/fpoirotte:pssht/reference_badge.svg?style=flat
+    :alt: unknown
+    :target: https://www.versioneye.com/php/fpoirotte:pssht/references
+
+..  |hhvm| image:: http://hhvm.h4cc.de/badge/fpoirotte/pssht.png
+    :alt: unknown
+    :target: http://hhvm.h4cc.de/package/fpoirotte/pssht
+
+..  |readthedocs| image:: https://readthedocs.org/projects/pssht/badge/?version=latest
+    :alt: unknown
+    :target: https://readthedocs.org/projects/pssht/?badge=latest
+
 ..  |[ ]| unicode:: U+2610 .. ballot box
 ..  |[x]| unicode:: U+2611 .. ballot box with check
 ..  |---| unicode:: U+2014 .. em dash
     :trim:
 
+..  : vim: ts=4 et
