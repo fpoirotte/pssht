@@ -318,10 +318,12 @@ abstract class AbstractSshClient
             $command = (string) $this;
             $logging->debug('Executing: %s', array($command));
             $logging->debug('Environment: %s', array(var_export($_ENV, true)));
-            $process = exec($command, $output, $exitCode);
+            ob_start();
+            $process = passthru($command, $exitCode);
+            $output = ob_get_clean();
             $logging->debug(
                 "Exit code: %(code)d - Output:\n%(output)s",
-                array('code' => $exitCode, 'output' => var_export($output, true))
+                array('code' => $exitCode, 'output' => $output)
             );
         } catch (\Exception $e) {
         }
@@ -337,9 +339,7 @@ abstract class AbstractSshClient
             throw $e;
         }
 
-        if (!is_string($process)) {
-            throw new \Exception('Could not execute command: ' . $command);
-        }
+        $output = array_filter(array_map('trim', explode(PHP_EOL, $output)));
         return array($exitCode, $output);
     }
 }
