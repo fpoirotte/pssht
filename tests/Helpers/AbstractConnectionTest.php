@@ -98,6 +98,7 @@ abstract class AbstractConnectionTest extends \PHPUnit_Framework_TestCase
                                  'this command line: ' . $command);
         }
         $logging->info('The test server is starting...');
+        stream_set_timeout(self::$serverProcess, 5);
 
         // Grab the server's PID.
         $init = fgets(self::$serverProcess, 1024);
