@@ -10,9 +10,7 @@ class Openssh extends \fpoirotte\Pssht\Tests\Helpers\AbstractSshClient
 
         $args = array(
             $this->phpBinary,
-            dirname(dirname(__DIR__)) .
-            DIRECTORY_SEPARATOR . 'data' .
-            DIRECTORY_SEPARATOR . 'setsid.php',
+            'setsid',
             $this->binary,
             '-F', $null,                                // No config. file
             '-p', $this->port,                          // Port
