@@ -466,7 +466,7 @@ v0.1.1
     This code will be revisited later on as it currently represents
     a possible security threat when ECDH is used.
 
-*   Improve this README (installation instruction, changelog).
+*   Improve this README (installation instructions, changelog).
 
 *   Change the default ``pssht.xml`` so that it accepts connections
     from the same user as the one starting the server
