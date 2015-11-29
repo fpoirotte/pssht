@@ -202,7 +202,6 @@ abstract class AbstractConnectionTest extends \PHPUnit_Framework_TestCase
         }
 
         $this->sshClient = new $cls(
-            self::$phpBinary,
             $binary,
             'localhost',
             null,
