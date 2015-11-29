@@ -1,4 +1,5 @@
 language: php
+
 sudo: false
 
 cache:
@@ -13,19 +14,20 @@ php:
     - 5.6
     - nightly
     - hhvm
-    - hhvm-nightly
 
 matrix:
     allow_failures:
-    - php: nightly
-    - php: hhvm
-    - php: hhvm-nightly
+    - nightly
+    - hhvm
+    - hhvm-nightly
 
 notifications:
     email: false
     irc: "irc.iiens.net#Clicky"
 
 before_script:
+    - pecl install pecl_http
+    - phpenv config-add tests/php.ini
     - composer self-update -n
     - composer install --dev -n
     - /usr/bin/ssh -V || echo "SSH not found"
