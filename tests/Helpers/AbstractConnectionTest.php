@@ -93,6 +93,7 @@ abstract class AbstractConnectionTest extends \PHPUnit_Framework_TestCase
         $logging->debug('Starting test server: %s', array($command));
         self::$serverProcess = popen($command, 'r');
         if (self::$serverProcess === false) {
+            self::$serverProcess = null;
             throw new \Exception('Could not start the test server using ' .
                                  'this command line: ' . $command);
         }
@@ -101,12 +102,14 @@ abstract class AbstractConnectionTest extends \PHPUnit_Framework_TestCase
         // Grab the server's PID.
         $init = fgets(self::$serverProcess, 1024);
         if ($init === false) {
+            self::tearDownAfterClass();
             throw new \Exception("Could not read the server's PID");
         }
         $init   = rtrim($init);
         $msg    = 'LOG: pssht ';
         if (strncmp($init, $msg, strlen($msg) - 1) ||
             !strpos($init, 'is starting')) {
+            self::tearDownAfterClass();
             throw new \Exception(
                 'Unexpected content: ' .
                 addcslashes($init, "\x00..\x1F\x7F..\xFF")
@@ -115,6 +118,7 @@ abstract class AbstractConnectionTest extends \PHPUnit_Framework_TestCase
         // "pssht is starting (PID ...)"
         self::$serverPID = (int) substr($init, strrpos($init, '(') + 5, -1);
         if (self::$serverPID === 0) {
+            self::tearDownAfterClass();
             throw new \Exception("Could not read the server's PID");
         }
         $logging->info('Test server started (PID %d)', array(self::$serverPID));
@@ -122,11 +126,13 @@ abstract class AbstractConnectionTest extends \PHPUnit_Framework_TestCase
         // Grab the port assigned to the server.
         $init = fgets(self::$serverProcess, 1024);
         if ($init === false) {
+            self::tearDownAfterClass();
             throw new \Exception("Could not read the server's port");
         }
         $init   = rtrim($init);
         $msg    = 'LOG: Listening for new connections on ';
         if (strncmp($init, $msg, strlen($msg) - 1)) {
+            self::tearDownAfterClass();
             throw new \Exception(
                 'Unexpected content: ' .
                 addcslashes($init, "\x00..\x1F\x7F..\xFF")
@@ -135,6 +141,7 @@ abstract class AbstractConnectionTest extends \PHPUnit_Framework_TestCase
         // "Listening for new connections on ...:..." (address:port)
         self::$serverPort = (int) substr($init, strrpos($init, ':') + 1);
         if (self::$serverPort === 0) {
+            self::tearDownAfterClass();
             throw new \Exception("Could not read the server's port");
         }
         $logging->info(
