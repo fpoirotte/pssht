@@ -300,9 +300,13 @@ abstract class AbstractSshClient
             $command = (string) $this;
             $logging->debug('Executing: %s', array($command));
             $logging->debug('Environment: %s', array(var_export($_ENV, true)));
-            ob_start();
-            $process = passthru($command, $exitCode);
-            $output = ob_get_clean();
+            $process = popen($command, 'r');
+            if ($process === false) {
+                throw \Exception('Could not open command');
+            }
+
+            $output     = stream_get_contents($process);
+            $exitCode   = pclose($process);
             $logging->debug(
                 "Exit code: %(code)d - Output:\n%(output)s",
                 array('code' => $exitCode, 'output' => $output)
