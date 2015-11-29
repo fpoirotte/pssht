@@ -296,8 +296,7 @@ abstract class AbstractSshClient
         $logging    = \Plop\Plop::getInstance();;
         $_ENV       = array();
         $keep       = array(
-            'PATH', 'Path', 'USER', 'TERM', 'SHELL',
-            'PWD', 'LANG', 'LANGUAGE', 'LC_ALL'
+            'PATH', 'Path', 'USER', 'SHELL', 'PWD',
         );
 
         try {
