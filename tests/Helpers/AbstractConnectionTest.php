@@ -47,11 +47,12 @@ abstract class AbstractConnectionTest extends \PHPUnit_Framework_TestCase
             '-d ' . escapeshellarg('extension_dir=' . PHP_EXTENSION_DIR);
 
         $extensions = array(
+            // Standard extensions
             'ctype',    // Required by symfony/config
             'dom',      // Required by symfony/config
             'gmp',
             'hash',
-            'http',
+            'iconv',    // Required by ext-http
             'mcrypt',
             'openssl',
             'pcntl',
@@ -59,6 +60,12 @@ abstract class AbstractConnectionTest extends \PHPUnit_Framework_TestCase
             'reflection',
             'sockets',
             'spl',
+
+            // Additional extensions
+            // raphf & propro must be loaded before http.
+            'raphf',
+            'propro',
+            'http',
         );
 
         // Load all necessary (shared) extensions.
