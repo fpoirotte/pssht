@@ -22,10 +22,11 @@ addons:
         - util-linux
 
 matrix:
+    fast_finish: true
     allow_failures:
-    - nightly
-    - hhvm
-    - hhvm-nightly
+    - php: nightly
+    - php: hhvm
+    - php: hhvm-nightly
 
 notifications:
     email: false
