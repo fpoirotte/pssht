@@ -1,4 +1,7 @@
-@INCLUDE            = vendor/erebot/buildenv/Doxyfile
-INPUT              += docs/exceptions.php
-EXCLUDE_SYMBOLS    += exc_*
-JAVADOC_AUTOBRIEF   = YES
+@INCLUDE        = vendor/erebot/buildenv/Doxyfile
+INPUT          += vendor/fpoirotte/natives4doxygen/docs/
+INPUT          += docs/src/
+# readthedocs generates intermediary files into docs/src/_build.
+EXCLUDE        += docs/src/_build
+FILE_PATTERNS  += *.dox
+
