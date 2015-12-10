@@ -41,7 +41,7 @@ before_script:
 - (/usr/bin/plink -V; exit $(($?/2))) || echo "plink not found"
 
 script:
-- phpunit --coverage-clover clover.xml
+- vendor/bin/phpunit --coverage-clover clover.xml
 
 after_script:
 - composer require --dev "satooshi/php-coveralls dev-master"
