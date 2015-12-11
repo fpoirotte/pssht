@@ -16,10 +16,13 @@
         <include name="pssht.xml"/>
         <include name="vendor/autoload.php"/>
         <include name="vendor/composer/*.php"/>
-        <include name="vendor/erebot/plop/**/*.php"/>
+        <include name="vendor/erebot/plop/src/**/*.php"/>
         <include name="vendor/symfony/dependency-injection/**/*.php"/>
+        <exclude name="vendor/symfony/dependency-injection/Tests/**/*.php"/>
         <include name="vendor/symfony/config/**/*.php"/>
+        <exclude name="vendor/symfony/config/Tests/**/*.php"/>
         <include name="vendor/symfony/filesystem/**/*.php"/>
+        <exclude name="vendor/symfony/filesystem/Tests/**/*.php"/>
     </fileset>
 
     <fileset dir="src/" id="sources">
