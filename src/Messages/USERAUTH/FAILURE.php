@@ -14,7 +14,7 @@ namespace fpoirotte\Pssht\Messages\USERAUTH;
 /**
  * SSH_MSG_USERAUTH_FAILURE message (RFC 4252).
  */
-class FAILURE implements \fpoirotte\Pssht\MessageInterface
+class FAILURE implements \fpoirotte\Pssht\Messages\MessageInterface
 {
     /// List of authentication methods that may continue.
     protected $methods;

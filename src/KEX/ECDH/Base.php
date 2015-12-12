@@ -16,8 +16,8 @@ namespace fpoirotte\Pssht\KEX\ECDH;
  * key exchange as defined in RFC 5656.
  */
 abstract class Base implements
-    \fpoirotte\Pssht\KEXInterface,
-    \fpoirotte\Pssht\AvailabilityInterface,
+    \fpoirotte\Pssht\KEX\KEXInterface,
+    \fpoirotte\Pssht\Algorithms\AvailabilityInterface,
     \fpoirotte\Pssht\KEX\ECDH\BaseInterface
 {
     public static function addHandlers(\fpoirotte\Pssht\Transport $transport)

@@ -9,12 +9,12 @@
 * file that was distributed with this source code.
 */
 
-namespace fpoirotte\Pssht;
+namespace fpoirotte\Pssht\Algorithms\AEAD;
 
 /**
  * Interface for Authenticated Encryption with Additional Data.
  */
-interface AEADInterface extends \fpoirotte\Pssht\EncryptionInterface
+interface AEADInterface extends \fpoirotte\Pssht\Encryption\EncryptionInterface
 {
     /**
      * Get the size of an Authentication Tag

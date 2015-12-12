@@ -14,7 +14,7 @@ namespace fpoirotte\Pssht\Messages;
 /**
  * SSH_MSG_IGNORE message (RFC 4253).
  */
-class IGNORE implements \fpoirotte\Pssht\MessageInterface
+class IGNORE implements MessageInterface
 {
     /// Payload for the ignore message.
     protected $data;

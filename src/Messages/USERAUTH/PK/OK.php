@@ -14,7 +14,7 @@ namespace fpoirotte\Pssht\Messages\USERAUTH\PK;
 /**
  * SSH_MSG_USERAUTH_PK_OK message (RFC 4252).
  */
-class OK implements \fpoirotte\Pssht\MessageInterface
+class OK implements \fpoirotte\Pssht\Messages\MessageInterface
 {
     /// Public key algorithm in use (eg. "ssh-rsa" or "ssh-dss").
     protected $algorithm;

@@ -1,6 +1,6 @@
 <?php
 
-namespace fpoirotte\Pssht\Tests\Unit\AEAD;
+namespace fpoirotte\Pssht\Tests\Unit\Algorithms\AEAD;
 
 /**
  * Test point addition for various NIST curves
@@ -18,7 +18,7 @@ class GCMTest extends \PHPUnit_Framework_TestCase
     public function getGCM($key)
     {
         if (!isset(self::$cache[$key])) {
-            self::$cache[$key] = new \fpoirotte\Pssht\AEAD\GCM(
+            self::$cache[$key] = new \fpoirotte\Pssht\Algorithms\AEAD\GCM(
                 MCRYPT_RIJNDAEL_128,
                 pack('H*', $key),
                 128

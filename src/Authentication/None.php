@@ -11,7 +11,7 @@
 
 namespace fpoirotte\Pssht\Authentication;
 
-use fpoirotte\Pssht\AuthenticationInterface;
+use fpoirotte\Pssht\Authentication\AuthenticationInterface;
 
 /**
  * Anonymous authentication.

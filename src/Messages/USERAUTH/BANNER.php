@@ -14,7 +14,7 @@ namespace fpoirotte\Pssht\Messages\USERAUTH;
 /**
  * SSH_MSG_USERAUTH_BANNER message (RFC 4252).
  */
-class BANNER implements \fpoirotte\Pssht\MessageInterface
+class BANNER implements \fpoirotte\Pssht\Messages\MessageInterface
 {
     /// Banner to display.
     protected $message;

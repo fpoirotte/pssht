@@ -9,12 +9,12 @@
 * file that was distributed with this source code.
 */
 
-namespace fpoirotte\Pssht;
+namespace fpoirotte\Pssht\Key;
 
 /**
  * Interface for a public key algorithm.
  */
-interface KeyInterface extends AlgorithmInterface
+interface KeyInterface extends \fpoirotte\Pssht\Algorithms\AlgorithmInterface
 {
     /**
      * Serialize a key.

@@ -9,12 +9,12 @@
 * file that was distributed with this source code.
 */
 
-namespace fpoirotte\Pssht;
+namespace fpoirotte\Pssht\Compression;
 
 /**
  * Interface for a (de)compression algorithm.
  */
-interface CompressionInterface extends AlgorithmInterface
+interface CompressionInterface extends \fpoirotte\Pssht\Algorithms\AlgorithmInterface
 {
     /// Use the algorithm for compression.
     const MODE_COMPRESS     = 0;

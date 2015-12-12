@@ -15,7 +15,7 @@ namespace fpoirotte\Pssht\Key\SSH;
  * Public key using the Digital Signature Algorithm (DSA),
  * as used in the Digital Signature Standard (DSS).
  */
-class DSS implements \fpoirotte\Pssht\KeyInterface
+class DSS implements \fpoirotte\Pssht\Key\KeyInterface
 {
     /// DER header for DSA.
     const DER_HEADER = "\x30\x20\x30\x0c\x06\x08\x2a\x86\x48\x86\xf7\x0d\x02\x05\x05\x00\x04\x10";

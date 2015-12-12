@@ -9,12 +9,12 @@
 * file that was distributed with this source code.
 */
 
-namespace fpoirotte\Pssht;
+namespace fpoirotte\Pssht\Authentication;
 
 /**
  * Interface for an authentication method.
  */
-interface AuthenticationInterface extends AlgorithmInterface
+interface AuthenticationInterface extends \fpoirotte\Pssht\Algorithms\AlgorithmInterface
 {
     /// The message passed the check.
     const CHECK_OK      = 1;

@@ -11,8 +11,6 @@
 
 namespace fpoirotte\Pssht\Messages;
 
-use fpoirotte\Pssht\MessageInterface;
-
 /**
  * SSH_MSG_DISCONNECT message (RFC 4253).
  */

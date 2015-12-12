@@ -14,7 +14,7 @@ namespace fpoirotte\Pssht\Messages\SERVICE;
 /**
  * Abstract SSH_MSG_SERVICE_* message (RFC 4253).
  */
-abstract class Base implements \fpoirotte\Pssht\MessageInterface
+abstract class Base implements \fpoirotte\Pssht\Messages\MessageInterface
 {
     /// Name of the service to start after authentication.
     protected $service;

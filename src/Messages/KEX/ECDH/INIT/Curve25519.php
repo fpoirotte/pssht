@@ -15,7 +15,7 @@ namespace fpoirotte\Pssht\Messages\KEX\ECDH\INIT;
  * SSH_MSG_KEX_ECDH_INIT message (RFC 5656),
  * specialized for Curve25519.
  */
-class Curve25519 implements \fpoirotte\Pssht\MessageInterface
+class Curve25519 implements \fpoirotte\Pssht\Messages\MessageInterface
 {
     /// Client's ephemeral public key as a string.
     protected $Q;

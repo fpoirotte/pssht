@@ -16,7 +16,7 @@ use fpoirotte\Pssht\Messages\DISCONNECT;
 /**
  * Handler for SSH_MSG_SERVICE_REQUEST messages.
  */
-class REQUEST implements \fpoirotte\Pssht\HandlerInterface
+class REQUEST implements \fpoirotte\Pssht\Handlers\HandlerInterface
 {
     /// User authentication request handler.
     protected $userAuthRequestHandler;

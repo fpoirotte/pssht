@@ -16,7 +16,7 @@ namespace fpoirotte\Pssht\Key\ECDSA\SHA2;
  * Digital Signature Algorithm (ECDSA).
  */
 abstract class Base implements
-    \fpoirotte\Pssht\KeyInterface,
+    \fpoirotte\Pssht\Key\KeyInterface,
     \fpoirotte\Pssht\Key\ECDSA\SHA2\BaseInterface
 {
     /// Public key.
@@ -134,7 +134,7 @@ abstract class Base implements
     /**
      * Get the Random Number Generator associated with this key.
      *
-     *  \retval fpoirotte::Pssht::RandomInterface
+     *  \retval fpoirotte::Pssht::Random::RandomInterface
      *      RNG associated with this key.
      */
     public function getRNG()
@@ -146,10 +146,10 @@ abstract class Base implements
      * Set the Random Number Generator to use when
      * signing messages with this key.
      *
-     *  \param fpoirotte::Pssht::RandomInterface $rng
+     *  \param fpoirotte::Pssht::Random::RandomInterface $rng
      *      New RNG to use.
      */
-    public function setRNG(\fpoirotte\Pssht\RandomInterface $rng)
+    public function setRNG(\fpoirotte\Pssht\Random\RandomInterface $rng)
     {
         $this->rng = $rng;
         return $this;

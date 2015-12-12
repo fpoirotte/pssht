@@ -9,7 +9,7 @@
 * file that was distributed with this source code.
 */
 
-namespace fpoirotte\Pssht;
+namespace fpoirotte\Pssht\KeyLoader;
 
 interface KeyLoaderInterface
 {

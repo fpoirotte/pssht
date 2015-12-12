@@ -14,7 +14,7 @@ namespace fpoirotte\Pssht\Handlers;
 /**
  * Handler for the SSH protocol's initial state.
  */
-class InitialState implements \fpoirotte\Pssht\HandlerInterface
+class InitialState implements \fpoirotte\Pssht\Handlers\HandlerInterface
 {
     // Initial state
     public function handle(

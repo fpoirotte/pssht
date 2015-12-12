@@ -10,12 +10,12 @@
 
 namespace fpoirotte\Pssht\Application;
 
-class EchoService implements \fpoirotte\Pssht\HandlerInterface
+class EchoService implements \fpoirotte\Pssht\Handlers\HandlerInterface
 {
     public function __construct(
         \fpoirotte\Pssht\Transport $transport,
         \fpoirotte\Pssht\Connection $connection,
-        \fpoirotte\Pssht\MessageInterface $message
+        \fpoirotte\Pssht\Messages\MessageInterface $message
     ) {
         $transport->setHandler(\fpoirotte\Pssht\Messages\CHANNEL\DATA::getMessageId(), $this);
     }

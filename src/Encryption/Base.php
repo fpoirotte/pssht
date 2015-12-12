@@ -11,8 +11,8 @@
 
 namespace fpoirotte\Pssht\Encryption;
 
-use fpoirotte\Pssht\EncryptionInterface;
-use fpoirotte\Pssht\AvailabilityInterface;
+use fpoirotte\Pssht\Encryption\EncryptionInterface;
+use fpoirotte\Pssht\Algorithms\AvailabilityInterface;
 use fpoirotte\Pssht\Encryption\BaseInterface;
 
 /**

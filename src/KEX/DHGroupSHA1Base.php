@@ -16,7 +16,9 @@ namespace fpoirotte\Pssht\KEX;
  * with SHA-1 as HASH; intended for groups defined
  * in RFC 4253.
  */
-abstract class DHGroupSHA1Base implements \fpoirotte\Pssht\KEXInterface, \fpoirotte\Pssht\KEX\DHGroupSHA1Interface
+abstract class DHGroupSHA1Base implements
+    \fpoirotte\Pssht\KEX\KEXInterface,
+    \fpoirotte\Pssht\KEX\DHGroupSHA1Interface
 {
     public function hash($data)
     {

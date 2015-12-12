@@ -14,7 +14,9 @@ namespace fpoirotte\Pssht\Encryption\OpensshCom;
 /**
  * AES-GCM with a 128-bit key.
  */
-class AES128GCM implements \fpoirotte\Pssht\AEADInterface, \fpoirotte\Pssht\AvailabilityInterface
+class AES128GCM implements
+    \fpoirotte\Pssht\Algorithms\AEAD\AEADInterface,
+    \fpoirotte\Pssht\Algorithms\AvailabilityInterface
 {
     protected $iv;
     protected $gcm;
@@ -22,7 +24,7 @@ class AES128GCM implements \fpoirotte\Pssht\AEADInterface, \fpoirotte\Pssht\Avai
     public function __construct($iv, $key)
     {
         $this->iv = gmp_init(bin2hex($iv), 16);
-        $this->gcm = new \fpoirotte\Pssht\AEAD\GCM(
+        $this->gcm = new \fpoirotte\Pssht\Algorithms\AEAD\GCM(
             MCRYPT_RIJNDAEL_128,
             $key,
             128
@@ -60,7 +62,7 @@ class AES128GCM implements \fpoirotte\Pssht\AEADInterface, \fpoirotte\Pssht\Avai
         $plain      = (string) substr($data, 4);
         $iv         = str_pad(gmp_strval($this->iv, 16), 24, '0', STR_PAD_LEFT);
         $res        = $this->gcm->ae(pack('H*', $iv), $plain, $len);
-        $this->iv   = \fpoirotte\Pssht\AEAD\GCM::inc($this->iv, 64);
+        $this->iv   = \fpoirotte\Pssht\Algorithms\AEAD\GCM::inc($this->iv, 64);
         return $len . $res[0] . $res[1];
     }
 
@@ -75,7 +77,7 @@ class AES128GCM implements \fpoirotte\Pssht\AEADInterface, \fpoirotte\Pssht\Avai
         $tag        = substr($data, -static::getSize());
         $iv         = str_pad(gmp_strval($this->iv, 16), 24, '0', STR_PAD_LEFT);
         $res        = $this->gcm->ad(pack('H*', $iv), $cipher, $len, $tag);
-        $this->iv   = \fpoirotte\Pssht\AEAD\GCM::inc($this->iv, 64);
+        $this->iv   = \fpoirotte\Pssht\Algorithms\AEAD\GCM::inc($this->iv, 64);
         return $res;
     }
 

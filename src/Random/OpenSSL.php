@@ -14,7 +14,7 @@ namespace fpoirotte\Pssht\Random;
 /**
  * OpenSSL-based pseudo-random number generator.
  */
-class OpenSSL implements \fpoirotte\Pssht\RandomInterface
+class OpenSSL implements RandomInterface
 {
     /// Construct a new PRNG.
     public function __construct()

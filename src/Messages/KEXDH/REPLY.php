@@ -14,7 +14,7 @@ namespace fpoirotte\Pssht\Messages\KEXDH;
 /**
  * SSH_MSG_KEXDH_REPLY message (RFC 4253).
  */
-class REPLY implements \fpoirotte\Pssht\MessageInterface
+class REPLY implements \fpoirotte\Pssht\Messages\MessageInterface
 {
     /// Exchange hash.
     protected $H;
@@ -53,13 +53,13 @@ class REPLY implements \fpoirotte\Pssht\MessageInterface
      *  \param fpoirotte::Pssht::Messages::KEXDH::INIT $kexDHInit
      *      Client's contribution to the Diffie-Hellman Key Exchange.
      *
-     *  \param fpoirotte::Pssht::KeyInterface $key
+     *  \param fpoirotte::Pssht::Key::KeyInterface $key
      *      Server's public key.
      *
-     *  \param fpoirotte::Pssht::EncryptionInterface $encryptionAlgo
+     *  \param fpoirotte::Pssht::Encryption::EncryptionInterface $encryptionAlgo
      *      Encryption algorithm in use.
      *
-     *  \param fpoirotte::Pssht::KEXInterface $kexAlgo
+     *  \param fpoirotte::Pssht::KEX::KEXInterface $kexAlgo
      *      Key exchange algorithm to use.
      *
      *  \param fpoirotte::Pssht::Messages::KEXINIT $serverKEX
@@ -76,9 +76,9 @@ class REPLY implements \fpoirotte\Pssht\MessageInterface
      */
     public function __construct(
         \fpoirotte\Pssht\Messages\KEXDH\INIT $kexDHInit,
-        \fpoirotte\Pssht\KeyInterface $key,
-        \fpoirotte\Pssht\EncryptionInterface $encryptionAlgo,
-        \fpoirotte\Pssht\KEXInterface $kexAlgo,
+        \fpoirotte\Pssht\Key\KeyInterface $key,
+        \fpoirotte\Pssht\Encryption\EncryptionInterface $encryptionAlgo,
+        \fpoirotte\Pssht\KEX\KEXInterface $kexAlgo,
         \fpoirotte\Pssht\Messages\KEXINIT $serverKEX,
         \fpoirotte\Pssht\Messages\KEXINIT $clientKEX,
         $serverIdent,

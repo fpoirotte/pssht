@@ -14,7 +14,7 @@ namespace fpoirotte\Pssht\Messages\CHANNEL\OPEN;
 /**
  * SSH_MSG_CHANNEL_OPEN_CONFIRMATION message (RFC 4254).
  */
-class CONFIRMATION implements \fpoirotte\Pssht\MessageInterface
+class CONFIRMATION implements \fpoirotte\Pssht\Messages\MessageInterface
 {
     /// Recipient channel.
     protected $recipientChannel;

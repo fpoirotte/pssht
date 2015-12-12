@@ -14,7 +14,7 @@ namespace fpoirotte\Pssht\Handlers\CHANNEL;
 /**
  * Abstract handler for SSH_MSG_CHANNEL_* messages.
  */
-abstract class Base implements \fpoirotte\Pssht\HandlerInterface
+abstract class Base implements \fpoirotte\Pssht\Handlers\HandlerInterface
 {
     /// SSH connection layer.
     protected $connection;

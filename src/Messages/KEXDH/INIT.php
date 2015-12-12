@@ -14,7 +14,7 @@ namespace fpoirotte\Pssht\Messages\KEXDH;
 /**
  * SSH_MSG_KEXDH_INIT message (RFC 4253).
  */
-class INIT implements \fpoirotte\Pssht\MessageInterface
+class INIT implements \fpoirotte\Pssht\Messages\MessageInterface
 {
     /// Client's public exponent as a GMP resource.
     protected $e;

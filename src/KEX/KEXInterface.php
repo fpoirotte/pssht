@@ -9,12 +9,12 @@
 * file that was distributed with this source code.
 */
 
-namespace fpoirotte\Pssht;
+namespace fpoirotte\Pssht\KEX;
 
 /**
  * Interface for a Key Exchange algorithm.
  */
-interface KEXInterface extends AlgorithmInterface
+interface KEXInterface extends \fpoirotte\Pssht\Algorithms\AlgorithmInterface
 {
     /**
      * Hash the given data.

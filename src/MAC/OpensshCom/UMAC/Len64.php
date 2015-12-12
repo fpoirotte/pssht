@@ -16,7 +16,7 @@ class Len64 extends Base
     final public function __construct($key)
     {
         $this->key  = $key;
-        $this->umac = new \fpoirotte\Pssht\UMAC\UMAC64();
+        $this->umac = new \fpoirotte\Pssht\Algorithms\UMAC\UMAC64();
     }
 
     final public static function getKeySize()

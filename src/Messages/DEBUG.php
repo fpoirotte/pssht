@@ -14,7 +14,7 @@ namespace fpoirotte\Pssht\Messages;
 /**
  * SSH_MSG_DEBUG message (RFC 4253).
  */
-class DEBUG implements \fpoirotte\Pssht\MessageInterface
+class DEBUG implements MessageInterface
 {
     /// Whether to always display the message or not.
     protected $alwaysDisplay;

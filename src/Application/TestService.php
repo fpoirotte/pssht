@@ -12,12 +12,12 @@ namespace fpoirotte\Pssht\Application;
 
 use \fpoirotte\Pssht\Messages\DISCONNECT;
 
-class TestService implements \fpoirotte\Pssht\HandlerInterface
+class TestService implements \fpoirotte\Pssht\Handlers\HandlerInterface
 {
     public function __construct(
         \fpoirotte\Pssht\Transport $transport,
         \fpoirotte\Pssht\Connection $connection,
-        \fpoirotte\Pssht\MessageInterface $message
+        \fpoirotte\Pssht\Messages\MessageInterface $message
     ) {
         if (!($message instanceof \fpoirotte\Pssht\Messages\CHANNEL\REQUEST\Exec)) {
             throw new DISCONNECT(

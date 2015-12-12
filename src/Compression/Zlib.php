@@ -15,8 +15,8 @@ namespace fpoirotte\Pssht\Compression;
  * ZLIB compression.
  */
 class Zlib implements
-    \fpoirotte\Pssht\CompressionInterface,
-    \fpoirotte\Pssht\AvailabilityInterface
+    \fpoirotte\Pssht\Compression\CompressionInterface,
+    \fpoirotte\Pssht\Algorithms\AvailabilityInterface
 {
     static protected $deflateFactory;
     static protected $inflateFactory;

@@ -11,12 +11,10 @@
 
 namespace fpoirotte\Pssht\Compression;
 
-use fpoirotte\Pssht\CompressionInterface;
-
 /**
  * Null compression (= no compression).
  */
-class None implements CompressionInterface
+class None implements \fpoirotte\Pssht\Compression\CompressionInterface
 {
     /// Compression/decompression mode.
     protected $mode;

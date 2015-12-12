@@ -14,7 +14,7 @@ namespace fpoirotte\Pssht\Messages\KEX\ECDH\INIT;
 /**
  * SSH_MSG_KEX_ECDH_INIT message (RFC 5656).
  */
-abstract class RFC5656 implements \fpoirotte\Pssht\MessageInterface
+abstract class RFC5656 implements \fpoirotte\Pssht\Messages\MessageInterface
 {
     /// Client's ephemeral public key as an EC Point.
     protected $Q;

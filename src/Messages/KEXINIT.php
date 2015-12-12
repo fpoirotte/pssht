@@ -14,7 +14,7 @@ namespace fpoirotte\Pssht\Messages;
 /**
  * SSH_MSG_KEXINIT message (RFC 4253).
  */
-class KEXINIT implements \fpoirotte\Pssht\MessageInterface
+class KEXINIT implements MessageInterface
 {
     /// Random cookie for the Key Exchange.
     protected $cookie;
@@ -56,7 +56,7 @@ class KEXINIT implements \fpoirotte\Pssht\MessageInterface
     /**
      * Construct a new SSH_MSG_KEXINIT message.
      *
-     *  \param fpoirotte::Pssht::RandomInterface $random
+     *  \param fpoirotte::Pssht::Random::RandomInterface $rng
      *      RNG from which the KEX cookie will be generated.
      *
      *  \param array $kexAlgos
@@ -104,7 +104,7 @@ class KEXINIT implements \fpoirotte\Pssht\MessageInterface
      *      sent after this packet (\b true) or not (\b false).
      */
     public function __construct(
-        \fpoirotte\Pssht\RandomInterface $random,
+        \fpoirotte\Pssht\Random\RandomInterface $rng,
         array $kexAlgos,
         array $serverHostKeyAlgos,
         array $encAlgosC2S,
@@ -121,7 +121,7 @@ class KEXINIT implements \fpoirotte\Pssht\MessageInterface
             throw new \InvalidArgumentException();
         }
 
-        $this->cookie               = $random->getBytes(16);
+        $this->cookie               = $rng->getBytes(16);
         $this->kexAlgos             = $kexAlgos;
         $this->serverHostKeyAlgos   = $serverHostKeyAlgos;
         $this->encAlgosC2S          = $encAlgosC2S;

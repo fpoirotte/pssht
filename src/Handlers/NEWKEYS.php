@@ -11,12 +11,12 @@
 
 namespace fpoirotte\Pssht\Handlers;
 
-use fpoirotte\Pssht\CompressionInterface;
+use fpoirotte\Pssht\Compression\CompressionInterface;
 
 /**
  * Handler for SSH_MSG_NEWKEYS messages.
  */
-class NEWKEYS implements \fpoirotte\Pssht\HandlerInterface
+class NEWKEYS implements \fpoirotte\Pssht\Handlers\HandlerInterface
 {
     // SSH_MSG_NEWKEYS = 21
     public function handle(

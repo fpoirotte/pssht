@@ -1,6 +1,6 @@
 <?php
 
-namespace fpoirotte\Pssht\Tests\Unit;
+namespace fpoirotte\Pssht\Tests\Unit\Algorithms;
 
 /**
  * Test vectors for ChaCha20.
@@ -66,7 +66,7 @@ class ChaCha20 extends \PHPUnit_Framework_TestCase
         $nonce      = pack('H*', $nonce);
         $keystream  = pack('H*', $keystream);
 
-        $cipher     = new \fpoirotte\Pssht\ChaCha20($key);
+        $cipher     = new \fpoirotte\Pssht\Algorithms\ChaCha20($key);
         $plain      = str_repeat("\x00", strlen($keystream));
         $this->assertSame($keystream, $cipher->encrypt($plain, $nonce));
     }

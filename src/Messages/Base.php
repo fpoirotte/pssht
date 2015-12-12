@@ -14,7 +14,7 @@ namespace fpoirotte\Pssht\Messages;
 /**
  * Abstract SSH message.
  */
-abstract class Base implements \fpoirotte\Pssht\MessageInterface
+abstract class Base implements MessageInterface
 {
     /// Construct the message.
     final public function __construct()

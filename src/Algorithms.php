@@ -31,11 +31,11 @@ class Algorithms
     private function __construct()
     {
         $this->interfaces = array(
-            'MAC'           => '\\fpoirotte\\Pssht\\MACInterface',
-            'Compression'   => '\\fpoirotte\\Pssht\\CompressionInterface',
-            'Key'           => '\\fpoirotte\\Pssht\\KeyInterface',
-            'KEX'           => '\\fpoirotte\\Pssht\\KEXInterface',
-            'Encryption'    => '\\fpoirotte\\Pssht\\EncryptionInterface',
+            'MAC'           => '\\fpoirotte\\Pssht\\MAC\\MACInterface',
+            'Compression'   => '\\fpoirotte\\Pssht\\Compression\\CompressionInterface',
+            'Key'           => '\\fpoirotte\\Pssht\\Key\\KeyInterface',
+            'KEX'           => '\\fpoirotte\\Pssht\\KEX\\KEXInterface',
+            'Encryption'    => '\\fpoirotte\\Pssht\\Encryption\\EncryptionInterface',
         );
 
         $this->algos = array(
@@ -158,7 +158,7 @@ class Algorithms
 
         // Classes that implement AvailabilityInterface
         // where the algorithm is not currently available.
-        $iface = '\\fpoirotte\\Pssht\\AvailabilityInterface';
+        $iface = '\\fpoirotte\\Pssht\\Algorithms\\AvailabilityInterface';
         if ($reflector->implementsInterface($iface) && !$class::isAvailable()) {
             $logging->debug(
                 'Skipping %(type)s algorithm "%(name)s" (not available)',

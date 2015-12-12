@@ -18,7 +18,7 @@ use fpoirotte\Pssht\Wire\Decoder;
 /**
  * Connection layer for the SSH protocol (RFC 4254).
  */
-class Connection implements \fpoirotte\Pssht\HandlerInterface
+class Connection implements \fpoirotte\Pssht\Handlers\HandlerInterface
 {
     /// Opened SSH channels.
     protected $channels;
@@ -146,13 +146,13 @@ class Connection implements \fpoirotte\Pssht\HandlerInterface
      *  \param int $type
      *      Message type.
      *
-     *  \param fpoirotte::Pssht::HandlerInterface $handler
+     *  \param fpoirotte::Pssht::Handlers::HandlerInterface $handler
      *      Handler to associate with the message.
      */
     public function setHandler(
         $message,
         $type,
-        \fpoirotte\Pssht\HandlerInterface $handler
+        \fpoirotte\Pssht\Handlers\HandlerInterface $handler
     ) {
         if (!is_int($type) || $type < 0 || $type > 255) {
             throw new \InvalidArgumentException();
@@ -178,13 +178,13 @@ class Connection implements \fpoirotte\Pssht\HandlerInterface
      *  \param int $type
      *      Message type.
      *
-     *  \param fpoirotte::Pssht::HandlerInterface $handler
+     *  \param fpoirotte::Pssht::Handlers::HandlerInterface $handler
      *      Handler to unregister.
      */
     public function unsetHandler(
         $message,
         $type,
-        \fpoirotte\Pssht\HandlerInterface $handler
+        \fpoirotte\Pssht\Handlers\HandlerInterface $handler
     ) {
         if (!is_int($type) || $type < 0 || $type > 255) {
             throw new \InvalidArgumentException();

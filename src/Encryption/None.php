@@ -11,12 +11,10 @@
 
 namespace fpoirotte\Pssht\Encryption;
 
-use fpoirotte\Pssht\EncryptionInterface;
-
 /**
  * Null cipher (OPTIONAL and NOT RECOMMENDED in RFC 4253).
  */
-class None implements EncryptionInterface
+class None implements \fpoirotte\Pssht\Encryption\EncryptionInterface
 {
     public function __construct($iv, $key)
     {

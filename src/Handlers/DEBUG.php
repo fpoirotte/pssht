@@ -14,7 +14,7 @@ namespace fpoirotte\Pssht\Handlers;
 /**
  * Handler for SSH_MSG_DEBUG messages.
  */
-class DEBUG implements \fpoirotte\Pssht\HandlerInterface
+class DEBUG implements \fpoirotte\Pssht\Handlers\HandlerInterface
 {
     // SSH_MSG_DEBUG = 4
     public function handle(

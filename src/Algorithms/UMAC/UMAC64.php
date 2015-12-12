@@ -9,12 +9,12 @@
 * file that was distributed with this source code.
 */
 
-namespace fpoirotte\Pssht\UMAC;
+namespace fpoirotte\Pssht\Algorithms\UMAC;
 
-class UMAC128 extends \fpoirotte\Pssht\UMAC\Base
+class UMAC64 extends Base
 {
     public function __construct()
     {
-        parent::__construct(MCRYPT_RIJNDAEL_128, 16);
+        parent::__construct(MCRYPT_RIJNDAEL_128, 8);
     }
 }

@@ -14,7 +14,7 @@ namespace fpoirotte\Pssht\Messages\KEX\ECDH\REPLY;
 /**
  * SSH_MSG_KEX_ECDH_REPLY message (RFC 5656).
  */
-class RFC5656 implements \fpoirotte\Pssht\MessageInterface
+class RFC5656 implements \fpoirotte\Pssht\Messages\MessageInterface
 {
     /// Exchange hash.
     protected $H;
@@ -59,13 +59,13 @@ class RFC5656 implements \fpoirotte\Pssht\MessageInterface
      *  \param fpoirotte::Pssht::Messages::KEX::ECDH::INIT::RFC5656 $kexDHInit
      *      Client's contribution to the Diffie-Hellman Key Exchange.
      *
-     *  \param fpoirotte::Pssht::KeyInterface $key
+     *  \param fpoirotte::Pssht::Key::KeyInterface $key
      *      Server's public key.
      *
-     *  \param fpoirotte::Pssht::EncryptionInterface $encryptionAlgo
+     *  \param fpoirotte::Pssht::Encryption::EncryptionInterface $encryptionAlgo
      *      Encryption algorithm in use.
      *
-     *  \param fpoirotte::Pssht::KEXInterface $kexAlgo
+     *  \param fpoirotte::Pssht::KEX::KEXInterface $kexAlgo
      *      Key exchange algorithm to use.
      *
      *  \param fpoirotte::Pssht::Messages::KEXINIT $serverKEX
@@ -83,9 +83,9 @@ class RFC5656 implements \fpoirotte\Pssht\MessageInterface
     public function __construct(
         \fpoirotte\Pssht\ECC\Curve $curve,
         \fpoirotte\Pssht\Messages\KEX\ECDH\INIT\RFC5656 $kexDHInit,
-        \fpoirotte\Pssht\KeyInterface $key,
-        \fpoirotte\Pssht\EncryptionInterface $encryptionAlgo,
-        \fpoirotte\Pssht\KEXInterface $kexAlgo,
+        \fpoirotte\Pssht\Key\KeyInterface $key,
+        \fpoirotte\Pssht\Encryption\EncryptionInterface $encryptionAlgo,
+        \fpoirotte\Pssht\KEX\KEXInterface $kexAlgo,
         \fpoirotte\Pssht\Messages\KEXINIT $serverKEX,
         \fpoirotte\Pssht\Messages\KEXINIT $clientKEX,
         $serverIdent,

@@ -1,6 +1,6 @@
 <?php
 
-namespace fpoirotte\Pssht\Tests\Unit;
+namespace fpoirotte\Pssht\Tests\Unit\ECC;
 
 /**
  * Test vectors for Curve 25519.
@@ -9,7 +9,7 @@ class Curve25519 extends \PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
-        $this->curve = \fpoirotte\Pssht\Curve25519::getInstance();
+        $this->curve = \fpoirotte\Pssht\ECC\Curve25519::getInstance();
     }
 
     public function testHandshake()

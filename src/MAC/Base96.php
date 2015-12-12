@@ -11,8 +11,8 @@
 
 namespace fpoirotte\Pssht\MAC;
 
-use fpoirotte\Pssht\MACInterface;
-use fpoirotte\Pssht\AvailabilityInterface;
+use fpoirotte\Pssht\MAC\MACInterface;
+use fpoirotte\Pssht\Algorithms\AvailabilityInterface;
 use fpoirotte\Pssht\MAC\Base96Interface;
 
 /**

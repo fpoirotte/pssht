@@ -14,7 +14,7 @@ namespace fpoirotte\Pssht\Handlers\KEXDH;
 /**
  * Handler for SSH_MSG_KEXDH_INIT messages.
  */
-class INIT implements \fpoirotte\Pssht\HandlerInterface
+class INIT implements \fpoirotte\Pssht\Handlers\HandlerInterface
 {
     // SSH_MSG_KEXDH_INIT = 30
     public function handle(

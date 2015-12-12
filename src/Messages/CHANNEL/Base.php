@@ -14,7 +14,7 @@ namespace fpoirotte\Pssht\Messages\CHANNEL;
 /**
  * Abstract SSH_MSG_CHANNEL_* message (RFC 4254).
  */
-abstract class Base implements \fpoirotte\Pssht\MessageInterface
+abstract class Base implements \fpoirotte\Pssht\Messages\MessageInterface
 {
     /// Local channel identifier.
     protected $channel;

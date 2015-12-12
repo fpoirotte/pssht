@@ -11,6 +11,8 @@
 
 namespace fpoirotte\Pssht;
 
+use \fpoirotte\Pssht\Compression\CompressionInterface;
+
 /**
  * Transport layer for the SSH protocol (RFC 4253).
  */
@@ -158,13 +160,8 @@ class Transport
         $this->encoder      = $encoder;
         $this->decoder      = $decoder;
 
-        $this->compressor   = new \fpoirotte\Pssht\Compression\None(
-            \fpoirotte\Pssht\CompressionInterface::MODE_COMPRESS
-        );
-
-        $this->uncompressor = new \fpoirotte\Pssht\Compression\None(
-            \fpoirotte\Pssht\CompressionInterface::MODE_UNCOMPRESS
-        );
+        $this->compressor   = new \fpoirotte\Pssht\Compression\None(CompressionInterface::MODE_COMPRESS);
+        $this->uncompressor = new \fpoirotte\Pssht\Compression\None(CompressionInterface::MODE_UNCOMPRESS);
 
         $this->encryptor    = new \fpoirotte\Pssht\Encryption\None(null, null);
         $this->decryptor    = new \fpoirotte\Pssht\Encryption\None(null, null);
@@ -325,7 +322,7 @@ class Transport
     /**
      * Get the object used to compress outgoing packets.
      *
-     *  \retval fpoirotte::Pssht::CompressionInterface
+     *  \retval fpoirotte::Pssht::Compression::CompressionInterface
      *      Outgoing packets' compressor.
      */
     public function getCompressor()
@@ -336,15 +333,15 @@ class Transport
     /**
      * Set the object used to compress outgoing packets.
      *
-     *  \param fpoirotte::Pssht::CompressionInterface $compressor
+     *  \param fpoirotte::Pssht::Compression::CompressionInterface $compressor
      *      Outgoing packets' compressor.
      *
      *  \retval Transport
      *      Return this transport layer.
      */
-    public function setCompressor(\fpoirotte\Pssht\CompressionInterface $compressor)
+    public function setCompressor(CompressionInterface $compressor)
     {
-        if ($compressor->getMode() !== \fpoirotte\Pssht\CompressionInterface::MODE_COMPRESS) {
+        if ($compressor->getMode() !== CompressionInterface::MODE_COMPRESS) {
             throw new \InvalidArgumentException();
         }
 
@@ -372,9 +369,9 @@ class Transport
      *  \retval Transport
      *      Return this transport layer.
      */
-    public function setUncompressor(\fpoirotte\Pssht\CompressionInterface $uncompressor)
+    public function setUncompressor(CompressionInterface $uncompressor)
     {
-        if ($uncompressor->getMode() !== \fpoirotte\Pssht\CompressionInterface::MODE_UNCOMPRESS) {
+        if ($uncompressor->getMode() !== CompressionInterface::MODE_UNCOMPRESS) {
             throw new \InvalidArgumentException();
         }
 
@@ -385,7 +382,7 @@ class Transport
     /**
      * Get the object used to encrypt outgoing packets.
      *
-     *  \retval fpoirotte::Pssht::EncryptionInterface
+     *  \retval fpoirotte::Pssht::Encryption::EncryptionInterface
      *      Outgoing packets' encryptor.
      */
     public function getEncryptor()
@@ -396,13 +393,13 @@ class Transport
     /**
      * Set the object used to encrypt outgoing packets.
      *
-     *  \param fpoirotte::Pssht::EncryptionInterface $encryptor
+     *  \param fpoirotte::Pssht::Encryption::EncryptionInterface $encryptor
      *      Outgoing packets' encryptor.
      *
      *  \retval Transport
      *      Return this transport layer.
      */
-    public function setEncryptor(\fpoirotte\Pssht\EncryptionInterface $encryptor)
+    public function setEncryptor(\fpoirotte\Pssht\Encryption\EncryptionInterface $encryptor)
     {
         $this->encryptor = $encryptor;
         return $this;
@@ -411,7 +408,7 @@ class Transport
     /**
      * Get the object used to decrypt incoming packets.
      *
-     *  \retval fpoirotte::Pssht::EncryptionInterface
+     *  \retval fpoirotte::Pssht::Encryption::EncryptionInterface
      *      Incoming packets' decryptor.
      */
     public function getDecryptor()
@@ -422,13 +419,13 @@ class Transport
     /**
      * Set the object used to decrypt incoming packets.
      *
-     *  \param fpoirotte::Pssht::EncryptionInterface $decryptor
+     *  \param fpoirotte::Pssht::Encryption::EncryptionInterface $decryptor
      *      Incoming packets' decryptor.
      *
      *  \retval Transport
      *      Return this transport layer.
      */
-    public function setDecryptor(\fpoirotte\Pssht\EncryptionInterface $decryptor)
+    public function setDecryptor(\fpoirotte\Pssht\Encryption\EncryptionInterface $decryptor)
     {
         $this->decryptor = $decryptor;
         return $this;
@@ -437,7 +434,7 @@ class Transport
     /**
      * Get the object used to check integrity of incoming packets.
      *
-     *  \retval fpoirotte::Pssht::MACInterface
+     *  \retval fpoirotte::Pssht::MAC::MACInterface
      *      Incoming packets' MAC checker.
      */
     public function getInputMAC()
@@ -448,13 +445,13 @@ class Transport
     /**
      * Set the object used to check integrity of incoming packets.
      *
-     *  \param fpoirotte::Pssht::MACInterface $inputMAC
+     *  \param fpoirotte::Pssht::MAC::MACInterface $inputMAC
      *      Incoming packets' MAC checker.
      *
      *  \retval Transport
      *      Return this transport layer.
      */
-    public function setInputMAC(\fpoirotte\Pssht\MACInterface $inputMAC)
+    public function setInputMAC(\fpoirotte\Pssht\MAC\MACInterface $inputMAC)
     {
         $this->inMAC = $inputMAC;
         return $this;
@@ -463,7 +460,7 @@ class Transport
     /**
      * Get the object used to check integrity of outgoing packets.
      *
-     *  \retval fpoirotte::Pssht::MACInterface
+     *  \retval fpoirotte::Pssht::MAC::MACInterface
      *      Outgoing packets' MAC generator.
      */
     public function getOutputMAC()
@@ -474,13 +471,13 @@ class Transport
     /**
      * Set the object used to generate MACs for outgoing packets.
      *
-     *  \param fpoirotte::Pssht::MACInterface $outputMAC
+     *  \param fpoirotte::Pssht::MAC::MACInterface $outputMAC
      *      Outgoing packets' MAC generator.
      *
      *  \retval Transport
      *      Return this transport layer.
      */
-    public function setOutputMAC(\fpoirotte\Pssht\MACInterface $outputMAC)
+    public function setOutputMAC(\fpoirotte\Pssht\MAC\MACInterface $outputMAC)
     {
         $this->outMAC = $outputMAC;
         return $this;
@@ -551,7 +548,7 @@ class Transport
      *  \param int $type
      *      Message type.
      *
-     *  \retval fpoirotte::Pssht::HandlerInterface
+     *  \retval fpoirotte::Pssht::Handlers::HandlerInterface
      *      Handler associated with the given message type.
      *
      *  \retval null
@@ -576,7 +573,7 @@ class Transport
      *  \param int $type
      *      Message type.
      *
-     *  \param fpoirotte::Pssht::HandlerInterface $handler
+     *  \param fpoirotte::Pssht::Handlers::HandlerInterface $handler
      *      Handler to register for that message type.
      *
      *  \retval Transport
@@ -586,7 +583,7 @@ class Transport
      *      The given handler will overwrite any previously
      *      registered handler for that message type.
      */
-    public function setHandler($type, \fpoirotte\Pssht\HandlerInterface $handler)
+    public function setHandler($type, \fpoirotte\Pssht\Handlers\HandlerInterface $handler)
     {
         if (!is_int($type) || $type < 0 || $type > 255) {
             throw new \InvalidArgumentException();
@@ -602,13 +599,13 @@ class Transport
      *  \param int $type
      *      Message type.
      *
-     *  \param fpoirotte::Pssht::HandlerInterface $handler
+     *  \param fpoirotte::Pssht::Handlers::HandlerInterface $handler
      *      Handler to unregister for that message type.
      *
      *  \retval Transport
      *      Returns this transport layer.
      */
-    public function unsetHandler($type, \fpoirotte\Pssht\HandlerInterface $handler)
+    public function unsetHandler($type, \fpoirotte\Pssht\Handlers\HandlerInterface $handler)
     {
         if (!is_int($type) || $type < 0 || $type > 255) {
             throw new \InvalidArgumentException();
@@ -623,13 +620,13 @@ class Transport
     /**
      * Write an SSH message into the output buffer.
      *
-     *  \param fpoirotte::Pssht::MessageInterface $message
+     *  \param fpoirotte::Pssht::Messages::MessageInterface $message
      *      Message to write into the output buffer.
      *
      *  \retval Transport
      *      Returns this transport layer.
      */
-    public function writeMessage(\fpoirotte\Pssht\MessageInterface $message)
+    public function writeMessage(\fpoirotte\Pssht\Messages\MessageInterface $message)
     {
         $logging = \Plop\Plop::getInstance();
 
@@ -651,7 +648,7 @@ class Transport
         // and RFCs 5116 & 5647 for AEAD & AES-GCM.
         if ($this->outMAC instanceof \fpoirotte\Pssht\MAC\OpensshCom\EtM\EtMInterface) {
             $padSize    = $blockSize - ((1 + $size) % $blockSize);
-        } elseif ($this->encryptor instanceof \fpoirotte\Pssht\AEADInterface) {
+        } elseif ($this->encryptor instanceof \fpoirotte\Pssht\Algorithms\AEADInterface) {
             $padSize    = $blockSize - ((1 + $size) % $blockSize);
         } else {
             $padSize    = $blockSize - ((1 + 4 + $size) % $blockSize);
@@ -746,7 +743,7 @@ class Transport
                 return false;
             }
             $unencrypted = $encPayload;
-        } elseif ($this->decryptor instanceof \fpoirotte\Pssht\AEADInterface) {
+        } elseif ($this->decryptor instanceof \fpoirotte\Pssht\Algorithms\AEADInterface) {
             $encPayload = $this->decoder->getBuffer()->get(4);
             if ($encPayload === null) {
                 return false;
@@ -769,7 +766,7 @@ class Transport
         if ($this->inMAC instanceof \fpoirotte\Pssht\MAC\OpensshCom\EtM\EtMInterface) {
             // Only the main payload remains.
             $toRead = $packetLength;
-        } elseif ($this->decryptor instanceof \fpoirotte\Pssht\AEADInterface) {
+        } elseif ($this->decryptor instanceof \fpoirotte\Pssht\Algorithms\AEADInterface) {
             // packet length (authenticated data)
             // + encrypted payload
             // + authentication tag (AT)

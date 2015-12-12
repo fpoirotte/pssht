@@ -22,7 +22,9 @@ namespace fpoirotte\Pssht\Key\SSH;
  *      http://cvsweb.openbsd.org/cgi-bin/cvsweb/src/usr.bin/ssh/PROTOCOL.key?rev=1.1
  *      for the specification of OpenSSH's private key format.
  */
-class ED25519 implements \fpoirotte\Pssht\KeyInterface, \fpoirotte\Pssht\AvailabilityInterface
+class ED25519 implements
+    \fpoirotte\Pssht\Key\KeyInterface,
+    \fpoirotte\Pssht\Algorithms\AvailabilityInterface
 {
     /// Public key.
     protected $pk;
@@ -113,7 +115,7 @@ class ED25519 implements \fpoirotte\Pssht\KeyInterface, \fpoirotte\Pssht\Availab
 
     protected static function decodepoint($s)
     {
-        $curve = \fpoirotte\Pssht\ED25519::getInstance();
+        $curve = \fpoirotte\Pssht\ECC\ED25519::getInstance();
         $y = gmp_and(
             gmp_init(bin2hex(strrev($s)), 16),
             gmp_sub(gmp_pow(2, 255), 1)
@@ -131,7 +133,7 @@ class ED25519 implements \fpoirotte\Pssht\KeyInterface, \fpoirotte\Pssht\Availab
 
     protected static function isOnCurve($P)
     {
-        $curve = \fpoirotte\Pssht\ED25519::getInstance();
+        $curve = \fpoirotte\Pssht\ECC\ED25519::getInstance();
         list($x, $y) = $P;
         $x2 = gmp_mul($x, $x);
         $y2 = gmp_mul($y, $y);
@@ -151,7 +153,7 @@ class ED25519 implements \fpoirotte\Pssht\KeyInterface, \fpoirotte\Pssht\Availab
             throw new \RuntimeException();
         }
 
-        $curve = \fpoirotte\Pssht\ED25519::getInstance();
+        $curve = \fpoirotte\Pssht\ECC\ED25519::getInstance();
         $h = hash('sha512', $this->sk, true);
         $a = gmp_add(
             gmp_pow(2, 256-2),
@@ -178,7 +180,7 @@ class ED25519 implements \fpoirotte\Pssht\KeyInterface, \fpoirotte\Pssht\Availab
 
     public function check($message, $signature)
     {
-        $curve = \fpoirotte\Pssht\ED25519::getInstance();
+        $curve = \fpoirotte\Pssht\ECC\ED25519::getInstance();
         if (strlen($signature) !== 64) {
             throw new \InvalidArgumentException();
         }

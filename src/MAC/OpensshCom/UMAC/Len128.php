@@ -16,7 +16,7 @@ class Len128 extends Base
     final public function __construct($key)
     {
         $this->key  = $key;
-        $this->umac = new \fpoirotte\Pssht\UMAC\UMAC128();
+        $this->umac = new \fpoirotte\Pssht\Algorithms\UMAC\UMAC128();
     }
 
     final public static function getKeySize()

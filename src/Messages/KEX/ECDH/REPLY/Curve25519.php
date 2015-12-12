@@ -15,7 +15,7 @@ namespace fpoirotte\Pssht\Messages\KEX\ECDH\REPLY;
  * SSH_MSG_KEX_ECDH_REPLY message (RFC 5656),
  * specialized for Curve25519.
  */
-class Curve25519 implements \fpoirotte\Pssht\MessageInterface
+class Curve25519 implements \fpoirotte\Pssht\Messages\MessageInterface
 {
     /// Exchange hash.
     protected $H;
@@ -77,9 +77,9 @@ class Curve25519 implements \fpoirotte\Pssht\MessageInterface
      */
     public function __construct(
         \fpoirotte\Pssht\Messages\KEX\ECDH\INIT\Curve25519 $kexDHInit,
-        \fpoirotte\Pssht\KeyInterface $key,
-        \fpoirotte\Pssht\EncryptionInterface $encryptionAlgo,
-        \fpoirotte\Pssht\KEXInterface $kexAlgo,
+        \fpoirotte\Pssht\Key\KeyInterface $key,
+        \fpoirotte\Pssht\Encryption\EncryptionInterface $encryptionAlgo,
+        \fpoirotte\Pssht\KEX\KEXInterface $kexAlgo,
         \fpoirotte\Pssht\Messages\KEXINIT $serverKEX,
         \fpoirotte\Pssht\Messages\KEXINIT $clientKEX,
         $serverIdent,
@@ -93,7 +93,7 @@ class Curve25519 implements \fpoirotte\Pssht\MessageInterface
             throw new \InvalidArgumentException();
         }
 
-        $curve              = \fpoirotte\Pssht\Curve25519::getInstance();
+        $curve              = \fpoirotte\Pssht\ECC\Curve25519::getInstance();
         $d_S                = openssl_random_pseudo_bytes(32);
         $this->Q_S          = $curve->getPublic($d_S);
         $Q_C                = $kexDHInit->getQ();

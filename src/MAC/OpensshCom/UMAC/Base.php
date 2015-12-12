@@ -11,7 +11,9 @@
 
 namespace fpoirotte\Pssht\MAC\OpensshCom\UMAC;
 
-abstract class Base implements \fpoirotte\Pssht\MACInterface, \fpoirotte\Pssht\AvailabilityInterface
+abstract class Base implements
+    \fpoirotte\Pssht\MAC\MACInterface,
+    \fpoirotte\Pssht\Algorithms\AvailabilityInterface
 {
     protected $umac;
     protected $key;

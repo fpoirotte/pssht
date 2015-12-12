@@ -15,7 +15,7 @@ namespace fpoirotte\Pssht\KEX\LibsshOrg;
  * Abstract class for Elliptic Curve Diffie-Hellman
  * key exchange using Curve25519 and SHA-256.
  */
-class Curve25519 implements \fpoirotte\Pssht\KEXInterface
+class Curve25519 implements \fpoirotte\Pssht\KEX\KEXInterface
 {
     public static function addHandlers(\fpoirotte\Pssht\Transport $transport)
     {

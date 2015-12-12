@@ -9,12 +9,12 @@
 * file that was distributed with this source code.
 */
 
-namespace fpoirotte\Pssht;
+namespace fpoirotte\Pssht\Encryption;
 
 /**
  * Interface for an encryption/decryption algorithm.
  */
-interface EncryptionInterface extends AlgorithmInterface
+interface EncryptionInterface extends \fpoirotte\Pssht\Algorithms\AlgorithmInterface
 {
     /**
      * Construct an encryption/decryption algorithm.

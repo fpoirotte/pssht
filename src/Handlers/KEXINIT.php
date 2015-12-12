@@ -14,7 +14,7 @@ namespace fpoirotte\Pssht\Handlers;
 /**
  * Handler for SSH_MSG_KEXINIT messages.
  */
-class KEXINIT implements \fpoirotte\Pssht\HandlerInterface
+class KEXINIT implements \fpoirotte\Pssht\Handlers\HandlerInterface
 {
     // SSH_MSG_KEXINIT = 20
     public function handle(
@@ -75,7 +75,7 @@ class KEXINIT implements \fpoirotte\Pssht\HandlerInterface
         $context['C2S']['MAC'] = null;
         $reflector = new \ReflectionClass($context['C2S']['Encryption']);
         // Skip MAC algorithm selection for AEAD.
-        if ($reflector->implementsInterface('\\fpoirotte\\Pssht\\AEADInterface')) {
+        if ($reflector->implementsInterface('\\fpoirotte\\Pssht\\Algorithms\\AEAD\\AEADInterface')) {
             $context['C2S']['MAC'] = '\\fpoirotte\\Pssht\\MAC\\None';
         } else {
             foreach ($kex->getC2SMACAlgos() as $algo) {
@@ -120,7 +120,7 @@ class KEXINIT implements \fpoirotte\Pssht\HandlerInterface
         $context['S2C']['MAC'] = null;
         $reflector = new \ReflectionClass($context['S2C']['Encryption']);
         // Skip MAC algorithm selection for AEAD.
-        if ($reflector->implementsInterface('\\fpoirotte\\Pssht\\AEADInterface')) {
+        if ($reflector->implementsInterface('\\fpoirotte\\Pssht\\Algorithms\\AEAD\\AEADInterface')) {
             $context['S2C']['MAC'] = '\\fpoirotte\\Pssht\\MAC\\None';
         } else {
             foreach ($kex->getS2CMACAlgos() as $algo) {

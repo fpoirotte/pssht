@@ -9,12 +9,12 @@
 * file that was distributed with this source code.
 */
 
-namespace fpoirotte\Pssht;
+namespace fpoirotte\Pssht\MAC;
 
 /**
  * Interface for a MAC algorithm.
  */
-interface MACInterface extends AlgorithmInterface
+interface MACInterface extends \fpoirotte\Pssht\Algorithms\AlgorithmInterface
 {
     /**
      * Construct a new MAC algorithm.

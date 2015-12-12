@@ -1,6 +1,6 @@
 <?php
 
-namespace fpoirotte\Pssht\Tests\Unit;
+namespace fpoirotte\Pssht\Tests\Unit\Algorithms;
 
 /**
  * Test vectors for Poly1305.
@@ -42,7 +42,7 @@ class Poly1305 extends \PHPUnit_Framework_TestCase
         $key    = pack('H*', $key);
         $tag    = pack('H*', $tag);
 
-        $mac = new \fpoirotte\Pssht\Poly1305($key);
+        $mac = new \fpoirotte\Pssht\Algorithms\Poly1305($key);
         $this->assertSame($tag, $mac->mac($input));
     }
 }

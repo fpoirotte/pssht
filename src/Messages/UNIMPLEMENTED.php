@@ -14,7 +14,7 @@ namespace fpoirotte\Pssht\Messages;
 /**
  * SSH_MSG_UNIMPLEMENTED message (RFC 4253).
  */
-class UNIMPLEMENTED implements \fpoirotte\Pssht\MessageInterface
+class UNIMPLEMENTED implements MessageInterface
 {
     /// Sequence number for the unimplemented message.
     protected $sequenceNo;

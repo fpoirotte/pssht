@@ -11,7 +11,7 @@
 
 namespace fpoirotte\Pssht\Messages\USERAUTH\REQUEST;
 
-use fpoirotte\Pssht\MessageInterface;
+use fpoirotte\Pssht\Messages\MessageInterface;
 
 /**
  * Abstract SSH_MSG_USERAUTH_REQUEST message (RFC 4252).

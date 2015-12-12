@@ -9,7 +9,7 @@
 * file that was distributed with this source code.
 */
 
-namespace fpoirotte\Pssht\AEAD;
+namespace fpoirotte\Pssht\Algorithms\AEAD;
 
 /**
  * ChaCha20 & Poly1305 combined to achieve AEAD.
@@ -21,14 +21,14 @@ class ChaCha20Poly1305
 
     public function __construct($key)
     {
-        $this->main     = new \fpoirotte\Pssht\ChaCha20(substr($key, 0, 32));
-        $this->header   = new \fpoirotte\Pssht\ChaCha20(substr($key, 32));
+        $this->main     = new \fpoirotte\Pssht\Algorithms\ChaCha20(substr($key, 0, 32));
+        $this->header   = new \fpoirotte\Pssht\Algorithms\ChaCha20(substr($key, 32));
     }
 
     public function ae($IV, $P, $A)
     {
         $polyKey    = $this->main->encrypt(str_repeat("\x00", 32), $IV, 0);
-        $poly       = new \fpoirotte\Pssht\Poly1305($polyKey);
+        $poly       = new \fpoirotte\Pssht\Algorithms\Poly1305($polyKey);
         $aad        = $this->header->encrypt($A, $IV, 0);
         $res        = $this->main->encrypt($P, $IV, 1);
         return $aad . $res . $poly->mac($aad . $res);
@@ -42,7 +42,7 @@ class ChaCha20Poly1305
         }
 
         $polyKey    = $this->main->encrypt(str_repeat("\x00", 32), $IV, 0);
-        $poly       = new \fpoirotte\Pssht\Poly1305($polyKey);
+        $poly       = new \fpoirotte\Pssht\Algorithms\Poly1305($polyKey);
         if ($poly->mac($A . $C) !== $T) {
             return null;
         }

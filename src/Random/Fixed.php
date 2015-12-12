@@ -14,7 +14,7 @@ namespace fpoirotte\Pssht\Random;
 /**
  * Fake PRNG that returns a fixed string.
  */
-class Fixed implements \fpoirotte\Pssht\RandomInterface
+class Fixed implements RandomInterface
 {
     /// Fixed data to return.
     protected $data;

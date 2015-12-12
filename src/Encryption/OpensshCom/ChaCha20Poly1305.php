@@ -14,13 +14,13 @@ namespace fpoirotte\Pssht\Encryption\OpensshCom;
 /**
  * ChaCha20 & Poly1305 combined to achieve AEAD.
  */
-class ChaCha20Poly1305 implements \fpoirotte\Pssht\AEADInterface
+class ChaCha20Poly1305 implements \fpoirotte\Pssht\Algorithms\AEAD\AEADInterface
 {
     protected $aead;
 
     public function __construct($iv, $key)
     {
-        $this->aead = new \fpoirotte\Pssht\AEAD\ChaCha20Poly1305($key);
+        $this->aead = new \fpoirotte\Pssht\Algorithms\AEAD\ChaCha20Poly1305($key);
     }
 
     public static function getName()

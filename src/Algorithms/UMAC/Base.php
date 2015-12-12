@@ -9,7 +9,7 @@
 * file that was distributed with this source code.
 */
 
-namespace fpoirotte\Pssht\UMAC;
+namespace fpoirotte\Pssht\Algorithms\UMAC;
 
 abstract class Base
 {

@@ -12,12 +12,12 @@
 namespace fpoirotte\Pssht\Handlers\USERAUTH;
 
 use fpoirotte\Pssht\Messages\Disconnect;
-use fpoirotte\Pssht\AuthenticationInterface;
+use fpoirotte\Pssht\Authentication\AuthenticationInterface;
 
 /**
  * Handler for SSH_MSG_USERAUTH_REQUEST messages.
  */
-class REQUEST implements \fpoirotte\Pssht\HandlerInterface
+class REQUEST implements \fpoirotte\Pssht\Handlers\HandlerInterface
 {
     /// Allowed authentication methods.
     protected $methods;
@@ -36,7 +36,7 @@ class REQUEST implements \fpoirotte\Pssht\HandlerInterface
         $method         = new \fpoirotte\Pssht\Authentication\None();
         $realMethods    = array($method->getName() => $method);
         foreach ($methods as $method) {
-            if (!($method instanceof \fpoirotte\Pssht\AuthenticationInterface)) {
+            if (!($method instanceof AuthenticationInterface)) {
                 throw new \InvalidArgumentException();
             }
             $realMethods[$method->getName()] = $method;
@@ -133,11 +133,11 @@ class REQUEST implements \fpoirotte\Pssht\HandlerInterface
         $transport->writeMessage($response);
 
         $compressor = $transport->getCompressor();
-        if ($compressor instanceof \fpoirotte\Pssht\DelayedCompressionInterface) {
+        if ($compressor instanceof \fpoirotte\Pssht\Compression\DelayedCompressionInterface) {
             $compressor->setAuthenticated();
         }
         $uncompressor = $transport->getUncompressor();
-        if ($uncompressor instanceof \fpoirotte\Pssht\DelayedCompressionInterface) {
+        if ($uncompressor instanceof \fpoirotte\Pssht\Compression\DelayedCompressionInterface) {
             $uncompressor->setAuthenticated();
         }
 

@@ -14,7 +14,7 @@ namespace fpoirotte\Pssht\Handlers;
 /**
  * Handler for SSH_MSG_IGNORE messages.
  */
-class IGNORE implements \fpoirotte\Pssht\HandlerInterface
+class IGNORE implements \fpoirotte\Pssht\Handlers\HandlerInterface
 {
     // SSH_MSG_IGNORE = 2
     public function handle(

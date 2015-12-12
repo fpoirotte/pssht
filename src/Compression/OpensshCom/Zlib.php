@@ -15,7 +15,7 @@ namespace fpoirotte\Pssht\Compression\OpensshCom;
  * Delayed ZLIB compression.
  */
 class Zlib extends \fpoirotte\Pssht\Compression\Zlib implements
-    \fpoirotte\Pssht\DelayedCompressionInterface
+    \fpoirotte\Pssht\Compression\DelayedCompressionInterface
 {
     /// Flag indicating whether user authentication succeeded or not.
     protected $authenticated;

@@ -14,7 +14,7 @@ namespace fpoirotte\Pssht\MAC;
 /**
  * Null MAC generation (= no MAC).
  */
-class None implements \fpoirotte\Pssht\MACInterface
+class None implements \fpoirotte\Pssht\MAC\MACInterface
 {
     public function __construct($key)
     {

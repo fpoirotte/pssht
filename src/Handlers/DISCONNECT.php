@@ -14,7 +14,7 @@ namespace fpoirotte\Pssht\Handlers;
 /**
  * Handler for SSH_MSG_DISCONNECT messages.
  */
-class DISCONNECT implements \fpoirotte\Pssht\HandlerInterface
+class DISCONNECT implements \fpoirotte\Pssht\Handlers\HandlerInterface
 {
     // SSH_MSG_DISCONNECT = 1
     public function handle(
