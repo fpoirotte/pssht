@@ -19,6 +19,8 @@
         <include name="vendor/erebot/plop/src/**/*.php"/>
         <include name="vendor/symfony/dependency-injection/**/*.php"/>
         <exclude name="vendor/symfony/dependency-injection/Tests/**/*.php"/>
+        <exclude name="vendor/symfony/dependency-injection/Compiler/**/*.php"/>
+        <exclude name="vendor/symfony/dependency-injection/Dumper/**/*.php"/>
         <include name="vendor/symfony/config/**/*.php"/>
         <exclude name="vendor/symfony/config/Tests/**/*.php"/>
         <include name="vendor/symfony/filesystem/**/*.php"/>
