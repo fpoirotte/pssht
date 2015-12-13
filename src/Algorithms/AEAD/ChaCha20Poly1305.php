@@ -16,7 +16,10 @@ namespace fpoirotte\Pssht\Algorithms\AEAD;
  */
 class ChaCha20Poly1305
 {
+    /// Instance of ChaCha20 used to encrypt/decrypt additional data.
     protected $header;
+
+    /// Instance of ChaCha20 used to encrypt/decrypt plaintext/cipher data.
     protected $main;
 
     public function __construct($key)

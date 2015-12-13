@@ -15,13 +15,15 @@ namespace fpoirotte\Pssht\ECC;
  * Definition for the elliptic curve "Ed25519".
  *
  * \see
- *      http://ed25519.cr.yp.to/ed25519-20110926.pdf for more information
- *      about this curve.
+ *      http://ed25519.cr.yp.to/ed25519-20110926.pdf
+ *      for more information about this curve.
  */
 class ED25519
 {
+    /// Singleton instance.
     protected static $instance = null;
 
+    /// Holds various parameters for the curve (q, l, d, I, B).
     protected $params = array();
 
     protected function __construct()

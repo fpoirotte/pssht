@@ -63,4 +63,19 @@ abstract class RFC5656 implements \fpoirotte\Pssht\Messages\MessageInterface
     {
         return $this->Q;
     }
+
+    /**
+     * Return the curve to use during computations.
+     *
+     *  \retval fpoirotte::Pssht::ECC:Curve
+     *      The ECC curve to use, in accordance with RFC 5656.
+     *
+     *  \note
+     *      This method MUST be redefined by subclasses.
+     *      The default implementation simply throws an exception.
+     */
+    protected static function getCurve()
+    {
+        throw new \RuntimeException();
+    }
 }

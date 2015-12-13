@@ -25,7 +25,10 @@ namespace fpoirotte\Pssht\ECC;
  */
 class Curve25519
 {
+    /// Singleton instance.
     protected static $instance = null;
+
+    /// Set to 2**255 - 19, hence this curve's name.
     protected $p;
 
     protected function __construct()

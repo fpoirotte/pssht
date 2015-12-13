@@ -16,6 +16,7 @@ namespace fpoirotte\Pssht\ECC;
  */
 class Point implements \ArrayAccess
 {
+    /// The points coordinates (x, y).
     protected $coordinates;
 
     public function __construct($x = null, $y = null)

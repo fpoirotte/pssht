@@ -11,6 +11,9 @@
 
 namespace fpoirotte\Pssht\Algorithms\UMAC;
 
+/**
+ * UMAC algorithm with a 128-bits tag.
+ */
 class UMAC128 extends Base
 {
     public function __construct()

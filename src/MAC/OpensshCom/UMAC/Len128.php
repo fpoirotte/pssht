@@ -11,6 +11,9 @@
 
 namespace fpoirotte\Pssht\MAC\OpensshCom\UMAC;
 
+/**
+ * The UMAC-128 algorithm, generating 128-bits tags.
+ */
 class Len128 extends Base
 {
     final public function __construct($key)

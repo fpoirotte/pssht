@@ -16,6 +16,7 @@ namespace fpoirotte\Pssht\Encryption\OpensshCom;
  */
 class ChaCha20Poly1305 implements \fpoirotte\Pssht\Algorithms\AEAD\AEADInterface
 {
+    /// Underlying implementation for Authenticated Encryption with Additional Data
     protected $aead;
 
     public function __construct($iv, $key)

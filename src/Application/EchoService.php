@@ -10,6 +10,10 @@
 
 namespace fpoirotte\Pssht\Application;
 
+/**
+ * A sample application that acts like an echo server,
+ * sending back whatever message it is fed with.
+ */
 class EchoService implements \fpoirotte\Pssht\Handlers\HandlerInterface
 {
     public function __construct(

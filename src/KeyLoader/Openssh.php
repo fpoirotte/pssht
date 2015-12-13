@@ -11,8 +11,16 @@
 
 namespace fpoirotte\Pssht\KeyLoader;
 
+/**
+ * OpenSSH key loader.
+ *
+ * This class can read OpenSSH's Private Key format.
+ * See http://cvsweb.openbsd.org/cgi-bin/cvsweb/src/usr.bin/ssh/PROTOCOL.key?rev=1.1
+ * for more information on this format.
+ */
 class Openssh
 {
+    /// Magic value used to identity OpenSSH private keys.
     const AUTH_MAGIC = "openssh-key-v1\x00";
 
     public static function loadPublic($data)
@@ -159,6 +167,15 @@ class Openssh
     /**
      * Attempt to parse an OpenSSH key type which is not recognized
      * by the PHP OpenSSL extension.
+     *
+     *  \param string $data
+     *      Raw data contained in the key file.
+     *
+     *  \param string $passphrase
+     *      Private passphrase to use to unlock the contents.
+     *
+     *  \retval fpoirotte::Pssht:KeyInterface
+     *      The actual key.
      */
     private static function parseUnknown($data, $passphrase)
     {
@@ -168,6 +185,15 @@ class Openssh
 
     /**
      * Parse a file using the new OpenSSH private key format.
+     *
+     *  \param string $data
+     *      Raw data contained in the key file.
+     *
+     *  \param string $passphrase
+     *      Private passphrase to use to unlock the contents.
+     *
+     *  \retval fpoirotte::Pssht:KeyInterface
+     *      The actual key.
      *
      *  \see
      *      http://cvsweb.openbsd.org/cgi-bin/cvsweb/src/usr.bin/ssh/PROTOCOL.key?rev=1.1
@@ -340,6 +366,13 @@ class Openssh
      *
      * See https://msdn.microsoft.com/en-us/library/bb540809%28v=vs.85%29.aspx
      * for an explanation of the algorithm used.
+     *
+     *  \param string $oid
+     *      Human-readable representation of an OID
+     *      (eg. ".1.3.6.1.2.1.1.1").
+     *
+     *  \retval string
+     *      Binary representation for the given OID.
      */
     public static function encodeOID($oid)
     {

@@ -11,6 +11,9 @@
 
 namespace fpoirotte\Pssht\MAC\OpensshCom\UMAC;
 
+/**
+ * The UMAC-64 algorithm, generating 64-bits tags.
+ */
 class Len64 extends Base
 {
     final public function __construct($key)

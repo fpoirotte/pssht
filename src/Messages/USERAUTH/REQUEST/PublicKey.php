@@ -99,7 +99,7 @@ class PublicKey extends \fpoirotte\Pssht\Messages\USERAUTH\REQUEST\Base
     }
 
     /**
-     * Get public key algorithm in use.
+     * Get the public key algorithm in use.
      *
      *  \retval string
      *      Public key algorithm in use.

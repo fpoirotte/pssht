@@ -21,7 +21,10 @@ namespace fpoirotte\Pssht\Algorithms;
  */
 class Poly1305
 {
+    /// First half of the secret key (second half in the spec. due to endianness).
     protected $r;
+
+    /// Second half of the secret key.
     protected $s;
 
     public function __construct($key)

@@ -18,7 +18,10 @@ class AES128GCM implements
     \fpoirotte\Pssht\Algorithms\AEAD\AEADInterface,
     \fpoirotte\Pssht\Algorithms\AvailabilityInterface
 {
+    /// Initialization vector.
     protected $iv;
+
+    /// Underlying GCM implementation.
     protected $gcm;
 
     public function __construct($iv, $key)

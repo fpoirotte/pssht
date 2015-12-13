@@ -11,11 +11,17 @@
 
 namespace fpoirotte\Pssht\MAC\OpensshCom\UMAC;
 
+/**
+ * Abstract class for the UMAC algorithm.
+ */
 abstract class Base implements
     \fpoirotte\Pssht\MAC\MACInterface,
     \fpoirotte\Pssht\Algorithms\AvailabilityInterface
 {
+    /// Underlying UMAC implementation.
     protected $umac;
+
+    /// Integrity key
     protected $key;
 
     final public function compute($seqno, $data)

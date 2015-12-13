@@ -13,6 +13,10 @@ namespace fpoirotte\Pssht\MAC\OpensshCom\EtM\UMAC;
 
 use fpoirotte\Pssht\MAC\OpensshCom\EtM\EtMInterface;
 
+/**
+ * The UMAC-128 algorithm, generating 128-bits tags,
+ * in Encrypt-then-MAC (EtM) mode.
+ */
 class Len128 extends \fpoirotte\Pssht\MAC\OpensshCom\UMAC\Len128 implements EtMInterface
 {
     public static function getName()

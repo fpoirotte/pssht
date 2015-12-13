@@ -12,6 +12,14 @@ namespace fpoirotte\Pssht\Application;
 
 use \fpoirotte\Pssht\Messages\DISCONNECT;
 
+/**
+ * A sample application used for testing purposes.
+ *
+ * This application can only be used as a direct command.
+ * It expects a number to be given as the command
+ * and will display a message with that number.
+ * It will also exit with that number as the exit status.
+ */
 class TestService implements \fpoirotte\Pssht\Handlers\HandlerInterface
 {
     public function __construct(

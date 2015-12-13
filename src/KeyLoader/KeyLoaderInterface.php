@@ -11,6 +11,12 @@
 
 namespace fpoirotte\Pssht\KeyLoader;
 
+/**
+ * Interface for a key loader.
+ *
+ * This interface can be used to load both public
+ * and private keys.
+ */
 interface KeyLoaderInterface
 {
     /**

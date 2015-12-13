@@ -21,6 +21,7 @@ namespace fpoirotte\Pssht\Algorithms;
  */
 class ChaCha20
 {
+    /// Secret key used to encrypt/decrypt data.
     protected $key;
 
     public function __construct($key)

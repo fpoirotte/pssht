@@ -63,7 +63,10 @@ class Transport
     /// SSH banner.
     protected $banner;
 
+    /// Maximum number of bytes exchanged before rekeying.
     protected $rekeyingBytes;
+
+    /// Maximum duration before rekeying.
     protected $rekeyingTime;
 
     /// Whether this client is still connected or not.
@@ -91,6 +94,14 @@ class Transport
      *  \param fpoirotte::Pssht::Wire::Decoder $decoder
      *      (optional) Decoder to use when sending SSH messages.
      *      If omitted, a new decoder is automatically created.
+     *
+     *  \param int $rekeyingBytes
+     *      (optional) Maximum number of bytes that may be exchanged
+     *      before key re-exchange (aka. rekeying) is requested.
+     *
+     *  \param int $rekeyingTime
+     *      (optional) Maximum duration (in seconds) before key
+     *      re-exchange (aka. rekeying) is requested.
      *
      *  \note
      *      Once this class' constructor has been called,

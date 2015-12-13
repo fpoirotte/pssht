@@ -11,6 +11,11 @@
 
 namespace fpoirotte\Pssht\KeyLoader;
 
+/**
+ * PuTTY key loader.
+ *
+ * This class can read PuTTY's Private Key (PPK) format.
+ */
 class Putty
 {
     private static function parseHeaderAndBody($line)

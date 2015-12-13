@@ -18,7 +18,10 @@ class Zlib implements
     \fpoirotte\Pssht\Compression\CompressionInterface,
     \fpoirotte\Pssht\Algorithms\AvailabilityInterface
 {
+    /// Factory used to deflate (compress) data.
     static protected $deflateFactory;
+
+    /// Factory used to inflate (decompress) data.
     static protected $inflateFactory;
 
     /// Compression/decompression stream.
