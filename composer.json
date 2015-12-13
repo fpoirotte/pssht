@@ -42,7 +42,8 @@
         "sebastian/phpcpd": "*",
         "phpunit/phpunit": "<4",
         "squizlabs/php_codesniffer": "*",
-        "erebot/buildenv": "~1.2.0"
+        "erebot/buildenv": "~1.2.0",
+        "fpoirotte/natives4doxygen": "*"
     },
     "suggest": {
         "ext-hash": "Add support for various additional algorithms",

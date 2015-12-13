@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "f1b956b01367b5f86ef877147a2b3adc",
-    "content-hash": "b7e20ca34bb547c140ccbde2c508c358",
+    "hash": "668ee4a2dcb0f20a5f54db78d81a02c7",
+    "content-hash": "807729b8e783f068a27864ba422c33c1",
     "packages": [
         {
             "name": "erebot/plop",
@@ -281,6 +281,48 @@
                 "Erebot"
             ],
             "time": "2014-12-30 11:49:48"
+        },
+        {
+            "name": "fpoirotte/natives4doxygen",
+            "version": "0.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/fpoirotte/PHPNatives4Doxygen.git",
+                "reference": "608700ccb6428cf376ce837f30ba7db505ef6835"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/fpoirotte/PHPNatives4Doxygen/zipball/608700ccb6428cf376ce837f30ba7db505ef6835",
+                "reference": "608700ccb6428cf376ce837f30ba7db505ef6835",
+                "shasum": ""
+            },
+            "require": {
+                "php": "*"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "François Poirotte",
+                    "email": "clicky@erebot.net",
+                    "role": "lead"
+                }
+            ],
+            "description": "Doxygen documentation for PHP's built-in classes and interfaces",
+            "homepage": "https://github.com/fpoirotte/PHPNatives4Doxygen",
+            "keywords": [
+                "documentation",
+                "doxygen"
+            ],
+            "time": "2014-11-02 13:27:25"
         },
         {
             "name": "pdepend/pdepend",
