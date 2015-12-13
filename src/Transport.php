@@ -352,7 +352,7 @@ class Transport
     /**
      * Get the object used to uncompress incoming packets.
      *
-     *  \retval fpoirotte::Pssht::CompressionInterface
+     *  \retval fpoirotte::Pssht::Compression::CompressionInterface
      *      Incoming packets' uncompressor.
      */
     public function getUncompressor()
@@ -363,7 +363,7 @@ class Transport
     /**
      * Set the object used to uncompress incoming packets.
      *
-     *  \param fpoirotte::Pssht::CompressionInterface $uncompressor
+     *  \param fpoirotte::Pssht::Compression::CompressionInterface $uncompressor
      *      Incoming packets' uncompressor.
      *
      *  \retval Transport
@@ -648,7 +648,7 @@ class Transport
         // and RFCs 5116 & 5647 for AEAD & AES-GCM.
         if ($this->outMAC instanceof \fpoirotte\Pssht\MAC\OpensshCom\EtM\EtMInterface) {
             $padSize    = $blockSize - ((1 + $size) % $blockSize);
-        } elseif ($this->encryptor instanceof \fpoirotte\Pssht\Algorithms\AEADInterface) {
+        } elseif ($this->encryptor instanceof \fpoirotte\Pssht\Algorithms\AEAD\AEADInterface) {
             $padSize    = $blockSize - ((1 + $size) % $blockSize);
         } else {
             $padSize    = $blockSize - ((1 + 4 + $size) % $blockSize);
@@ -743,7 +743,7 @@ class Transport
                 return false;
             }
             $unencrypted = $encPayload;
-        } elseif ($this->decryptor instanceof \fpoirotte\Pssht\Algorithms\AEADInterface) {
+        } elseif ($this->decryptor instanceof \fpoirotte\Pssht\Algorithms\AEAD\AEADInterface) {
             $encPayload = $this->decoder->getBuffer()->get(4);
             if ($encPayload === null) {
                 return false;
@@ -766,7 +766,7 @@ class Transport
         if ($this->inMAC instanceof \fpoirotte\Pssht\MAC\OpensshCom\EtM\EtMInterface) {
             // Only the main payload remains.
             $toRead = $packetLength;
-        } elseif ($this->decryptor instanceof \fpoirotte\Pssht\Algorithms\AEADInterface) {
+        } elseif ($this->decryptor instanceof \fpoirotte\Pssht\Algorithms\AEAD\AEADInterface) {
             // packet length (authenticated data)
             // + encrypted payload
             // + authentication tag (AT)

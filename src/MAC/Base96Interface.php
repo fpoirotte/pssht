@@ -26,7 +26,7 @@ interface Base96Interface
      *
      *  \note
      *      The base class returned by this method must implement
-     *      the fpoirotte::Pssht::MACInterface interface.
+     *      the fpoirotte::Pssht::MAC::MACInterface interface.
      */
     public static function getBaseClass();
 }
