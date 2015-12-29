@@ -7,67 +7,45 @@ namespace fpoirotte\Pssht\Tests\Functional;
  */
 class Ciphers extends \fpoirotte\Pssht\Tests\Helpers\AbstractConnectionTest
 {
-    public function provideCipher()
+    public function provideAlgorithms()
     {
-        $algos      = array();
-        $algos[]    = '3des-cbc';
-        $algos[]    = 'aes128-cbc';
-        $algos[]    = 'aes192-cbc';
-        $algos[]    = 'aes256-cbc';
-        $algos[]    = 'aes128-ctr';
-        $algos[]    = 'aes192-ctr';
-        $algos[]    = 'aes256-ctr';
-        $algos[]    = 'arcfour';
-        $algos[]    = 'arcfour128';
-        $algos[]    = 'arcfour256';
-        $algos[]    = 'blowfish-cbc';
-        $algos[]    = 'cast128-cbc';
-
-        switch (get_class($this->sshClient)) {
-            case '\\fpoirotte\\Pssht\\Tests\\Helpers\\SshClient\\OpenSSH':
-                $algos[] = 'aes128-gcm@openssh.com';
-                $algos[] = 'aes256-gcm@openssh.com';
-                $algos[] = 'chacha20-poly1305@openssh.com';
-                break;
-        }
-
+        $this->initClient();
         $res = array();
-        foreach ($algos as $algo) {
-            $res[] = array($algo);
+
+        // Keep only algorithms which are supported
+        // by both the SSH client and Pssht.
+        $algos = \fpoirotte\Pssht\Algorithms::factory();
+        foreach ($this->sshClient->getSupportedCiphers() as $algo) {
+            if ($algos->getClass('Encryption', $algo) !== null) {
+                $res[] = array($algo);
+            }
         }
+
         return $res;
     }
 
     /**
-     * @dataProvider    provideCipher
+     * @dataProvider    provideAlgorithms
      */
     public function testCiphers($cipher)
     {
-        // Skip algorithms which are not currently available.
-        $algos = \fpoirotte\Pssht\Algorithms::factory();
-        if ($algos->getClass('Encryption', $cipher) === null) {
-            return $this->markTestSkipped("Unsupported cipher: $cipher");
-        }
-
         $number = rand(0, 100);
-        list($exitCode, $output) = $this->sshClient
+        $client = $this->sshClient
             ->setCipher($cipher)
             ->setCommand(array($number))
             ->setIdentity(
                 dirname(__DIR__) .
                 DIRECTORY_SEPARATOR . 'data' .
                 DIRECTORY_SEPARATOR . 'plaintext' .
-                DIRECTORY_SEPARATOR . 'rsa' .
+                DIRECTORY_SEPARATOR . 'ssh-rsa' .
                 DIRECTORY_SEPARATOR . '4096'
-            )
-            ->run();
-
+            );
+        list($exitCode, $output) = $this->runClient($client);
+        $this->assertSame("Your number: $number" . PHP_EOL, $output);
         $this->assertSame(
             $number,
             $exitCode,
-            "Wrong exit code ($exitCode). Output: " . print_r($output, true)
+            "Wrong exit code ($exitCode)."
         );
-        $this->assertSame(1, count($output));
-        $this->assertSame("Your number: $number", $output[0]);
     }
 }

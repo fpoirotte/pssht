@@ -32,16 +32,16 @@
         -->
         <parameter key="auth.pubkeys" type="collection">
             <parameter key="%USER%" type="collection">
-                <parameter>file://%pssht.base_dir%/tests/data/plaintext/dsa/1024.pub</parameter>
-                <parameter>file://%pssht.base_dir%/tests/data/plaintext/rsa/1024.pub</parameter>
-                <parameter>file://%pssht.base_dir%/tests/data/plaintext/rsa/2048.pub</parameter>
-                <parameter>file://%pssht.base_dir%/tests/data/plaintext/rsa/4096.pub</parameter>
-                <parameter>file://%pssht.base_dir%/tests/data/plaintext/rsa/8192.pub</parameter>
-                <parameter>file://%pssht.base_dir%/tests/data/plaintext/rsa/16384.pub</parameter>
-                <parameter>file://%pssht.base_dir%/tests/data/plaintext/ecdsa/256.pub</parameter>
-                <parameter>file://%pssht.base_dir%/tests/data/plaintext/ecdsa/384.pub</parameter>
-                <parameter>file://%pssht.base_dir%/tests/data/plaintext/ecdsa/521.pub</parameter>
-                <parameter>file://%pssht.base_dir%/tests/data/plaintext/ed25519/256.pub</parameter>
+                <parameter>file://%pssht.base_dir%/tests/data/plaintext/ssh-dss/1024.pub</parameter>
+                <parameter>file://%pssht.base_dir%/tests/data/plaintext/ssh-rsa/1024.pub</parameter>
+                <parameter>file://%pssht.base_dir%/tests/data/plaintext/ssh-rsa/2048.pub</parameter>
+                <parameter>file://%pssht.base_dir%/tests/data/plaintext/ssh-rsa/4096.pub</parameter>
+                <parameter>file://%pssht.base_dir%/tests/data/plaintext/ssh-rsa/8192.pub</parameter>
+                <parameter>file://%pssht.base_dir%/tests/data/plaintext/ssh-rsa/16384.pub</parameter>
+                <parameter>file://%pssht.base_dir%/tests/data/plaintext/ecdsa-sha2-nistp256/256.pub</parameter>
+                <parameter>file://%pssht.base_dir%/tests/data/plaintext/ecdsa-sha2-nistp384/384.pub</parameter>
+                <parameter>file://%pssht.base_dir%/tests/data/plaintext/ecdsa-sha2-nistp521/521.pub</parameter>
+                <parameter>file://%pssht.base_dir%/tests/data/plaintext/ssh-ed25519/256.pub</parameter>
             </parameter>
         </parameter>
         <parameter key="auth.passwords" type="collection"/>

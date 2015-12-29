@@ -50,33 +50,33 @@
         -->
         <parameter key="server_keys" type="collection">
             <parameter key="ssh-rsa" type="collection">
-                <parameter key="file">file://%pssht.base_dir%/tests/data/plaintext/rsa/4096</parameter>
+                <parameter key="file">file://%pssht.base_dir%/tests/data/plaintext/ssh-rsa/4096</parameter>
                 <parameter key="passphrase"></parameter>
             </parameter>
 
             <parameter key="ssh-dss" type="collection">
-                <parameter key="file">file://%pssht.base_dir%/tests/data/plaintext/dsa/1024</parameter>
+                <parameter key="file">file://%pssht.base_dir%/tests/data/plaintext/ssh-dss/1024</parameter>
                 <parameter key="passphrase"/>
             </parameter>
 
             <parameter key="ecdsa-sha2-nistp256" type="collection">
-                <parameter key="file">file://%pssht.base_dir%/tests/data/plaintext/ecdsa/256</parameter>
+                <parameter key="file">file://%pssht.base_dir%/tests/data/plaintext/ecdsa-sha2-nistp256/256</parameter>
                 <parameter key="passphrase"/>
             </parameter>
 
             <!-- @FIXME: The following keys do not work yet. -->
 <!--            <parameter key="ecdsa-sha2-nistp384" type="collection">-->
-<!--                <parameter key="file">file://%pssht.base_dir%/tests/data/plaintext/ecdsa/384</parameter>-->
+<!--                <parameter key="file">file://%pssht.base_dir%/tests/data/plaintext/ecdsa-sha2-nistp384/384</parameter>-->
 <!--                <parameter key="passphrase"/>-->
 <!--            </parameter>-->
 
 <!--            <parameter key="ecdsa-sha2-nistp521" type="collection">-->
-<!--                <parameter key="file">file://%pssht.base_dir%/tests/data/plaintext/ecdsa/521</parameter>-->
+<!--                <parameter key="file">file://%pssht.base_dir%/tests/data/plaintext/ecdsa-sha2-nistp521/521</parameter>-->
 <!--                <parameter key="passphrase"/>-->
 <!--            </parameter>-->
 
             <parameter key="ssh-ed25519" type="collection">
-                <parameter key="file">file://%pssht.base_dir%/tests/data/plaintext/ed25519/256</parameter>
+                <parameter key="file">file://%pssht.base_dir%/tests/data/plaintext/ssh-ed25519/256</parameter>
                 <parameter key="passphrase"/>
             </parameter>
         </parameter>

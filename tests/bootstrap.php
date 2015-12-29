@@ -34,7 +34,13 @@ require(
     DIRECTORY_SEPARATOR . 'AbstractConnectionTest.php'
 );
 
-$logging = \Plop\Plop::getInstance();
-$handlers = $logging->getLogger()->getHandlers();
-define('PSSHT_TESTS_LOG', tempnam(sys_get_temp_dir(), 'pssht-'));
-#$handlers[0] = new \Plop\Handler\Stream(fopen(PSSHT_TESTS_LOG, 'w'));
+require(
+    __DIR__ .
+    DIRECTORY_SEPARATOR . 'Helpers' .
+    DIRECTORY_SEPARATOR . 'OutputException.php'
+);
+
+$logging    = \Plop\Plop::getInstance();
+$handlers   = new \Plop\HandlersCollection();
+$handlers[] = new \Plop\Handler\Stream(fopen('php://output', 'w'));
+$logging->addLogger(new \Plop\Logger('fpoirotte\\Pssht\\Tests\\Helpers', null, null, $handlers));

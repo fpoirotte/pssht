@@ -2,8 +2,16 @@
 
 namespace fpoirotte\Pssht\Tests\Helpers\SshClient;
 
+use fpoirotte\Pssht\Tests\Helpers;
+
 class Openssh extends \fpoirotte\Pssht\Tests\Helpers\AbstractSshClient
 {
+    public function __construct($host, $login = null, $port = 22)
+    {
+        // Use OpenSSH's "ssh" binary
+        parent::__construct(Helpers\findBinary('ssh'), $host, $login, $port);
+    }
+
     public function __toString()
     {
         $null = strncasecmp(PHP_OS, 'Win', 3) ? '/dev/null' : 'NUL';
@@ -57,7 +65,7 @@ class Openssh extends \fpoirotte\Pssht\Tests\Helpers\AbstractSshClient
         }
 
         // Build final command with redirections.
-        $command = implode(' ', $realArgs) . ' < ' . $null;
+        $command = implode(' ', $realArgs) . ' < ' . $null . ' 2>&1';
         return $command;
     }
 
@@ -104,5 +112,41 @@ class Openssh extends \fpoirotte\Pssht\Tests\Helpers\AbstractSshClient
                     DIRECTORY_SEPARATOR . 'askpass.sh',
             )
         );
+    }
+
+    public function getSupportedCiphers()
+    {
+        exec(escapeshellarg($this->binary) . ' -Q cipher', $output, $exitCode);
+        if ($exitCode !== 0) {
+            throw new \Exception();
+        }
+        return $output;
+    }
+
+    public function getSupportedMACs()
+    {
+        exec(escapeshellarg($this->binary) . ' -Q mac', $output, $exitCode);
+        if ($exitCode !== 0) {
+            throw new \Exception();
+        }
+        return $output;
+    }
+
+    public function getSupportedKEXs()
+    {
+        exec(escapeshellarg($this->binary) . ' -Q kex', $output, $exitCode);
+        if ($exitCode !== 0) {
+            throw new \Exception();
+        }
+        return $output;
+    }
+
+    public function getSupportedKeys()
+    {
+        exec(escapeshellarg($this->binary) . ' -Q key', $output, $exitCode);
+        if ($exitCode !== 0) {
+            throw new \Exception();
+        }
+        return $output;
     }
 }

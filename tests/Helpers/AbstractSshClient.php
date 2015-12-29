@@ -116,6 +116,17 @@ abstract class AbstractSshClient
         return $this;
     }
 
+    public function getPort()
+    {
+        return $this->port;
+    }
+
+    public function setPort($port)
+    {
+        $this->port = $port;
+        return $this;
+    }
+
     public function getCommand()
     {
         return $this->command;
@@ -279,7 +290,10 @@ abstract class AbstractSshClient
         $logging    = \Plop\Plop::getInstance();;
         $_ENV       = array();
         $keep       = array(
-            'PATH', 'Path', 'USER', 'SHELL', 'PWD',
+            'PATH', 'Path',
+            'USER', 'SHELL', 'PWD',
+            'SSH_AGENT_PID',
+            'SSH_AUTH_SOCK',
         );
 
         try {
@@ -304,13 +318,6 @@ abstract class AbstractSshClient
             if ($process === false) {
                 throw \Exception('Could not open command');
             }
-
-            $output     = stream_get_contents($process);
-            $exitCode   = pclose($process);
-            $logging->debug(
-                "Exit code: %(code)d - Output:\n%(output)s",
-                array('code' => $exitCode, 'output' => $output)
-            );
         } catch (\Exception $e) {
         }
 
@@ -325,8 +332,14 @@ abstract class AbstractSshClient
             throw $e;
         }
 
-        $output = array_filter(array_map('trim', explode(PHP_EOL, $output)));
-        return array($exitCode, $output);
+        return $process;
     }
-}
 
+    abstract public function getSupportedCiphers();
+
+    abstract public function getSupportedMACs();
+
+    abstract public function getSupportedKEXs();
+
+    abstract public function getSupportedKeys();
+}

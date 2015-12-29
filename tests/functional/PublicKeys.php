@@ -7,58 +7,52 @@ namespace fpoirotte\Pssht\Tests\Functional;
  */
 class PublicKeys extends \fpoirotte\Pssht\Tests\Helpers\AbstractConnectionTest
 {
-    public function providePublicKeys()
+    public function provideAlgorithms()
     {
-        $algos      = array();
-        $algos[]    = 'dsa/1024';
-        $algos[]    = 'rsa/1024';
-        $algos[]    = 'rsa/2048';
-        $algos[]    = 'rsa/4096';
-        $algos[]    = 'rsa/8192';
-        $algos[]    = 'rsa/16384';
-
-        switch (get_class($this->sshClient)) {
-            case '\\fpoirotte\\Pssht\\Tests\\Helpers\\SshClient\\OpenSSH':
-                $algos[]    = 'ecdsa/256';
-                $algos[]    = 'ecdsa/384';
-                $algos[]    = 'ecdsa/521';
-                $algos[]    = 'ed25519/256';
-                break;
-        }
-
+        $this->initClient();
         $res = array();
-        foreach ($algos as $algo) {
-            $res[] = array($algo);
+
+        // Keep only algorithms which are supported
+        // by both the SSH client and Pssht.
+        $algos = \fpoirotte\Pssht\Algorithms::factory();
+        foreach ($this->sshClient->getSupportedKeys() as $algo) {
+            if ($algos->getClass('Key', $algo) === null) {
+                continue;
+            }
+
+            $base = dirname(__DIR__) .
+                    DIRECTORY_SEPARATOR . 'data' .
+                    DIRECTORY_SEPARATOR . 'plaintext' .
+                    DIRECTORY_SEPARATOR . $algo;
+
+            $it = new \GlobIterator(
+                $base . DIRECTORY_SEPARATOR . '*.pub',
+                \FilesystemIterator::KEY_AS_PATHNAME |
+                \FilesystemIterator::SKIP_DOTS
+            );
+            foreach ($it as $key => $value) {
+                $res[] = array(substr($key, 0, -4));
+            }
         }
+
         return $res;
     }
 
     /**
-     * @dataProvider    providePublicKeys
+     * @dataProvider    provideAlgorithms
      */
-    public function testPublicKeys($key)
+    public function testPublicKeys($identity)
     {
-        // Skip algorithms which are not currently available.
-        $algos = \fpoirotte\Pssht\Algorithms::factory();
-
         $number = rand(0, 100);
-        list($exitCode, $output) = $this->sshClient
+        $client = $this->sshClient
             ->setCommand(array($number))
-            ->setIdentity(
-                dirname(__DIR__) .
-                DIRECTORY_SEPARATOR . 'data' .
-                DIRECTORY_SEPARATOR . 'plaintext' .
-                DIRECTORY_SEPARATOR .
-                str_replace('/', DIRECTORY_SEPARATOR, $key)
-            )
-            ->run();
-
+            ->setIdentity($identity);
+        list($exitCode, $output) = $this->runClient($client);
+        $this->assertSame("Your number: $number" . PHP_EOL, $output);
         $this->assertSame(
             $number,
             $exitCode,
-            "Wrong exit code ($exitCode). Output: " . print_r($output, true)
+            "Wrong exit code ($exitCode)."
         );
-        $this->assertSame(1, count($output));
-        $this->assertSame("Your number: $number", $output[0]);
     }
 }
