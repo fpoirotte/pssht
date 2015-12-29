@@ -116,7 +116,7 @@ class Openssh extends \fpoirotte\Pssht\Tests\Helpers\AbstractSshClient
 
     protected function isOldVersion()
     {
-        exec(escapeshellarg($this->binary) . ' -V', $output, $exitCode);
+        exec(escapeshellarg($this->binary) . ' -V 2>&1', $output, $exitCode);
         if ($exitCode !== 0) {
             throw new \Exception();
         }
