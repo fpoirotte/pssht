@@ -114,8 +114,36 @@ class Openssh extends \fpoirotte\Pssht\Tests\Helpers\AbstractSshClient
         );
     }
 
+    protected function isOldVersion()
+    {
+        exec(escapeshellarg($this->binary) . ' -V', $output, $exitCode);
+        if ($exitCode !== 0) {
+            throw new \Exception();
+        }
+        return version_compare($output[0], 'OpenSSH_6.0', '<');
+    }
+
     public function getSupportedCiphers()
     {
+        // ssh -Q XXX does not work in OpenSSH < 6.0.
+        // So we use a hard-coded list for old versions (5.x).
+        if ($this->isOldVersion()) {
+            return array(
+                'aes128-ctr',
+                'aes192-ctr',
+                'aes256-ctr',
+                'arcfour256',
+                'arcfour128',
+                'aes128-cbc',
+                '3des-cbc',
+                'blowfish-cbc',
+                'cast128-cbc',
+                'aes192-cbc',
+                'aes256-cbc',
+                'arcfour',
+            );
+        }
+
         exec(escapeshellarg($this->binary) . ' -Q cipher', $output, $exitCode);
         if ($exitCode !== 0) {
             throw new \Exception();
@@ -125,6 +153,23 @@ class Openssh extends \fpoirotte\Pssht\Tests\Helpers\AbstractSshClient
 
     public function getSupportedMACs()
     {
+        // ssh -Q XXX does not work in OpenSSH < 6.0.
+        // So we use a hard-coded list for old versions (5.x).
+        if ($this->isOldVersion()) {
+            return array(
+                'hmac-md5',
+                'hmac-sha1',
+                'umac-64@openssh.com',
+                'hmac-ripemd160',
+                'hmac-sha1-96',
+                'hmac-md5-96',
+                'hmac-sha2-256',
+                'hmac-sha2-256-96',
+                'hmac-sha2-512',
+                'hmac-sha2-512-96',
+            );
+        }
+
         exec(escapeshellarg($this->binary) . ' -Q mac', $output, $exitCode);
         if ($exitCode !== 0) {
             throw new \Exception();
@@ -134,6 +179,20 @@ class Openssh extends \fpoirotte\Pssht\Tests\Helpers\AbstractSshClient
 
     public function getSupportedKEXs()
     {
+        // ssh -Q XXX does not work in OpenSSH < 6.0.
+        // So we use a hard-coded list for old versions (5.x).
+        if ($this->isOldVersion()) {
+            return array(
+                'ecdh-sha2-nistp256',
+                'ecdh-sha2-nistp384',
+                'ecdh-sha2-nistp521',
+                'diffie-hellman-group-exchange-sha256',
+                'diffie-hellman-group-exchange-sha1',
+                'diffie-hellman-group14-sha1',
+                'diffie-hellman-group1-sha1',
+            );
+        }
+
         exec(escapeshellarg($this->binary) . ' -Q kex', $output, $exitCode);
         if ($exitCode !== 0) {
             throw new \Exception();
@@ -143,6 +202,25 @@ class Openssh extends \fpoirotte\Pssht\Tests\Helpers\AbstractSshClient
 
     public function getSupportedKeys()
     {
+        // ssh -Q XXX does not work in OpenSSH < 6.0.
+        // So we use a hard-coded list for old versions (5.x).
+        if ($this->isOldVersion()) {
+            return array(
+                'ssh-rsa',
+                'ssh-dss',
+                'ecdsa-sha2-nistp256',
+                'ecdsa-sha2-nistp384',
+                'ecdsa-sha2-nistp521',
+                'ssh-rsa-cert-v01@openssh.com',
+                'ssh-dss-cert-v01@openssh.com',
+                'ecdsa-sha2-nistp256-cert-v01@openssh.com',
+                'ecdsa-sha2-nistp384-cert-v01@openssh.com',
+                'ecdsa-sha2-nistp521-cert-v01@openssh.com',
+                'ssh-rsa-cert-v00@openssh.com',
+                'ssh-dss-cert-v00@openssh.com',
+            );
+        }
+
         exec(escapeshellarg($this->binary) . ' -Q key', $output, $exitCode);
         if ($exitCode !== 0) {
             throw new \Exception();
