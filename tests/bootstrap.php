@@ -42,5 +42,5 @@ require(
 
 $logging    = \Plop\Plop::getInstance();
 $handlers   = new \Plop\HandlersCollection();
-$handlers[] = new \Plop\Handler\Stream(fopen('php://output', 'w'));
+$handlers[] = new \Plop\Handler\Stream(STDOUT);
 $logging->addLogger(new \Plop\Logger('fpoirotte\\Pssht\\Tests\\Helpers', null, null, $handlers));
