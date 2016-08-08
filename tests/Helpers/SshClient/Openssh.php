@@ -45,6 +45,10 @@ class Openssh extends \fpoirotte\Pssht\Tests\Helpers\AbstractSshClient
             $args[] = '-N';
         }
 
+        if ($this->password === null) {
+            array_push($args, '-o', 'PasswordAuthentication=no');
+        }
+
         if ($this->home !== null) {
             array_push(
                 $args,
