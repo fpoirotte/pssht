@@ -141,7 +141,7 @@
 
     <services>
         <!-- The "client" service is used to handle new clients. -->
-        <service id="client" scope="prototype" class="\fpoirotte\Pssht\Transport">
+        <service id="client" shared="false" class="\fpoirotte\Pssht\Transport">
             <argument>%server_keys%</argument>
             <argument type="service" id="authMethods"/>
 
@@ -209,10 +209,10 @@
             The "authMethods" service is used to indicate
             which authentication methods are allowed.
         -->
-        <service id="authMethods" scope="prototype" public="false"
+        <service id="authMethods" shared="false" public="false"
             class="\fpoirotte\Pssht\Handlers\SERVICE\REQUEST">
             <argument type="service">
-                <service scope="prototype"
+                <service shared="false"
                     class="\fpoirotte\Pssht\Handlers\USERAUTH\REQUEST">
                     <argument type="collection">
 
