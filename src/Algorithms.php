@@ -46,7 +46,7 @@ class Algorithms
             'Encryption'    => array(),
         );
 
-        $logging = \Plop\Plop::getInstance();;
+        $logging = \Plop\Plop::getInstance();
         foreach (array_keys($this->algos) as $type) {
             $it = new \RecursiveIteratorIterator(
                 new \RecursiveDirectoryIterator(
@@ -128,7 +128,7 @@ class Algorithms
      */
     protected function getValidClass($type, $name)
     {
-        $logging = \Plop\Plop::getInstance();;
+        $logging = \Plop\Plop::getInstance();
         $w = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_1234567890\\';
         if (!is_string($name) || strspn($name, $w) !== strlen($name)) {
             $logging->debug(
@@ -194,7 +194,7 @@ class Algorithms
      */
     protected function getValidAlgorithm($class)
     {
-        $logging = \Plop\Plop::getInstance();;
+        $logging = \Plop\Plop::getInstance();
         $w =    'abcdefghijklmnopqrstuvwxyz' .
                 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' .
                 '1234567890-@.';

@@ -27,7 +27,8 @@ class Curve25519 implements \fpoirotte\Pssht\Messages\MessageInterface
      *  \param string $Q
      *      The client's ephemeral public key.
      */
-    public function __construct($Q) {
+    public function __construct($Q)
+    {
         $this->Q = $Q;
     }
 

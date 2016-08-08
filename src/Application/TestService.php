@@ -68,7 +68,7 @@ class TestService implements \fpoirotte\Pssht\Handlers\HandlerInterface
             $message->getChannel()
         );
         $transport->writeMessage($response);
-     }
+    }
 
     public function handle(
         $msgType,

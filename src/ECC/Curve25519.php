@@ -115,7 +115,8 @@ class Curve25519
         return strrev(pack('H*', $res));
     }
 
-    public function getPublic($S) {
+    public function getPublic($S)
+    {
         return $this->getShared($S, $this->pointToPubkey(array(9, 1)));
     }
 

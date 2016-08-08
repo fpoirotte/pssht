@@ -101,7 +101,7 @@ class ED25519 implements
         return $res;
     }
 
-    protected static function Hint($m)
+    protected static function hashint($m)
     {
         $h = hash('sha512', $m, true);
         $res = gmp_init(bin2hex(strrev($h)), 16);
@@ -162,14 +162,14 @@ class ED25519 implements
                 gmp_sub(gmp_pow(2, 254), 8)
             )
         );
-        $r = static::Hint(substr($h, 32) . $message);
+        $r = static::hashint(substr($h, 32) . $message);
         $R = $curve->scalarmult($curve->B, $r);
         $t = static::encodepoint($R) . $this->pk . $message;
         $S = gmp_mod(
             gmp_add(
                 $r,
                 gmp_mul(
-                    static::Hint($t),
+                    static::hashint($t),
                     $a
                 )
             ),
@@ -195,7 +195,7 @@ class ED25519 implements
             return false;
         }
         $S = static::decodeint(substr($signature, 32, 64));
-        $h = static::Hint(static::encodepoint($R) . $this->pk . $message);
+        $h = static::hashint(static::encodepoint($R) . $this->pk . $message);
         $res1 = $curve->scalarmult($curve->B, $S);
         $res2 = $curve->edwards($R, $curve->scalarmult($A, $h));
         return (!gmp_cmp($res1[0], $res2[0]) &&
