@@ -8,13 +8,13 @@ cache:
     - $HOME/.composer/cache
 
 php:
-- 5.3
-- 5.4
-- 5.5
-- 5.6
-- 7.0
-- nightly
-- hhvm
+    - 5.3
+    - 5.4
+    - 5.5
+    - 5.6
+    - 7.0
+    - nightly
+    - hhvm
 
 addons:
     apt:
@@ -26,23 +26,23 @@ matrix:
     allow_failures:
     - php: nightly
     - php: hhvm
-    - php: hhvm-nightly
 
 notifications:
     email: false
     irc: "irc.iiens.net#Clicky"
 
 before_script:
-- pecl install pecl_http < /dev/null
-- phpenv config-add tests/php.ini
-- composer self-update -n
-- composer install --dev -n
-- /usr/bin/ssh -V || (echo "SSH not found" && exit 1)
+    - pecl install pecl_http < /dev/null
+    - phpenv config-add tests/php.ini
+    - rm -rf vendor/
+    - rm composer.lock
+    - composer self-update -n
+    - composer install -n
+    - /usr/bin/ssh -V || (echo "SSH not found" && exit 1)
 
 script:
-- vendor/bin/phpunit --coverage-clover clover.xml
+    - vendor/bin/phpunit --coverage-clover clover.xml
 
-after_script:
-- composer require --dev "satooshi/php-coveralls dev-master"
-- php vendor/bin/coveralls -n -v
-
+after_success:
+    - composer require --dev satooshi/php-coveralls
+    - travis_retry vendor/bin/coveralls -n -v
