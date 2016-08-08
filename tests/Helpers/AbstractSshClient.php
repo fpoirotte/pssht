@@ -186,8 +186,9 @@ abstract class AbstractSshClient
 
     public function setPassword($password)
     {
-        $this->password = $password;
-        $this->identity = null;
+        $this->password     = $password;
+        $this->identity     = null;
+        $this->passphrase   = '';
         return $this;
     }
 

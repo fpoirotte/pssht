@@ -17,7 +17,6 @@ class Openssh extends \fpoirotte\Pssht\Tests\Helpers\AbstractSshClient
         $null = strncasecmp(PHP_OS, 'Win', 3) ? '/dev/null' : 'NUL';
 
         $args = array(
-            'setsid',
             $this->binary,
             '-F', $null,                                // No config. file
             '-p', $this->port,                          // Port

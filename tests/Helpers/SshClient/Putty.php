@@ -26,7 +26,6 @@ class Putty extends \fpoirotte\Pssht\Tests\Helpers\AbstractSshClient
     public function __toString()
     {
         $args = array(
-            'setsid',
             $this->binary,
             '-ssh',
             '-batch',
@@ -61,6 +60,10 @@ class Putty extends \fpoirotte\Pssht\Tests\Helpers\AbstractSshClient
             array_push($args, '-load', 'pssht');
         }
 
+        if ($this->password !== null) {
+            array_push($args, '-pw', $this->password);
+        }
+
         // Build the command & escape nasty stuff.
         array_push($args, $this->login . '@' . $this->host);
         $args       = array_merge($args, $this->command);
@@ -71,7 +74,7 @@ class Putty extends \fpoirotte\Pssht\Tests\Helpers\AbstractSshClient
 
         // Build final command with redirections.
         $command = implode(' ', $realArgs);
-        if ($this->identity !== null && $this->passphrase !== '') {
+        if ($this->passphrase !== '') {
             $command = 'echo ' . escapeshellarg($this->passphrase) . ' | ' .
                         $command;
         }
