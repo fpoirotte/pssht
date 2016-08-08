@@ -13,7 +13,6 @@
         }
     ],
     "support": {
-        "email": "clicky@erebot.net",
         "issues": "https://github.com/fpoirotte/pssht/issues",
         "irc": "irc://irc.iiens.net/Erebot",
         "source": "https://github.com/fpoirotte/pssht"
@@ -29,7 +28,7 @@
         "ext-spl": "*",
         "symfony/dependency-injection": "*",
         "symfony/config": "*",
-        "erebot/plop": "~0.5"
+        "erebot/plop": ">=0.6"
     },
     "require-dev": {
         "ext-hash": "*",
