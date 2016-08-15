@@ -34,12 +34,6 @@ require(
     DIRECTORY_SEPARATOR . 'AbstractConnectionTest.php'
 );
 
-require(
-    __DIR__ .
-    DIRECTORY_SEPARATOR . 'Helpers' .
-    DIRECTORY_SEPARATOR . 'OutputException.php'
-);
-
 $logging    = \Plop\Plop::getInstance();
 $handlers   = new \Plop\HandlersCollection();
 $handlers[] = new \Plop\Handler\Stream(STDOUT);

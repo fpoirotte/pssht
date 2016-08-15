@@ -2,50 +2,26 @@
 
 namespace fpoirotte\Pssht\Tests\Helpers;
 
-use fpoirotte\Pssht\Tests\Helpers\OutputException;
-
 /**
  * Abstract testcase to test connection.
  */
 abstract class AbstractConnectionTest extends \PHPUnit_Framework_TestCase
 {
+    private static $phpBinary;
+
     protected $fakeHome;
     protected $configFile;
     protected $sshClient;
-    protected $ipc;
 
-    private static $phpBinary;
-    private static $serverProcess;
-    private static $serverPID;
-    private static $serverPort;
+    private $serverPort;
+    private $serverProcess;
+    private $serverPipes;
+    private $serverBuffers;
 
-    final protected function initClient()
-    {
-        // Default configuration file for tests,
-        // can be overriden by redefining
-        // $configFile in subclasses.
-        if ($this->configFile === null) {
-            $this->configFile = dirname(__DIR__) .
-                                DIRECTORY_SEPARATOR . 'pssht.xml';
-        }
+    private $clientProcess;
+    private $clientPipes;
+    private $clientBuffers;
 
-        // HOME for the "known_hosts" / "sshhostkeys" file.
-        if ($this->fakeHome === null) {
-            $this->fakeHome = dirname(__DIR__) .
-                DIRECTORY_SEPARATOR . 'data' .
-                DIRECTORY_SEPARATOR . 'known_hosts';
-        }
-
-        try {
-            $this->sshClient = new \fpoirotte\Pssht\Tests\Helpers\SshClient\Openssh('localhost');
-        } catch (\Exception $e) {
-            try {
-                $this->sshClient = new \fpoirotte\Pssht\Tests\Helpers\SshClient\Putty('localhost');
-            } catch (\Exception $e) {
-                $this->markTestSkipped('No usable SSH client found');
-            }
-        }
-    }
 
     private static function locatePhpBinary()
     {
@@ -66,7 +42,7 @@ abstract class AbstractConnectionTest extends \PHPUnit_Framework_TestCase
         return $binary;
     }
 
-    private function prepareCommand()
+    final private function prepareCommand()
     {
         if (self::$phpBinary === null) {
             self::$phpBinary = self::locatePhpBinary();
@@ -117,8 +93,15 @@ abstract class AbstractConnectionTest extends \PHPUnit_Framework_TestCase
             }
         }
 
+        // Default configuration file for tests,
+        // can be overriden by redefining
+        // $configFile in subclasses.
+        if ($this->configFile === null) {
+            $this->configFile = dirname(__DIR__) .
+                                DIRECTORY_SEPARATOR . 'pssht.xml';
+        }
+
         // Launch pssht using the proper PHP binary and options.
-        $null = strncasecmp(PHP_OS, 'Win', 3) ? '/dev/null' : 'NUL';
         $command =
             escapeshellarg(self::$phpBinary) .
             " $options " .
@@ -127,154 +110,223 @@ abstract class AbstractConnectionTest extends \PHPUnit_Framework_TestCase
                 DIRECTORY_SEPARATOR . 'bin' .
                 DIRECTORY_SEPARATOR . 'pssht'
             ) . ' ' .
-            escapeshellarg($this->configFile) . ' < ' . $null . ' 2>&1';
+            escapeshellarg($this->configFile);
         return $command;
     }
 
-    private function startServer()
+    final private function startServer()
     {
+        $this->serverPipes = array();
+        $this->serverPort = null;
+
         $logging    = \Plop\Plop::getInstance();
-        $null       = strncasecmp(PHP_OS, 'Win', 3) ? '/dev/null' : 'NUL';
         $command    = $this->prepareCommand();
         $logging->debug('Starting test server: %s', array($command));
-        self::$serverPID        = null;
-        self::$serverProcess    = popen($command, 'r');
-        if (self::$serverProcess === false) {
-            self::$serverProcess = null;
-            throw new \Exception('Could not start the test server using ' .
-                                 'this command line: ' . $command);
-        }
-        $logging->info('The test server is starting...');
-        $this->ipc = array(
-            array(self::$serverProcess, new \fpoirotte\Pssht\Buffer())
-        );
 
+        $descriptors = array(
+            1 => array('pipe', 'w'),
+            2 => array('pipe', 'w'),
+        );
+        $this->serverBuffers = array(
+            1 => new \fpoirotte\Pssht\Buffer(),
+            2 => new \fpoirotte\Pssht\Buffer(),
+        );
+        $this->serverProcess = proc_open($command, $descriptors, $this->serverPipes);
+
+        if ($this->serverProcess === false) {
+            throw new \Exception('Could not start the test server');
+        }
+
+        $msg = 'SERVER: Listening for new connections on ';
         while (true) {
-            $read = $except = array($this->ipc[0][0]);
             $write = array();
+            $read = $except = array($this->serverPipes[1], $this->serverPipes[2]);
+
             if (!@stream_select($read, $write, $except, null)) {
                 throw new \Exception('Signal received');
             }
 
             if (count($except)) {
-                throw new \Exception('Unexpected server shutdown');
+                throw new \Exception('Unexpected error');
             }
 
-            $data = fread($this->ipc[0][0], 8192);
-            if ($data === false) {
-                throw new \Exception('Could not read data');
-            }
-            $this->ipc[0][1]->push($data);
-
-            $line = $this->ipc[0][1]->get(PHP_EOL);
-            if ($line === null) {
-                sleep(1);
-                continue;
-            }
-            $line = rtrim($line);
-
-            $msg  = 'LOG: pssht ';
-            $msg2 = 'LOG: Listening for new connections on ';
-
-            if (!strncmp($line, $msg, strlen($msg) - 1) &&
-                // Grab the server's PID.
-                // "pssht v... is starting (PID ...)"
-                strpos($line, 'is starting')) {
-                self::$serverPID = (int) substr($line, strrpos($line, '(') + 5, -1);
-                if (self::$serverPID === 0) {
-                    throw new \Exception("Could not read the server's PID");
+            foreach ($read as $stream) {
+                $idx = array_search($stream, $this->serverPipes, true);
+                if ($idx === false) {
+                    throw new \Exception('Unknown stream');
                 }
-                $logging->info('Test server started (PID %d)', array(self::$serverPID));
-            } elseif (!strncmp($line, $msg2, strlen($msg2) - 1)) {
-                // Grab the port assigned to the server.
-                // "Listening for new connections on ...:..." (address:port)
-                self::$serverPort = (int) substr($line, strrpos($line, ':') + 1);
-                if (self::$serverPort === 0) {
-                    throw new \Exception("Could not read the server's port");
+
+                $buffer = $this->serverBuffers[$idx];
+                $data = fread($stream, 8192);
+                if ($data === false) {
+                    throw new \Exception('EOF reached');
                 }
-                $logging->info(
-                    'Test server listening on port %d',
-                    array(self::$serverPort)
-                );
-                break;
+                $buffer->push($data);
+
+                while (($line = $buffer->get(PHP_EOL)) !== null) {
+                    $line = rtrim($line);
+                    if ($idx === 1) {
+                        $logging->debug("[STDOUT] %s", array($line));
+                    } else {
+                        $logging->error("[STDERR] %s", array($line));
+                        break 2;
+                    }
+
+                    if (!strncmp($line, $msg, strlen($msg))) {
+                        // Grab the port assigned to the server.
+                        // "Listening for new connections on ...:..." (address:port)
+                        $this->serverPort = (int) substr($line, strrpos($line, ':') + 1);
+                        if ($this->serverPort === 0) {
+                            throw new \Exception("Could not read the server's port");
+                        }
+                        $logging->info('Test server listening on port %d', array($this->serverPort));
+                        return;
+                    }
+                }
             }
         }
     }
 
-    private function doIPC($sec=null, $usec=null)
+    final protected function initClient()
     {
+        $this->clientPipes = array();
+
+        // HOME for the "known_hosts" / "sshhostkeys" file.
+        if ($this->fakeHome === null) {
+            $this->fakeHome = dirname(__DIR__) .
+                DIRECTORY_SEPARATOR . 'data' .
+                DIRECTORY_SEPARATOR . 'known_hosts';
+        }
+
+        try {
+            $this->sshClient = new \fpoirotte\Pssht\Tests\Helpers\SshClient\Openssh('localhost');
+        } catch (\Exception $e) {
+            try {
+                $this->sshClient = new \fpoirotte\Pssht\Tests\Helpers\SshClient\Putty('localhost');
+            } catch (\Exception $e) {
+                $this->markTestSkipped('No usable SSH client found');
+            }
+        }
+    }
+
+    final protected function doIPC()
+    {
+        $logging    = \Plop\Plop::getInstance();
+        $output     = new \fpoirotte\pssht\Buffer();
+
         while (true) {
-            $read = $except = array();
-            foreach (array(0, 1) as $idx) {
-                if (isset($this->ipc[$idx][0]) && !feof($this->ipc[$idx][0])) {
-                    $read[$idx] = $this->ipc[$idx][0];
-                }
-            }
-            $except = $read;
-            $write  = array();
+            $write = array();
+            $read = $except = array(
+                $this->serverPipes[1],
+                $this->serverPipes[2],
+                $this->clientPipes[1],
+                $this->clientPipes[2],
+            );
 
-            if (!count($read)) {
-                return;
-            }
-
-            $nb     = stream_select($read, $write, $except, $sec, $usec);
-            if ($nb === false) {
+            if (!@stream_select($read, $write, $except, null)) {
                 throw new \Exception('Signal received');
-            }
-            if ($nb === 0) {
-                return;
-            }
-
-            $feof = false;
-            foreach ($read as $idx => $fd) {
-                $data = fread($fd, 8192);
-                if ($data === false) {
-                    throw new \Exception('Could not read data');
-                }
-
-                $this->ipc[$idx][1]->push($data);
-
-                if (feof($fd)) {
-                    $feof = true;
-                }
             }
 
             if (count($except)) {
-                throw new \Exception('Unknown error');
+                throw new \Exception('Unexpected error');
             }
 
-            if ($feof) {
-                return;
+            foreach ($read as $stream) {
+                if (($idx = array_search($stream, $this->serverPipes, true)) !== false) {
+                    $buffer = $this->serverBuffers[$idx];
+                    $client = false;
+                } else if (($idx = array_search($stream, $this->clientPipes, true)) !== false) {
+                    $buffer = $this->clientBuffers[$idx];
+                    $client = true;
+                } else {
+                    throw new \Exception('Unknown stream');
+                }
+$logging->info("received data for the %s's %s", array($client ? "client" : "server", $idx === 1 ? "STDOUT" : "STDERR"));
+
+
+                $data = fread($stream, 8192);
+                if ($data === false) {
+                    $logging->error("EOF reached");
+                    throw new \Exception('EOF reached');
+                }
+                $buffer->push($data);
+
+                while (($line = $buffer->get(PHP_EOL)) !== null) {
+                    // Preserve the client's STDOUT
+                    if ($idx === 1 && $client) {
+                        $output->push($line);
+                    }
+
+                    $line = rtrim($line);
+                    $msg = $client ? "CLIENT: %s" : "%s";
+
+                    if ($idx === 1) {
+                        $logging->debug("[STDOUT] $msg", array($line));
+                    } else {
+                        $logging->error("[STDERR] $msg", array($line));
+                    }
+                }
+            }
+
+            $serverStatus = proc_get_status($this->serverProcess);
+            if (!$serverStatus['running']) {
+                $logging->error("Server stopped for no apparent reason");
+                throw new \Exception('Server stopped for no apparent reason');
+            }
+
+            $clientStatus = proc_get_status($this->clientProcess);
+            if ($clientStatus['signaled']) {
+                throw new \Exception('Client terminated by signal ' . $clientStatus['termsig']);
+            }
+
+            if ($clientStatus['stopped']) {
+                throw new \Exception('Client stopped by signal ' . $clientStatus['stopsig']);
+            }
+
+            if (!$clientStatus['running']) {
+                $logging->info("End of client execution");
+                fclose($this->clientPipes[1]);  // STDOUT
+                fclose($this->clientPipes[2]);  // STDERR
+                $this->clientPipes = array();
+                proc_close($this->clientProcess);
+                $this->clientProcess = false;
+                $this->clientBuffers[1] = $output;
+                return $clientStatus['exitcode'];
             }
         }
     }
 
     final protected function runClient($client)
     {
-        $process        = $client->run();
-        $logging        = \Plop\Plop::getInstance();
-        $this->ipc[1]   = array($process, new \fpoirotte\Pssht\Buffer());
-        $this->doIPC();
+        $logging                = \Plop\Plop::getInstance();
+        $descriptors            = array(
+            1 => array('pipe', 'w'),
+            2 => array('pipe', 'w'),
+        );
 
-        $exitCode   = pclose($this->ipc[1][0]);
-        $output     = $this->ipc[1][1]->get(0);
-        unset($this->ipc[1]);
+        $this->clientBuffers    = array(
+            1 => new \fpoirotte\Pssht\Buffer(),
+            2 => new \fpoirotte\Pssht\Buffer(),
+        );
 
-        $this->doIPC(0, 2000);
-        while (($line = $this->ipc[0][1]->get(PHP_EOL)) !== null) {
-            if (strncmp($line, 'LOG: ', 5)) {
-                $this->fail('Test server: ' . rtrim($line));
-            } else {
-                $logging->debug(rtrim($line));
-            }
-        }
+        $this->clientProcess    = $this->sshClient->run(
+            $descriptors,
+            $this->clientPipes
+        );
 
+        $exitCode   = $this->doIPC();
+        $output     = $this->clientBuffers[1]->get(0);
         return array($exitCode, $output);
     }
 
     final public function setUp()
     {
+        \fpoirotte\Pssht\Algorithms::factory();
+
+        $this->startServer();
         $this->initClient();
+        $this->sshClient->setPort($this->serverPort);
+        $this->sshClient->setHome($this->fakeHome);
 
         // PuTTY stores its configuration in the registry on Windows,
         // preventing us from overriding it like we do on Linux/Unix.
@@ -287,59 +339,34 @@ abstract class AbstractConnectionTest extends \PHPUnit_Framework_TestCase
              \fpoirotte\Pssht\Tests\Helpers\SshClient\PuTTY)) {
             return $this->markTestSkipped("Windows is not yet supported");
         }
-
-        // Start pssht for real and initialize the algorithms.
-        if (self::$serverPID === null) {
-            $this->startServer();
-            \fpoirotte\Pssht\Algorithms::factory();
-        } else {
-            $this->ipc = array(
-                array(self::$serverProcess, new \fpoirotte\Pssht\Buffer())
-            );
-        }
-
-        $this->sshClient->setPort(self::$serverPort);
-        $this->sshClient->setHome($this->fakeHome);
     }
 
-    protected final function runTest()
+    final public function tearDown()
     {
-        $e = null;
-        try {
-            parent::runTest();
-        } catch (\Exception $e) {
-            if ($e instanceof PHPUnit_Framework_SelfDescribing) {
-                $buffer = $e->toString();
-                if (!empty($buffer)) {
-                    $buffer = trim($buffer) . "\n";
-                }
-            } else {
-                $buffer = $e->getMessage() . "\n";
-            }
-
-            $e = new OutputException(
-                $buffer . PHP_EOL . $this->getActualOutput(),
-                0,
-                null,
-                null,
-                $e->getTrace()
-            );
+        $logging = \Plop\Plop::getInstance();
+        if (count($this->clientPipes)) {
+            $logging->info("Closing the client's file descriptors");
+            fclose($this->clientPipes[1]);  // STDOUT
+            fclose($this->clientPipes[2]);  // STDERR
+        }
+        if (is_resource($this->clientProcess)) {
+            $logging->info("Freeing client resources");
+            $status = proc_get_status($this->clientProcess);
+            posix_kill($status['pid'], defined('SIGKILL') ? constant('SIGKILL') : 9);
+            proc_close($this->clientProcess);
         }
 
-        // HACK: swallow original test STDOUT.
-        $this->setOutputCallback('is_object');
-        if ($e) {
-            throw $e;
+        if (count($this->serverPipes)) {
+            $logging->info("Closing the server's file descriptors");
+            fclose($this->serverPipes[1]);  // STDOUT
+            fclose($this->serverPipes[2]);  // STDERR
         }
-    }
-
-    public final static function tearDownAfterClass()
-    {
-        if (self::$serverPID !== null) {
-            // Just kill the damn thing already!
-            posix_kill(self::$serverPID, defined('SIGINT') ? SIGINT : 15);
-            pclose(self::$serverProcess);
-            self::$serverPID = null;
+        if (is_resource($this->serverProcess)) {
+            $logging->info("Freeing server resources");
+            $status = proc_get_status($this->serverProcess);
+            posix_kill($status['pid'], defined('SIGKILL') ? constant('SIGKILL') : 9);
+            proc_close($this->serverProcess);
         }
+        $this->serverPort = null;
     }
 }

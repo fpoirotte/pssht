@@ -68,8 +68,8 @@ class Openssh extends \fpoirotte\Pssht\Tests\Helpers\AbstractSshClient
             $realArgs[] = escapeshellarg((string) $arg);
         }
 
-        // Build final command with redirections.
-        $command = implode(' ', $realArgs) . ' < ' . $null . ' 2>&1';
+        // Build final command.
+        $command = implode(' ', $realArgs);
         return $command;
     }
 

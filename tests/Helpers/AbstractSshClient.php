@@ -281,14 +281,14 @@ abstract class AbstractSshClient
         }
     }
 
-    final public function run()
+    final public function run($desc, &$pipes)
     {
         $output     = array();
         $exitCode   = null;
         $command    = 'ERROR';
         $e          = null;
 
-        $logging    = \Plop\Plop::getInstance();;
+        $logging    = \Plop\Plop::getInstance();
         $_ENV       = array();
         $keep       = array(
             'PATH', 'Path',
@@ -315,8 +315,10 @@ abstract class AbstractSshClient
             $command = (string) $this;
             $logging->debug('Executing: %s', array($command));
             $logging->debug('Environment: %s', array(var_export($_ENV, true)));
-            $process = popen($command, 'r');
-            if ($process === false) {
+
+            $pipes = array();
+            $process = proc_open($command, $desc, $pipes, null, $_ENV);
+            if (!is_resource($process)) {
                 throw \Exception('Could not open command');
             }
         } catch (\Exception $e) {

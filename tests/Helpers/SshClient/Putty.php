@@ -79,7 +79,7 @@ class Putty extends \fpoirotte\Pssht\Tests\Helpers\AbstractSshClient
             $command = 'echo ' . escapeshellarg($this->passphrase) . ' | ' .
                         $command;
         }
-        return $command . ' 2>&1';
+        return $command;
     }
 
     public function patchContext()

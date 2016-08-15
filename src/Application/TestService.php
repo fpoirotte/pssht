@@ -27,6 +27,8 @@ class TestService implements \fpoirotte\Pssht\Handlers\HandlerInterface
         \fpoirotte\Pssht\Connection $connection,
         \fpoirotte\Pssht\Messages\MessageInterface $message
     ) {
+        $logging = \Plop\Plop::getInstance();
+
         if (!($message instanceof \fpoirotte\Pssht\Messages\CHANNEL\REQUEST\Exec)) {
             throw new DISCONNECT(
                 DISCONNECT::SSH_DISCONNECT_SERVICE_NOT_AVAILABLE,
@@ -34,12 +36,14 @@ class TestService implements \fpoirotte\Pssht\Handlers\HandlerInterface
             );
         }
 
+        $logging->info("Sending number back (%s)", array($message->getCommand()));
         $response   = new \fpoirotte\Pssht\Messages\CHANNEL\DATA(
             $message->getChannel(),
             'Your number: ' . $message->getCommand() . PHP_EOL
         );
         $transport->writeMessage($response);
 
+        $logging->info("Sending EOF message");
         $response   = new \fpoirotte\Pssht\Messages\CHANNEL\EOF(
             $message->getChannel()
         );
@@ -47,6 +51,7 @@ class TestService implements \fpoirotte\Pssht\Handlers\HandlerInterface
 
         /// @FIXME: We shouldn't need to pass values
         //          for the "type" & "want-replay" fields.
+        $logging->info("Sending exit status (%s)", array($message->getCommand()));
         $response   = new \fpoirotte\Pssht\Messages\CHANNEL\REQUEST\ExitStatus(
             $message->getChannel(),
             "exit-status",
@@ -57,6 +62,7 @@ class TestService implements \fpoirotte\Pssht\Handlers\HandlerInterface
 
         /// @FIXME: We shouldn't need to pass values
         //          for the "type" & "want-replay" fields.
+        $logging->info("Sending EOW message");
         $response   = new \fpoirotte\Pssht\Messages\CHANNEL\REQUEST\OpensshCom\Eow(
             $message->getChannel(),
             "eow@openssh.com",
@@ -64,6 +70,7 @@ class TestService implements \fpoirotte\Pssht\Handlers\HandlerInterface
         );
         $transport->writeMessage($response);
 
+        $logging->info("Closing the channel");
         $response   = new \fpoirotte\Pssht\Messages\CHANNEL\CLOSE(
             $message->getChannel()
         );

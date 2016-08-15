@@ -71,7 +71,7 @@
                                             <call method="setFormatter">
                                                 <argument type="service">
                                                     <service class="\Plop\Formatter">
-                                                        <argument>LOG: %%(message)s</argument>
+                                                        <argument>SERVER: %%(message)s</argument>
                                                         <argument></argument>
                                                     </service>
                                                 </argument>
