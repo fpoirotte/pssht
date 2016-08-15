@@ -18,6 +18,7 @@ class Openssh extends \fpoirotte\Pssht\Tests\Helpers\AbstractSshClient
 
         $args = array(
             $this->binary,
+            '-vvv',                                     // For debugging purposes
             '-F', $null,                                // No config. file
             '-p', $this->port,                          // Port
             ($this->X11Forwarding ? '-X' : '-x'),       // X11 forwarding

@@ -27,6 +27,7 @@ class Putty extends \fpoirotte\Pssht\Tests\Helpers\AbstractSshClient
     {
         $args = array(
             $this->binary,
+            '-v',                                       // For debugging
             '-ssh',
             '-batch',
             '-P', $this->port,                          // Port
