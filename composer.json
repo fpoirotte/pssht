@@ -39,7 +39,7 @@
         "phing/phing": "*",
         "phpmd/phpmd": "*",
         "sebastian/phpcpd": "*",
-        "phpunit/phpunit": "<4",
+        "phpunit/phpunit": "*",
         "squizlabs/php_codesniffer": "*",
         "erebot/buildenv": "~1.2.0",
         "fpoirotte/natives4doxygen": "*"
