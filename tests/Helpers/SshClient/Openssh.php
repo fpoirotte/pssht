@@ -24,6 +24,8 @@ class Openssh extends \fpoirotte\Pssht\Tests\Helpers\AbstractSshClient
             ($this->X11Forwarding ? '-X' : '-x'),       // X11 forwarding
             ($this->agentForwarding ? '-A' : '-a'),     // Agent forwarding
             ($this->ptyAllocation ? '-t' : '-T'),       // Pseudo-TTY
+            '-o', 'StrictHostKeyChecking=no',
+            '-o', 'UserKnownHostsFile=' . $null,
         );
 
         if ($this->compression) {
@@ -50,16 +52,6 @@ class Openssh extends \fpoirotte\Pssht\Tests\Helpers\AbstractSshClient
             array_push($args, '-o', 'PasswordAuthentication=no');
         }
 
-        if ($this->home !== null) {
-            array_push(
-                $args,
-                '-o',
-                'UserKnownHostsFile=' . $this->home .
-                    DIRECTORY_SEPARATOR . '.ssh' .
-                    DIRECTORY_SEPARATOR . 'known_hosts'
-            );
-        }
-
         // Build the command & escape nasty stuff.
         array_push($args, $this->login . '@' . $this->host);
         $args       = array_merge($args, $this->command);
@@ -77,19 +69,6 @@ class Openssh extends \fpoirotte\Pssht\Tests\Helpers\AbstractSshClient
     {
         if ($this->home !== null) {
             $this->setEnvironment(array('HOME' => $this->home));
-
-            // Replace <port> in known_hosts with the actual port.
-            $knownKeys = $this->home .
-                DIRECTORY_SEPARATOR . '.ssh' .
-                DIRECTORY_SEPARATOR . 'known_hosts';
-            file_put_contents(
-                $knownKeys,
-                str_replace(
-                    '<port>',
-                    $this->port,
-                    file_get_contents($knownKeys . '.tpl')
-                )
-            );
         }
 
         if (!$this->agent) {
