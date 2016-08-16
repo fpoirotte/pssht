@@ -1,5 +1,8 @@
 <?php
 
+chdir(__DIR__);
+exec("find data/encrypted/ data/plaintext/ -type f -exec chmod 0600 '{}' '+'");
+
 require(
     dirname(__DIR__) .
     DIRECTORY_SEPARATOR . 'vendor' .
