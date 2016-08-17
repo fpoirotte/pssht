@@ -111,7 +111,7 @@ abstract class AbstractConnectionTest extends \PHPUnit_Framework_TestCase
                 DIRECTORY_SEPARATOR . 'pssht'
             ) . ' ' .
             escapeshellarg($this->configFile);
-        return $command;
+        return "exec " . $command;
     }
 
     final private function startServer()
@@ -351,8 +351,7 @@ $logging->info("received data for the %s's %s", array($client ? "client" : "serv
         }
         if (is_resource($this->clientProcess)) {
             $logging->info("Freeing client resources");
-            $status = proc_get_status($this->clientProcess);
-            posix_kill($status['pid'], defined('SIGKILL') ? constant('SIGKILL') : 9);
+            proc_terminate($this->clientProcess, defined('SIGKILL') ? constant('SIGKILL') : 9);
             proc_close($this->clientProcess);
         }
 
@@ -363,8 +362,7 @@ $logging->info("received data for the %s's %s", array($client ? "client" : "serv
         }
         if (is_resource($this->serverProcess)) {
             $logging->info("Freeing server resources");
-            $status = proc_get_status($this->serverProcess);
-            posix_kill($status['pid'], defined('SIGKILL') ? constant('SIGKILL') : 9);
+            proc_terminate($this->serverProcess, defined('SIGKILL') ? constant('SIGKILL') : 9);
             proc_close($this->serverProcess);
         }
         $this->serverPort = null;
