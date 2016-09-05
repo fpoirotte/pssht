@@ -63,7 +63,7 @@ def prepare(globs, locs):
     buildenv = os.path.join(root, 'vendor', 'erebot', 'buildenv')
     natives = os.path.join(root, 'vendor', 'fpoirotte', 'natives4doxygen')
     for repository, path in (
-        ('git://github.com/Erebot/Erebot_Buildenv.git', buildenv),
+        ('git://github.com/Erebot/Buildenv.git', buildenv),
         ('git://github.com/fpoirotte/PHPNatives4Doxygen', natives),
     ):
         if not os.path.isdir(path):
