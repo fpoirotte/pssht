@@ -1,3 +1,4 @@
+.putty/sessions/
 .putty/sshhostkeys
 .putty/randomseed
 .ssh/known_hosts
