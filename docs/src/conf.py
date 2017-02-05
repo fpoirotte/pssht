@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
 
 import os
+from os.path import join, dirname
 import sys
 import glob
 import shutil
+import urllib
+import fnmatch
 from datetime import datetime
 from subprocess import call, Popen, PIPE
 
@@ -15,117 +18,155 @@ except ImportError:
 def prepare(globs, locs):
     # Where are we?
     cwd = os.getcwd()
-    root = os.path.abspath(os.path.join(cwd, '..', '..'))
+    root = os.path.abspath(join(cwd, '..', '..'))
+    deps = os.path.abspath(join(cwd, dirname(__file__), 'php-requirements.txt'))
 
-    git = Popen('which git 2> %s' % os.devnull, shell=True, stdout=PIPE
-                ).stdout.read().strip()
-    doxygen = Popen('which doxygen 2> %s' % os.devnull, shell=True, stdout=PIPE
-                ).stdout.read().strip()
-    pybabel = Popen('which pybabel 2> %s' % os.devnull, shell=True, stdout=PIPE
-                ).stdout.read().strip()
+    git = Popen('which git 2> %s' % os.devnull, shell=True,
+                stdout=PIPE).stdout.read().strip()
+    doxygen = Popen('which doxygen 2> %s' % os.devnull, shell=True,
+                stdout=PIPE).stdout.read().strip()
 
-    print "git version:",
-    sys.stdout.flush()
+    locs['rtd_slug'] = os.path.basename(os.path.dirname(os.path.dirname(root)))
+    locs['rtd_version'] = os.path.basename(root)
+    pybabel = join(root, '..', '..', 'envs', locs['rtd_version'], 'bin', 'pybabel')
+    builder = sys.argv[sys.argv.index('-b') + 1]
+
+    print "builder:", builder
+    print "git version:"
     call([git, '--version'])
-
-    print "doxygen version:",
-    sys.stdout.flush()
+    print "doxygen version:"
     call([doxygen, '--version'])
-
-    print "pybabel version:",
-    sys.stdout.flush()
+    print "pybabel version:"
     call([pybabel, '--version'])
 
-    print "environment:", repr(os.environ)
-
-    print "Running from %s..." % (root, )
+    print "Building version %s for %s in %s..." % (
+        locs['rtd_version'],
+        locs['rtd_slug'],
+        root
+    )
     os.chdir(root)
 
     # Figure several configuration values from git.
     origin = Popen([git, 'config', '--local', 'remote.origin.url'],
-                   stdout=PIPE).stdout.read().strip()
+                    stdout=PIPE).stdout.read().strip()
     git_tag = Popen([git, 'describe', '--tags', '--exact', '--first-parent'],
                     stdout=PIPE).communicate()[0].strip()
     git_hash = Popen([git, 'rev-parse', 'HEAD'],
                     stdout=PIPE).communicate()[0].strip()
-    gh_project = ('/'.join(origin.split('/')[-2:])).rpartition(':')[2]
-    if gh_project.endswith('.git'):
-        gh_project = gh_project[:-4]
-    project = gh_project.rpartition('/')[2]
+
+    origin = origin.replace(':', '/').split('/')
+    vendor = origin[-2]
+    project = origin[-1]
+    if project.endswith('.git'):
+        project = project[:-4]
     os.environ['SPHINX_PROJECT'] = project
     if git_tag:
-        os.environ['SPHINX_VERSION'] = os.environ['SPHINX_RELEASE'] = git_tag
+        os.environ['SPHINX_VERSION'] = git_tag
+        os.environ['SPHINX_RELEASE'] = git_tag
     else:
-        os.environ['SPHINX_VERSION'] = os.environ['SPHINX_RELEASE'] = 'latest'
+        commit = Popen([git, 'describe', '--always', '--first-parent'],
+                        stdout=PIPE).communicate()[0].strip()
+        os.environ['SPHINX_VERSION'] = 'latest'
+        os.environ['SPHINX_RELEASE'] = 'latest-%s' % (commit, )
         locs['tags'].add('devel')
 
+    # Common dependencies
+    dependencies = [
+        ('git://github.com/Erebot/Buildenv.git', 'vendor/erebot/buildenv'),
+        ('git://github.com/fpoirotte/PHPNatives4Doxygen', 'vendor/fpoirotte/natives4doxygen'),
+    ]
+
+    # Project-specific dependencies
+    try:
+        with open(deps, 'r') as fd:
+            dependencies += [line.split() for line in fd.readlines()]
+    except:
+        pass
+
     # Clone or update dependencies
-    buildenv = os.path.join(root, 'vendor', 'erebot', 'buildenv')
-    natives = os.path.join(root, 'vendor', 'fpoirotte', 'natives4doxygen')
-    for repository, path in (
-        ('git://github.com/Erebot/Buildenv.git', buildenv),
-        ('git://github.com/fpoirotte/PHPNatives4Doxygen', natives),
-    ):
+    for repository, path in dependencies:
+        path = join(root, path)
         if not os.path.isdir(path):
             os.makedirs(path)
             print "Cloning %s into %s..." % (repository, path)
             call([git, 'clone', repository, path])
-        elif os.path.isdir(os.path.join(path, '.git')):
+        elif os.path.isdir(join(path, '.git')):
             os.chdir(path)
             print "Updating clone of %s in %s..." % (repository, path)
             call([git, 'checkout', 'master'])
             call([git, 'pull'])
             os.chdir(root)
 
-    composer = json.load(open(os.path.join(root, 'composer.json'), 'r'))
+    composer = json.load(open(join(root, 'composer.json'), 'r'))
 
-    # Run doxygen
-    call([doxygen, os.path.join(root, 'Doxyfile')], env={
-        'COMPONENT_NAME': os.environ['SPHINX_PROJECT'],
-        'COMPONENT_VERSION': os.environ['SPHINX_VERSION'],
-        'COMPONENT_BRIEF': composer.get('description', ''),
-    })
+    if builder == 'readthedocs':
+        # Run doxygen
+        call([doxygen, join(root, 'Doxyfile')], env={
+            'COMPONENT_NAME': os.environ['SPHINX_PROJECT'],
+            'COMPONENT_VERSION': os.environ['SPHINX_VERSION'],
+            'COMPONENT_BRIEF': composer.get('description', ''),
+        })
 
-    # Remove extra files/folders.
-    try:
-        shutil.rmtree(os.path.join(root, 'build'))
-    except OSError:
-        pass
-    shutil.move(
-        os.path.join(root, 'docs', 'api', 'html'),
-        os.path.join(root, 'build', 'apidoc'),
-    )
+        # Copy API doc to final place,
+        # overwriting files as necessary.
+        try:
+            shutil.rmtree(join(root, 'build'))
+        except OSError:
+            pass
+        os.mkdir(join(root, 'build'))
+        shutil.move(
+            join(root, 'docs', 'api', 'html'),
+            join(root, 'build', 'apidoc'),
+        )
+        try:
+            shutil.move(
+                join(root, '%s.tagfile.xml' %
+                    os.environ['SPHINX_PROJECT']),
+                join(root, 'build', 'apidoc', '%s.tagfile.xml' %
+                    os.environ['SPHINX_PROJECT'])
+            )
+        except OSError:
+            pass
+
+    # Copy translations for generic docs to catalogs folder.
+    gen_i18n = join(root, 'docs', 'src', 'generic', 'i18n', '.')[:-1]
+    for translation in glob.iglob(join(gen_i18n, '*')):
+        target_dir = join(
+            root, 'docs', 'i18n',
+            translation[len(gen_i18n):],
+            'LC_MESSAGES', 'generic'
+        )
+        translation = join(translation, 'LC_MESSAGES', 'generic')
+        shutil.rmtree(target_dir, ignore_errors=True)
+        shutil.copytree(translation, target_dir)
 
     # Compile translation catalogs.
-    for po in glob.iglob(os.path.join(root, 'docs', 'i18n', '*', 'LC_MESSAGES', '*.po')):
-        mo = po[:-3] + '.mo'
-        call([pybabel, 'compile', '-f', '--statistics', '-i', po, '-o', mo])
+    for locale_dir in glob.iglob(join(root, 'docs', 'i18n', '*')):
+        for base, dirnames, filenames in os.walk(locale_dir):
+            for po in fnmatch.filter(filenames, '*.po'):
+                po = join(base, po)
+                mo = po[:-3] + '.mo'
+                call([pybabel, 'compile', '-f', '--statistics',
+                      '-i', po, '-o', mo])
 
     # Load the real Sphinx configuration file.
     os.chdir(cwd)
-    real_conf = os.path.join(buildenv, 'sphinx', 'conf.py')
+    real_conf = join(root, 'vendor', 'erebot', 'buildenv', 'sphinx', 'conf.py')
     print "Including real configuration file (%s)..." % (real_conf, )
     execfile(real_conf, globs, locs)
 
     # Patch configuration afterwards.
-    locs['copyright'] = u'2014-%d, François Poirotte. All rights reserved' % \
-            datetime.now().year
-    if 'html_extra_path' not in locs:
-        locs['html_extra_path'] = []
-    locs['html_extra_path'].append(os.path.join(root, 'build'))
+    # - Theme
+    locs.setdefault('html_extra_path', []).append(join(root, 'build'))
     locs['html_theme'] = 'haiku'
-    if 'locale_dirs' not in locs:
-        locs['locale_dirs'] = []
-    locs['locale_dirs'].insert(0, os.path.join(root, 'docs', 'i18n'))
-    if 'rst_prolog' not in locs:
-        locs['rst_prolog'] = ''
-    locs['rst_prolog'] += '\n    .. _`this_commit`: https://github.com/%s/commit/%s\n' % (
-        gh_project,
-        git_hash,
-    )
-
-    globs['RTD_NEW_THEME'] = False
-    globs['RTD_OLD_THEME'] = False
-
+    # - I18N
+    locs.setdefault('locale_dirs', []).insert(0, join(root, 'docs', 'i18n'))
+    # - misc.
+    locs['rst_prolog'] = locs.get('rst_prolog', '') + \
+        '\n    .. _`this_commit`: https://github.com/%s/%s/commit/%s\n' % (
+            vendor,
+            project,
+            git_hash,
+        )
 
 prepare(globals(), locals())
