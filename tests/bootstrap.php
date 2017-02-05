@@ -41,3 +41,7 @@ $logging    = \Plop\Plop::getInstance();
 $handlers   = new \Plop\HandlersCollection();
 $handlers[] = new \Plop\Handler\Stream(STDOUT);
 $logging->addLogger(new \Plop\Logger('fpoirotte\\Pssht\\Tests\\Helpers', null, null, $handlers));
+
+if (!class_exists('PHPUnit_Framework_TestCase')) {
+    class_alias('\\PHPUnit\\Framework\\TestCase', 'PHPUnit_Framework_TestCase');
+}
