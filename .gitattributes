@@ -16,3 +16,4 @@
 /tests           export-ignore
 /.tx             export-ignore
 /phing           export-ignore
+/.travis         export-ignore
