@@ -5,7 +5,7 @@ namespace fpoirotte\Pssht\Tests\Unit\Algorithms;
 /**
  * Test vectors for Poly1305.
  */
-class Poly1305 extends \PHPUnit_Framework_TestCase
+class Poly1305 extends \PHPUnit\Framework\TestCase
 {
     public function vectors()
     {

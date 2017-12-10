@@ -5,7 +5,7 @@ namespace fpoirotte\Pssht\Tests\Unit\Algorithms;
 /**
  * Test vectors for ChaCha20.
  */
-class ChaCha20 extends \PHPUnit_Framework_TestCase
+class ChaCha20 extends \PHPUnit\Framework\TestCase
 {
     public function vectors()
     {

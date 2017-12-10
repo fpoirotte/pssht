@@ -5,7 +5,7 @@ namespace fpoirotte\Pssht\Tests\Unit\ECC;
 /**
  * Test vectors for Curve 25519.
  */
-class Curve25519 extends \PHPUnit_Framework_TestCase
+class Curve25519 extends \PHPUnit\Framework\TestCase
 {
     public function setUp()
     {

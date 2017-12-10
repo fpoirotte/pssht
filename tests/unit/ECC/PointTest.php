@@ -6,7 +6,7 @@ namespace fpoirotte\Pssht\Tests\Unit\ECC;
  * Test point addition for various NIST curves
  * using the test vectors at http://point-at-infinity.org/ecc/nisttv
  */
-class PointTest extends \PHPUnit_Framework_TestCase
+class PointTest extends \PHPUnit\Framework\TestCase
 {
     public function setUp()
     {

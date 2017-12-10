@@ -6,7 +6,7 @@ namespace fpoirotte\Pssht\Tests\Unit\Key\ECDSA\SHA2;
  * Test ECDSA implementation using the test vectors
  * in http://tools.ietf.org/html/rfc4754#section-8
  */
-class NISTpTest extends \PHPUnit_Framework_TestCase
+class NISTpTest extends \PHPUnit\Framework\TestCase
 {
     public function setUp()
     {

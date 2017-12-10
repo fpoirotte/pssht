@@ -5,7 +5,7 @@ namespace fpoirotte\Pssht\Tests\Helpers;
 /**
  * Abstract testcase to test connection.
  */
-abstract class AbstractConnectionTest extends \PHPUnit_Framework_TestCase
+abstract class AbstractConnectionTest extends \PHPUnit\Framework\TestCase
 {
     private static $phpBinary;
 

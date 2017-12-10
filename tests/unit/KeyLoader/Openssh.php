@@ -2,7 +2,7 @@
 
 namespace fpoirotte\Pssht\Tests\Unit\KeyLoader;
 
-class OpensshTest extends \PHPUnit_Framework_TestCase
+class OpensshTest extends \PHPUnit\Framework\TestCase
 {
     public function provideOID()
     {

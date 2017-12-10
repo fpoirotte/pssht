@@ -14,7 +14,7 @@ class ED25519TestHelper extends \fpoirotte\Pssht\Key\SSH\ED25519
  * Test our EdDSA implementation using the test vectors
  * from http://ed25519.cr.yp.to/python/sign.input
  */
-class ED25519Test extends \PHPUnit_Framework_TestCase
+class ED25519Test extends \PHPUnit\Framework\TestCase
 {
     public function vectors()
     {
