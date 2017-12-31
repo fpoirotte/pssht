@@ -41,7 +41,7 @@
         "sebastian/phpcpd": "*",
         "phpunit/phpunit": "*",
         "squizlabs/php_codesniffer": "*",
-        "erebot/buildenv": "^1.4.0",
+        "erebot/buildenv": "^1.5.0",
         "fpoirotte/natives4doxygen": "*",
         "fpoirotte/push": "dev-master"
     },
