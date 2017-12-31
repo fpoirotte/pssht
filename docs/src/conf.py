@@ -29,6 +29,6 @@ def prepare(globs, locs):
     os.chdir(cwd)
     conf = join(root, 'vendor', 'erebot', 'buildenv', 'sphinx', 'rtd.py')
     print "Including the second configuration file (%s)..." % (conf, )
-    execfile(conf, globs, locs)
+    exec(compile(open(conf).read(), conf, 'exec'), globs, locs)
 
 prepare(globals(), locals())
