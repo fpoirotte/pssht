@@ -50,4 +50,4 @@ script:
 
 after_success:
     - composer require --dev satooshi/php-coveralls
-    - travis_retry vendor/bin/coveralls -n -v
+    - travis_retry vendor/bin/php-coveralls -n -v
