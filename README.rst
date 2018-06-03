@@ -9,7 +9,7 @@
 pssht
 =====
 
-|travis-ci| |coveralls| |versioneye-updates| |hhvm| |readthedocs|
+|travis-ci| |coveralls| |hhvm| |readthedocs|
 
 pssht is a PHP library that provides an SSH server that can be embedded
 in other applications.
@@ -510,14 +510,6 @@ v0.1.0
 ..  |coveralls| image:: https://coveralls.io/repos/fpoirotte/pssht/badge.svg?branch=develop&service=github
     :alt: unknown
     :target: https://coveralls.io/github/fpoirotte/pssht?branch=develop
-
-..  |versioneye-updates| image:: https://www.versioneye.com/php/fpoirotte:pssht/dev-develop/badge.png
-    :alt: unknown
-    :target: https://www.versioneye.com/php/fpoirotte:pssht/dev-develop
-
-..  |versioneye-refs| image:: https://www.versioneye.com/php/fpoirotte:pssht/reference_badge.svg?style=flat
-    :alt: unknown
-    :target: https://www.versioneye.com/php/fpoirotte:pssht/references
 
 ..  |hhvm| image:: http://hhvm.h4cc.de/badge/fpoirotte/pssht.png
     :alt: unknown
